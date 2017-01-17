@@ -13,6 +13,7 @@ setup(
     include_package_data=True,
     install_requires=[
         'Django<1.11',
+        'django-compressor'
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
