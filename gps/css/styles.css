@@ -1,0 +1,883 @@
+
+
+/* ==========================================================================
+   MAIN STYLE
+   ========================================================================== */
+/*boundless fonts*/
+@font-face {
+  font-family: 'Encode Sans Compressed';
+  src: url('../Assets/fonts/encodesanscondensed-400-regular-webfont.eot');
+  src: url('../Assets/fonts/encodesanscondensed-400-regular-webfont.eot?#iefix') format('embedded-opentype'), url('../Assets/fonts/encodesanscondensed-400-regular-webfont.woff') format('woff'), url('../Assets/fonts/encodesanscondensed-400-regular-webfont.ttf') format('truetype'), url('../Assets/fonts/encodesanscondensed-400-regular-webfont.svg#encodesanscondensed-400-regular-webfont') format('svg');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Encode Sans Compressed';
+  src: url('../Assets/fonts/encodesanscondensed-500-medium-webfont.eot');
+  src: url('../Assets/fonts/encodesanscondensed-500-medium-webfont.eot?#iefix') format('embedded-opentype'), url('../Assets/fonts/encodesanscondensed-500-medium-webfont.woff') format('woff'), url('../Assets/fonts/encodesanscondensed-500-medium-webfont.ttf') format('truetype'), url('../Assets/fonts/encodesanscondensed-500-medium-webfont.svg#encodesanscondensed-500-medium-webfont') format('svg');
+  font-weight: 500;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Encode Sans Compressed';
+  src: url('../Assets/fonts/encodesanscompressed-600-semibold-webfont.eot');
+  src: url('../Assets/fonts/encodesanscompressed-600-semibold-webfont.eot?#iefix') format('embedded-opentype'), url('../Assets/fonts/encodesanscompressed-600-semibold-webfont.woff') format('woff'), url('../Assets/fonts/encodesanscompressed-600-semibold-webfont.ttf') format('truetype'), url('../Assets/fonts/encodesanscompressed-600-semibold-webfont.svg#encodesanscompressed-600-semibold-webfont') format('svg');
+  font-weight: 600;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Encode Sans Compressed';
+  src: url('../Assets/fonts/encodesanscompressed-700-bold-webfont.eot');
+  src: url('../Assets/fonts/encodesanscompressed-700-bold-webfont.eot?#iefix') format('embedded-opentype'), url('../Assets/fonts/encodesanscompressed-700-bold-webfont.woff') format('woff'), url('../Assets/fonts/encodesanscompressed-700-bold-webfont.ttf') format('truetype'), url('../Assets/fonts/encodesanscompressed-700-bold-webfont.svg#encodesanscompressed-700-bold-webfont') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Encode Sans Compressed';
+  src: url('../Assets/fonts/encodesanscompressed-800-extrabold-webfont.eot');
+  src: url('../Assets/fonts/encodesanscompressed-800-extrabold-webfont.eot?#iefix') format('embedded-opentype'), url('../Assets/fonts/encodesanscompressed-800-extrabold-webfont.woff') format('woff'), url('../Assets/fonts/encodesanscompressed-800-extrabold-webfont.ttf') format('truetype'), url('../Assets/fonts/encodesanscompressed-800-extrabold-webfont.svg#encodesanscompressed-800-extrabold-webfont') format('svg');
+  font-weight: 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Encode Sans Compressed';
+  src: url('../Assets/fonts/encodesanscompressed-900-black-webfont.eot');
+  src: url('../Assets/fonts/encodesanscompressed-900-black-webfont.eot?#iefix') format('embedded-opentype'), url('../Assets/fonts/encodesanscompressed-900-black-webfont.woff') format('woff'), url('../Assets/fonts/encodesanscompressed-900-black-webfont.ttf') format('truetype'), url('../Assets/fonts/encodesanscompressed-900-black-webfont.svg#encodesanscompressed-900-black-webfont') format('svg');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* ++++++++++++++++++++++++++ GLOBAL ELEMENTS ++++++++++++++++++++++++++ */
+/* color: #cc721e; orange */
+/* color: #f7b670;  lite orange */
+/* color:#4b2e83;  UW Purple * /
+
+/*********** Spacing ***********/
+
+/* align center */
+.center {
+	margin: auto;
+	/* width: 50%;*/
+	text-align: center;
+}
+
+.search-text {
+	margin-top: 10px;
+}
+
+.no-btm-margin {
+	margin-bottom: 0px;	
+}
+
+/* Text structure */
+
+h1, h2, h3, h4 { font-weight: bold; }
+
+h1 {  
+  color: #4b2e83;
+  font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
+}
+
+h2 { 
+  font-size: 1.5em; 
+  color: #4b2e83;
+  margin-top: 1em;
+  margin-bottom: 10px;
+}
+
+/* Hyperlink style:*/
+a, a:hover {
+	color:#0077c2;
+}
+
+a:focus { /* Hyperlink style:*/
+	  color: #b5754d;
+	  border: 1px dotted ;
+}
+
+a.no-hover:hover, a.no-hover:focus {
+    text-decoration: none;
+    border:none;
+}
+
+/* Remove bold from the form */
+label{
+	font-weight: normal;
+}
+
+/* Stretch top banner base */
+.topbanner-bg {
+	background-color:#4b2e83; /* UW Purple */
+}
+
+.topbanner{ /* topbanner content chunk */
+	margin: 20px 0px 0px;
+}
+
+.sitename{
+	font-size: 3em; 
+	padding: 20px 0px;
+	margin-right: 20px;
+	color: #F38A28;
+	font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
+	font-weight: 400;
+}
+
+.tagline{
+	color: #e8e3d3; /* lite tan */
+	display: inline-block;
+	font-style: italic;
+	font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
+	font-weight: 400;
+	letter-spacing: 0.1em;
+}
+
+.login {
+	float: right;
+    margin-top: 10px;
+    margin: auto;
+    padding-top: 35px;
+    padding-bottom: 10px;
+    color: #aaa;
+    font-family: open sans, sans-serif;
+    font-weight: 300;
+    font-size: .9em;
+}
+
+
+/* Global nav style */	
+#nav a {
+	color:white;
+	font-size: 1.286em;
+}
+
+.underline > li > a, .underline > li > a:active {
+	border:none;
+	border-radius: 0px;
+	padding: 5px 10px;
+	color:#f7b670;
+	margin-right: 10px;
+}
+/* override the Bootstrap style for hamburger menu  */
+.navbar-toggle {
+	float: left
+}
+/* Divider line between nav menu and icon  */
+.navbar-default .navbar-collapse {
+	border-color: #f7b670;
+}
+
+/* override the Bootstrap style for nav  */
+
+.navbar {
+	margin-bottom: 0px;
+}
+.navbar-default{
+	background-image: none;
+	background-color: #4b2e83;
+	border: none;
+	box-shadow: none;
+}
+.navbar-collapse {
+	margin-top: 10px;
+}
+.navbar-default .navbar-nav>li>a {
+	color: #f7b670;
+}
+
+/* Remove the active state grey background  */
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus {
+	background-image: none;
+	background-color:#4b2e83;
+	color:white;
+	box-shadow: none;
+}
+
+
+/* Modify the toggle button's look  */
+.navbar-default .navbar-toggle {
+	border-color: #f7b670;
+}
+
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+	background-color: #cc721e;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+	background-color:#f7b670;
+}
+
+
+/* display the orange bar  */
+.underline > li.active > a {
+	background-color: #4b2e83;
+	border-bottom:2px solid #cc721e;  
+	color: white;
+	/* color: #f7b670;  lite orange */
+
+}
+
+.underline > li.active > a {
+	font-weight: bold;
+	color:white;
+}
+/* Selelected: Active & hover  */
+.underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
+	background-color: #b46100;	 /* orange */
+	border-bottom:2px solid #b46100;
+	color:white;
+}
+
+/* Active+hover & focus: Change the background to orange */
+ .underline > li.active > a:focus,  .underline > li > a:focus, .navbar-default .navbar-nav>li>a:focus {
+	/* background-color: #b46100; */
+	border-bottom:2px solid #b46100;
+	color:white;	 
+ }
+
+/* Button styles : Yellow Look */
+.btn-GPS-primary {
+  color: #000;
+  background-color: #fedf82;
+  border-color: #cba532;
+  background-image: linear-gradient(to bottom,#fee28d,#fedb71);
+  padding: 6px 40px;
+  margin: 10px 15px 0px 20px;
+}
+.btn-GPS-primary:hover,
+.btn-GPS-primary:focus,
+.btn-GPS-primary:active,
+.btn-GPS-primary.active,
+.open > .dropdown-toggle.btn-GPS-primary {
+  color: #000;
+  border-color: #cba532;
+   background-image: linear-gradient(to bottom,#fff6d2 ,#fee28d);
+}
+.btn-GPS-primary:active,
+.btn-GPS-primary.active,
+.open > .dropdown-toggle.btn-GPS-primary {
+  /*  background-image: none;*/
+}
+.btn-GPS-primary.disabled,
+.btn-GPS-primary[disabled],
+fieldset[disabled] .btn-GPS-primary,
+.btn-GPS-primary.disabled:hover,
+.btn-GPS-primary[disabled]:hover,
+fieldset[disabled] .btn-GPS-primary:hover,
+.btn-GPS-primary.disabled:focus,
+.btn-GPS-primary[disabled]:focus,
+fieldset[disabled] .btn-GPS-primary:focus,
+.btn-GPS-primary.disabled:active,
+.btn-GPS-primary[disabled]:active,
+fieldset[disabled] .btn-GPS-primary:active,
+.btn-GPS-primary.disabled.active,
+.btn-GPS-primary[disabled].active,
+fieldset[disabled] .btn-GPS-primary.active {
+  background-color: #eee;
+  border-color: #aaa;
+  background-image: none;
+  color: #777;
+}
+
+/*   Buttons   */
+.compare-gpa {
+	margin-left: 10px;
+	font-weight: bold;
+	/* margin-bottom: 10px;
+    color: black; */
+}
+
+/* #compare {
+	margin-right: 20px;
+	margin-bottom: 10px;
+}*/
+/* adding space between the form and the error message  */
+#compare-msg {
+	margin-top: 5px;	
+}
+
+/*   Buttons   */
+#clear_majors{
+	display:none; /*default hidden unless major selected*/
+    font-size: .9em;
+    margin: 10px 0px 0px 10px;
+}
+
+#search {
+	height: 35px;
+	margin: 10px 15px 10px 0px;
+	/*min-width: 300px;*/
+    width:100%;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+}
+
+#college-dropdown {
+    margin: 10px 0px 0px 0px;
+}
+
+#college-dropdown span#college-selection {
+    max-width: 90%;
+    display:block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#college-dropdown span.caret {
+    position: absolute;
+    right: 8px;
+    top: 15px;
+}
+
+
+
+
+/**************** Main stuff *************/
+
+.main-content {
+	margin: 40px 0px;
+}
+
+.page-title {
+	padding-bottom:20px;
+}
+
+
+/* content loading modal  */
+.center-modalcontent {
+	width: 50%;
+	text-align: center;
+}
+
+.load-message {
+	font-size: 1.5em;
+	font-weight: bold;
+	color: #4b2e83;
+	font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
+}
+
+/*placeholder image on major & course pages*/
+.sample-data {
+    display:none;
+}
+
+/* Placing contnet slots temporarily */
+
+.major-data-look{
+	min-height: 700px;
+}
+
+.page-wrap {
+	content: "";
+	display: block;
+	width: 100%;
+	/* min-width: 500px;  prevent the nav menu wrapping */
+}
+
+.site-footer, .page-wrap:after {
+  /* .push must be the same height as footer */
+	height: 160px; 
+}
+
+
+.faq-q {
+	font-weight: bold;
+	font-size: 100%;
+	color: #000;
+}
+.faq-chunk {
+	margin-top: 20px;
+}
+
+dfn {
+	font-weight: bold;
+}
+
+#boxplot-legend {
+	border: 1;
+	border-color: blue;
+}
+
+.bar-legend {
+	font-size: 0.8em;
+	margin-bottom: 10px;
+	padding: 7px 7px 0px 7px; 
+}
+
+.bar-legend-0 {
+	margin-left: -15px;
+	color: #777;
+}
+
+/* footer  Stuff*/
+
+/* Footer's horizontal line */
+footer {
+	border-top: #eee 1px solid;
+	padding-top: 20px;
+	margin-top: 50px;	
+}
+
+.site-footer {
+	background: #eee;
+}
+
+
+footer a { 
+	color: #666; 
+	font-size: 0.9em;
+	text-decoration: none; 
+}
+
+.footer-links ul { 
+    list-style: outside none none;
+    margin-bottom: 0.5em;
+    padding: 0; 
+}
+
+.footer-links ul li { 
+    border-right: 1px solid #bdc3c7;
+    display: inline-block;
+    margin-right: 5px;
+    padding-right: 10px;
+
+}
+
+footer .footer-links ul li:last-child { 
+	    border: 0px;
+    margin-right:0px;
+    padding-right:0px;
+}
+
+.credit {
+	font-size: 0.8em;
+	color: #6c6c6c;
+	width: 100%;
+	margin-top: 15px;
+}
+
+.uw-it-logo {
+	margin-top: 20px;
+	width: 220px;
+	height: auto;
+}
+
+
+
+
+/* ==========================================================================
+   D3 STYLES
+   ========================================================================== */
+   
+   
+/***** D3 STYLES *****/
+/*D3 Boxplot - styles affecting whole chart*/
+.boxChart {
+font: 10px sans-serif;
+}
+
+/*D3 Boxplot - generic styling for any line*/
+.boxChart line {
+stroke: #000;
+stroke-width: 1px;
+}
+
+/*D3 Boxplot - whisker styling*/
+.boxChart .whisker {
+    display: none;
+}
+
+/*D3 Boxplot - interquartile range styling*/
+.boxChart .boxLQ {
+fill: #B8C9EB;
+}
+.boxChart .boxHQ {
+fill: #7C89A4; 
+}
+
+.boxLegend {
+    width:10px;
+    height:10px;
+    float:left;
+    margin-top:5px;
+    margin-right:5px;
+    margin-bottom: 10px;
+}
+
+.LQ {
+    background-color: #B8C9EB;
+}
+
+.MD {
+    background-color: #9e005d;
+}
+
+.UQ {
+    background-color: #7C89A4;
+}
+
+/*D3 Boxplot - styling for horizontal line*/
+.boxChart .center {
+
+}
+
+/*D3 Boxplot - styling for median line*/
+.boxChart .median {
+	stroke:#9e005d;
+	stroke-width:3px;
+}
+
+/*D3 Boxplot - outlier styling*/
+.boxChart .outlier {
+fill: none;
+stroke: #000;
+}
+
+/*D3 Boxplot - generic axis styling*/
+.axis {
+font: 12px sans-serif;
+color: #ccc;
+}
+
+/*D3 Boxplot - axis line styling*/
+.axis path,
+.axis line {
+fill: none;
+stroke: #ccc;
+shape-rendering: crispEdges;
+}
+
+/***** EVERYTHING ELSE *****/
+
+html, body {
+    font-family: 'Open Sans', Helvetica, arial, san-serif;
+    padding:0;
+    margin:0;
+    height: 100%;
+}
+
+/* may not be needed once Bootstrap is in use */
+#boxplots {
+    clear:both;
+}
+
+/* modify Bootstrap grid styles */
+.row.no-gutters {
+  margin-right: 0;
+  margin-left: 0;
+}
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+  padding-right: 0;
+  padding-left: 0;
+}
+
+.code, .results-section {
+    display:none;
+}
+
+.chosen_major {
+    /*max-width: 150px;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;*/
+    display:none;
+}
+
+/* .major-card {
+    border: solid 1px #ccc;
+}*/
+
+.card-heading, .median-box, .data-display, .course-link {
+    border: solid 1px #ccc;
+}
+
+.card-heading p, p.college-heading, p.major-heading, .median-box p, .data-display p {
+    margin:12px 12px 0px 12px;
+}
+
+.major-heading {
+    font-weight: bold;
+    margin-bottom: 12px;
+    margin-left: 12px;
+    font-size: 1.5em;
+}
+
+.major-gpa-line {
+	font-size: 0.9em;
+	color: #666;
+	margin-left: -5px;
+}
+/* Slight tweak of major name on course page */
+.major-heading-course {
+margin-left: -5px;
+margin-bottom: 2px;
+}
+
+/* course code  */
+.coursecode {
+	font-weight: bold;
+}
+
+/* Tweaking the padding for the bar graph on course page */
+
+.course-median {
+	padding-left: 5px;
+	text-align: center;
+	font-weight: bold;
+	font-size: medium;
+	width: 100px;
+	height: 32px;
+}
+
+p.course-table-row {
+	padding: 5px 5px;
+}
+
+.data-heading {
+	color: #777;
+	font-size: .9em;
+}
+.median-value {
+	font-size: 1.75em;
+	font-weight: bold;
+	color: #9e005d;
+}
+
+.course-link {
+    padding:12px;
+}
+
+/* Search module style */
+.search-box {
+	background: #fdfbf3;
+}
+
+#options {
+    font-size:9pt;
+    font-family: Consolas, courier;
+    float:left;
+    margin-top:50px;
+    margin-left:20px;
+}
+
+.chosen_major {
+    float:left;
+    margin-right:10px;
+}
+
+#suggestions {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 0px;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+#suggestions .divider {
+    height: 1px;
+    margin: 9px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+}
+
+/* Compare GPA */
+#header-row h2 {
+    display: inline-block;
+}
+.yourgpa-box {
+	/*margin-left: -15px;
+	margin-top: 0px;
+	margin-right: -15px;*/
+    margin:0px 0px 0px 0px;
+	border-radius: 4px 4px 0 0 ;
+	background: #f7f7f7;
+	/*float:right;*/
+}
+.yourgpa {
+	padding: 10px 10px 5px 10px;
+}
+/*  To float the form retaining the row */
+.yourgpa-form{
+	float: right;
+}
+
+.yourgpa-heading{
+	 font-size: 1em;s
+	 margin-top: 0px;
+	 
+ }
+ 
+.compare-heading{
+	margin-right: 10px;
+}
+
+.myGPA {
+    border-right:2px dashed red;
+    position: absolute;
+    top:0px;
+    z-index:1000;
+}
+
+.gpaLabel {
+    text-align: center;
+    position:absolute;
+    color:red;
+    z-index: 1000;
+}
+
+/* Search: options */
+ul {
+	list-style: none;
+	padding-left: 10px;
+    padding-right: 10px;
+}  
+
+/*  course GPA table */
+
+.table {
+	width: 90%;
+}
+
+/*  override the Table.less' s vertical  */
+.table>tbody>tr>td, .table>tbody>tr>th {
+	vertical-align: middle;
+}
+
+.table>thead{
+	background-color: #ddd;
+}
+.table-striped>tbody>tr:nth-child(even)>td, 
+.table-striped>tbody>tr:nth-child(even)>th {
+   background-color: #f9f9f9;
+ }
+
+.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>th {
+   background-color: #fff;
+ }
+ 
+/* ColorBrewer YlGn styles for course GPA table */
+.q0-9{background-color:rgb(255,255,229)} .q1-9{background-color:rgb(247,252,185)} .q2-9{background-color:rgb(217,240,163)} .q3-9{background-color:rgb(173,221,142)} .q4-9{background-color:rgb(120,198,121)} .q5-9{background-color:rgb(65,171,93)} .q6-9{background-color:rgb(35,132,67); color:#ffffff;} .q7-9{background-color:rgb(0,104,55); color:#ffffff;} .q8-9{background-color:rgb(0,69,41); color:#ffffff;}
+
+.color-block {
+    min-width:11%;
+    min-height:15px;
+    float:left;
+}
+
+/* CONTACT ADVISOR TAB */
+            
+#contact {
+   position: fixed;
+    width:210px;
+    text-align: center;
+    padding:9px 0px;
+    border-radius:3px 3px 0px 0px;
+    background:#ccc;
+    font-size:16px;
+    font-weight:500;
+    text-decoration: none;
+    color:#000;
+    /* Text rotation */
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin:100% 100%;
+    transform-origin:100% 100%;
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -ms-transform-origin:100% 100%;
+    -o-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    top:102px;
+    right:0px;
+    cursor: pointer;
+
+}
+
+#blurb {
+    position:fixed;
+    margin:0px;
+    width:300px;
+    height:210px;
+    padding:0px;
+    background-color:#e8e3d3;
+    top:142px;
+    right:-300px;
+}
+
+#blurb p, h4 {
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 0px;
+    color:#333;
+}
+
+
+/* Search suggestion list header spacing */
+.dropdown-header {
+	padding:5px 20px 10px 0px;
+
+}	
+
+
+/* Collge list header -- TO-DO: add to college dropdown js */
+.college-list {
+	padding-left: 10px;
+	font-weight: 600;
+
+}
+ 
+ /* ==========================================================================
+   SMALL SCREEN
+   ========================================================================== */
+   
+ /* Small devices (tablets, 768px and up) */
+@media (max-width: 768px) {
+	.login {
+	float: right;
+    margin: auto;
+    padding-top: 35px;
+    padding-bottom: 5px;
+    color: #aaa;
+    font-family: open sans, sans-serif;
+    font-weight: 300;
+    font-size: .9em;
+	}
+
+.btn-GPS-primary {
+  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left */
+  }
+  /* Selelected: Active & hover  */
+.underline > li.active > a, .underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
+	background-color: #b46100;	 /* orange */
+	border-left:5px solid #b46100;
+	color:white;
+	border-bottom: 0px;
+	}
+/*.underline > li.active > a {
+	background-color: #4b2e83;
+	border-left:5px solid #cc721e;  
+	color: white;
+	}*/
+	
+/* Active+hover & focus: Change the background to orange */
+ .underline > li.active > a:focus,  .underline > li > a:focus, .navbar-default .navbar-nav>li>a:focus {
+	/* background-color: #b46100; */
+	border-left:5px solid #b46100;
+	color:white;	 
+	}
+	
+}
