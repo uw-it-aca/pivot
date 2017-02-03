@@ -1,3 +1,5 @@
+//Functions shared by major and course pages
+
 //Data storage
 var _majorLookup = {};
 var _completeMajorMap = [];
@@ -7,127 +9,31 @@ var _timer;//Timer to hide search suggestions after period of inactivity - used 
 var _campusNameLookup = {};
 var _majorNameLookup = {};
 var _courseNameLookup = {};
+var _statusLookup = {};
 var update_results_on_load = false;
 var all_data_loaded = false;
 var _searchResultsChecked = false;
 
-$(document).ready(function() {
-    // Init events
-    /***SEARCH***/
+/**** SETUP ****/
+if (window.location.search == "?slow") {
+    window.setTimeout(function() { getDataNameMap(); }, 5000);
+}
+else {
+    getDataNameMap();
+}
 
-    //When user clicks or tabs in to search field...
-    $("#search").on("focus", function() {
-        _searchResultsChecked = false;
-        prepareResults();
-    });
+//initializes Bootstrap popover plugin
+$(function () {
+    $('[data-toggle="popover"]').popover()
+})
 
-    //When user types in search field...
-    $("#search").on("input", prepareResults);
 
-    //When user clicks on college dropdown menu, hide search suggestions
-    $("#dropdownMenu").on("click", function(e) {
-        $("#suggestions").css("display","none");
-    });
-
-    //Keyboard navigation for search input field
-    $("#search").keydown(function(e) {
-        if (e.which == 40) { //down arrow key - go to first suggestion
-           $("#suggestions a").first().focus();
-       } else if (e.which == 38) //up arrow key - go to last suggestion
-          $("#suggestions a").last().focus();
-        else if (e.which == 13) { //enter key - search for keyword in input field
-            goSearch();
-        }
-    });
-
-    //Keyboard navigation for search suggestions/results box
-    $("#suggestions").keydown(function(e) {
-       clearTimeout(_timer); //cancel timer checking for inactivity
-        if (e.which == 40) { //down arrow key
-           e.preventDefault();
-           if (!$("a:focus").parent("li").next().is(".divider")) {
-               if (!$("a:focus").is("#suggestions ul:last-child li:last-child a:last-child"))
-                   $("a:focus").parent("li").next().children("a:first-child").focus();
-               else ($("#suggestions a").first().focus());
-           }
-           else $("a:focus").parent("li").parent("ul").next().children("li").children("a").first().focus();
-       } else if (e.which == 38) { //up arrow key
-           e.preventDefault();
-           if (!$("a:focus").parent("li").prev().is(".dropdown-header"))
-               $("a:focus").parent("li").prev().children("a:first-child").focus();
-           else {
-               if (!$("a:focus").is("#suggestions ul:first-child a:first-child"))
-                   $("a:focus").parent("li").parent("ul").prev().children("li").children("a").last().focus();
-               else ($("#suggestions a").last().focus());
-           }
-       }
-    });
-
-    //Go button is pressed > search
-    $("#goBtn").click(function (e) {
-        if (!$("#goBtn").hasClass("disabled"))
-            goSearch();
-    });
-
-    /**** MISC ****/
-
-    //Contact Advisor tab - NOTE: not in use for advisor beta but will be brought back if/when released to students
-    $("#contact").click(function(e) {
-        //slide left and bring blurb
-        if ($("#contact").css("right") == "0px") {
-            $("#contact").animate({right:'300px'},350);
-            $("#blurb").animate({right:'0px'}, 350);
-        } else {
-            $("#contact").animate({right:'0px'},350);
-            $("#blurb").animate({right:'-300px'}, 350);
-        }
-    });
-
-    //redraw data table if window is resized
-    d3.select(window).on('resize', resizeCharts);
-
-    //Clears all data
-    $("#clear_majors").click(function(e) {
-        $("#clear_majors").css("display","none");
-        $(".chosen_major").remove();
-        $(".no-results-warning").css("display","none");
-        $(".no-results-warning").removeClass("alert alert-info");
-        $("input#search").val("");
-        $("#boxplots").html("");
-        $(".yourgpa-box").remove();
-        storeSelections(null);
-    });
-
-    /**** SETUP ****/
-    if (window.location.search == "?slow") {
-        window.setTimeout(function() { getDataNameMap(); }, 5000);
-    }
-    else {
-        getDataNameMap();
-    }
-
-    //initializes Bootstrap popover plugin
-    $(function () {
-        $('[data-toggle="popover"]').popover()
-    });
-
-    //Clears all data
-    $("#clear_majors").click(function(e) {
-        $("#clear_majors").css("display","none");
-        $(".chosen_major").remove();
-        $(".no-results-warning").css("display","none");
-        $("input#search").val("");
-        $("#courselist").html("");
-    });
-});
-
-//Functions shared by major and course pages
 
 /**** READ DATA FROM CSV ****/
 
 //Reads file that maps data from course file to major file
 function getDataNameMap() {
-    d3.csv("static/v7 - Data Map.csv", function(d) {
+    d3.csv("api/v1/data_map", function(d) {
         return {
             is_course: d.is_course.trim(),
             is_major: d.is_major.trim(),
@@ -153,7 +59,7 @@ function getDataNameMap() {
 
 //Reads major and course data file
 function getCompleteMajorMap() {
-    d3.csv("static/v7 - Majors and Courses.csv", function(d) {
+    d3.csv("api/v1/major_course", function(d) {
         return {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
@@ -171,9 +77,6 @@ function getCompleteMajorMap() {
     }, function(error, data) {
         var id = 0;
         for (var index in data) {
-            if(data[index]["major_abbr"] === undefined){
-                continue;
-            }
             var cID = data[index]["dept_abbrev"] + data[index]["course_number"];
             var major = data[index]["major_abbr"] + "-" + data[index]["pathway"];
             if (_completeMajorMap.hasOwnProperty(major)) {
@@ -209,15 +112,61 @@ function getCompleteMajorMap() {
                 id++;
                 _completeMajorMap[major]["courses"][cID]["percentiles"][5] = data[index]["course_gpa_50pct"];
             }
-
         }
+        getMajorStatus();
         addStudents();
     });
 }
 
+//Reads seattle major status file
+function getMajorStatus() {
+    d3.csv("api/v1/status_lookup", function (d) {
+        return {
+            code: d.Code.trim(),
+            url: d.URL.trim(),
+            status: d.Status.trim()
+        }
+    }, function (error, data) {
+        for (var index in data) {
+            _statusLookup[data[index]["code"]] = {
+                "url": data[index]["url"],
+                "status": data[index]["status"]
+            }
+        }
+    });
+}
+
+//Generates HTML to show major name, url and status (for major and course pages)
+function displayMajorStatusURL(code) {
+    var parts = code.split('-');
+    var msg = _completeMajorMap[code]["major_full_nm"];
+    if (_statusLookup.hasOwnProperty(parts[0]) && _statusLookup[parts[0]]["url"] != "") {
+        msg = "<a href='" + _statusLookup[parts[0]]["url"] + "' target=_blank>" + msg + "</a>";
+    }
+    return msg;
+}
+
+function displayMajorStatusIcon(code) {
+    var parts = code.split('-');
+    var msg = "";
+    if (_statusLookup.hasOwnProperty(parts[0])) {
+        var status_name = _statusLookup[parts[0]]["status"];
+        msg = "<img src="+images_paths[status_name]+" title='Admission type: "+ status_name +"' alt='Admission type: "+ status_name +"'/>";
+    }
+    return msg;
+}
+
+function displayMajorStatusText(code) {
+    var parts = code.split('-');
+    var msg = "";
+    if (_statusLookup.hasOwnProperty(parts[0]))
+        msg = _statusLookup[parts[0]]["status"];
+    return msg;
+}
+
 //Reads student data file
 function addStudents() {
-    d3.csv("static/v7 - Student Data - All Majors.csv", function (d) {
+    d3.csv("api/v1/student_data", function (d) {
         return {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
@@ -247,8 +196,9 @@ function addStudents() {
         }
         populateCollegeDropdown();
         all_data_loaded = true;
-        
+
         checkStoredData();
+        init_search_events();
 
         if (update_results_on_load) {
             prepareResults();
@@ -258,18 +208,76 @@ function addStudents() {
 
 }
 
+
+function init_search_events() {
+    /***SEARCH***/
+    //When user clicks or tabs in to search field...
+    $("#search").on("focus", function() {
+        _searchResultsChecked = false;
+        prepareResults();
+    });
+
+    //When user types in search field...
+    $("#search").on("input", prepareResults);
+    var search_elm = $("#search");
+
+    //When user clicks on college dropdown menu, hide search suggestions
+    $("#dropdownMenu").on("click", function(e) {
+        $("#suggestions").css("display","none");
+    });
+
+    //Keyboard navigation for search input field
+    $("#search").keydown(function(e) {
+        if (e.which == 40) { //down arrow key - go to first suggestion
+            $("#suggestions a").first().focus();
+        } else if (e.which == 38) //up arrow key - go to last suggestion
+            $("#suggestions a").last().focus();
+        else if (e.which == 13) { //enter key - search for keyword in input field
+            goSearch();
+        }
+    });
+
+    //Keyboard navigation for search suggestions/results box
+    $("#suggestions").keydown(function(e) {
+        clearTimeout(_timer); //cancel timer checking for inactivity
+        if (e.which == 40) { //down arrow key
+            e.preventDefault();
+            if (!$("a:focus").parent("li").next().is(".divider")) {
+                if (!$("a:focus").is("#suggestions ul:last-child li:last-child a:last-child"))
+                    $("a:focus").parent("li").next().children("a:first-child").focus();
+                else ($("#suggestions a").first().focus());
+            }
+            else $("a:focus").parent("li").parent("ul").next().children("li").children("a").first().focus();
+        } else if (e.which == 38) { //up arrow key
+            e.preventDefault();
+            if (!$("a:focus").parent("li").prev().is(".dropdown-header"))
+                $("a:focus").parent("li").prev().children("a:first-child").focus();
+            else {
+                if (!$("a:focus").is("#suggestions ul:first-child a:first-child"))
+                    $("a:focus").parent("li").parent("ul").prev().children("li").children("a").last().focus();
+                else ($("#suggestions a").last().focus());
+            }
+        }
+    });
+}
+
+
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
+    console.log('prep')
     //close college dropdown menu if it is currently open
     if ($(".dropdown-menu").css("display") != "none")
         $("#dropdownMenu").dropdown("toggle");
     $("#suggestions").html('<ul id="selectedCollege"><li class="dropdown-header">' + $("#dropdownMenu:first-child").val() + '</li></ul><ul id="currentCampus"><li class="dropdown-header">' + _currentCampus + ' campus</li></ul><ul id="bothellCampus"><li class="dropdown-header">Bothell campus</li></ul><ul id="seattleCampus"><li class="dropdown-header">Seattle campus</li></ul><ul id="tacomaCampus"><li class="dropdown-header">Tacoma campus</li></ul>');
     //If a college is selected from the dropdown menu or text has been entered in the input field
     if ($("#dropdownMenu:first-child").val() != "All" || $("#search").val().length > 0) {
+        console.log('prep1')
         displayResults();
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
+        console.log('prep2')
         showCurrentSelections();
     } else { //Nothing to display
+        console.log('prep')
         $("#suggestions").css("display","none");
     }
     toggleGo(); //Update the "go" button display
@@ -306,6 +314,11 @@ function finishResults() {
     $("#suggestions .divider").last().remove();
 }
 
+//Go button is pressed > search
+$("#goBtn").click(function (e) {
+    if (!$("#goBtn").hasClass("disabled"))
+        goSearch();
+});
 
 /*** COLLEGE DROPDOWN ****/
 //Called when data files have been read - populates college dropdown menu
@@ -343,15 +356,28 @@ function populateCollegeDropdown() {
         $("#dropdownMenu:first-child").val($(this).text());
         toggleGo();
     });
-    
+
     //If this is the course page and a code is provided, load the data without searching
     if (getParameterByName("code") != null) {
         listCoursesForMajor(getParameterByName("code").replace("_", " "));
         //TODO: need to update placeholders
     }
-        
+
 }
 
+/**** MISC ****/
+
+//Contact Advisor tab - NOTE: not in use for advisor beta but will be brought back if/when released to students
+$("#contact").click(function(e) {
+    //slide left and bring blurb
+    if ($("#contact").css("right") == "0px") {
+        $("#contact").animate({right:'300px'},350);
+        $("#blurb").animate({right:'0px'}, 350);
+    } else {
+        $("#contact").animate({right:'0px'},350);
+        $("#blurb").animate({right:'-300px'}, 350);
+    }
+});
 
 //Get url paramters
 function getParameterByName(name, url) {
@@ -371,22 +397,12 @@ function round(value, decimals) {
 
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero
 /*function trailingZero(value) {
-    if (value != null) {
-        var str = value.toString();
-        if(/\d+(\.\d+)?/.test(str)) { 
-            var lastNum = parseInt(str[str.length - 1]);
-            return (lastNum==0);
-        }
-    }
-    return true;
-}*/
-
-//resize d3 elements when window size changes
-function resizeCharts() {
-    var list = [];
-    $(".chosen_major").each(function() {
-        list.push($(this).text());
-    });
-    if (list.length > 0)
-        createMajorCard(list,$("input#compare").val());
-}
+ if (value != null) {
+ var str = value.toString();
+ if(/\d+(\.\d+)?/.test(str)) {
+ var lastNum = parseInt(str[str.length - 1]);
+ return (lastNum==0);
+ }
+ }
+ return true;
+ }*/

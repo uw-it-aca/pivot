@@ -66,20 +66,20 @@
 }
 
 .no-btm-margin {
-	margin-bottom: 0px;	
+	margin-bottom: 0px;
 }
 
 /* Text structure */
 
 h1, h2, h3, h4 { font-weight: bold; }
 
-h1 {  
+h1 {
   color: #4b2e83;
   font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
 }
 
-h2 { 
-  font-size: 1.5em; 
+h2 {
+  font-size: 1.5em;
   color: #4b2e83;
   margin-top: 1em;
   margin-bottom: 10px;
@@ -115,7 +115,7 @@ label{
 }
 
 .sitename{
-	font-size: 3em; 
+	font-size: 3em;
 	padding: 20px 0px;
 	margin-right: 20px;
 	color: #F38A28;
@@ -145,7 +145,7 @@ label{
 }
 
 
-/* Global nav style */	
+/* Global nav style */
 #nav a {
 	color:white;
 	font-size: 1.286em;
@@ -211,7 +211,7 @@ label{
 /* display the orange bar  */
 .underline > li.active > a {
 	background-color: #4b2e83;
-	border-bottom:2px solid #cc721e;  
+	border-bottom:2px solid #cc721e;
 	color: white;
 	/* color: #f7b670;  lite orange */
 
@@ -232,7 +232,7 @@ label{
  .underline > li.active > a:focus,  .underline > li > a:focus, .navbar-default .navbar-nav>li>a:focus {
 	/* background-color: #b46100; */
 	border-bottom:2px solid #b46100;
-	color:white;	 
+	color:white;
  }
 
 /* Button styles : Yellow Look */
@@ -293,7 +293,7 @@ fieldset[disabled] .btn-GPS-primary.active {
 }*/
 /* adding space between the form and the error message  */
 #compare-msg {
-	margin-top: 5px;	
+	margin-top: 5px;
 }
 
 /*   Buttons   */
@@ -376,9 +376,17 @@ fieldset[disabled] .btn-GPS-primary.active {
 
 .site-footer, .page-wrap:after {
   /* .push must be the same height as footer */
-	height: 160px; 
+	height: 160px;
 }
 
+#status-legend {
+    float:right;
+    margin-top:1.8em;
+}
+
+.major-status-icon {
+    margin-left:1em;
+}
 
 .faq-q {
 	font-weight: bold;
@@ -401,11 +409,13 @@ dfn {
 .bar-legend {
 	font-size: 0.8em;
 	margin-bottom: 10px;
-	padding: 7px 7px 0px 7px; 
+	padding: 10px;
+	width: 110px;
 }
 
 .bar-legend-0 {
-	margin-left: -15px;
+	float: right;
+	margin-top: -15px;
 	color: #777;
 }
 
@@ -415,7 +425,7 @@ dfn {
 footer {
 	border-top: #eee 1px solid;
 	padding-top: 20px;
-	margin-top: 50px;	
+	margin-top: 50px;
 }
 
 .site-footer {
@@ -423,19 +433,19 @@ footer {
 }
 
 
-footer a { 
-	color: #666; 
+footer a {
+	color: #666;
 	font-size: 0.9em;
-	text-decoration: none; 
+	text-decoration: none;
 }
 
-.footer-links ul { 
+.footer-links ul {
     list-style: outside none none;
     margin-bottom: 0.5em;
-    padding: 0; 
+    padding: 0;
 }
 
-.footer-links ul li { 
+.footer-links ul li {
     border-right: 1px solid #bdc3c7;
     display: inline-block;
     margin-right: 5px;
@@ -443,7 +453,7 @@ footer a {
 
 }
 
-footer .footer-links ul li:last-child { 
+footer .footer-links ul li:last-child {
 	    border: 0px;
     margin-right:0px;
     padding-right:0px;
@@ -468,8 +478,8 @@ footer .footer-links ul li:last-child {
 /* ==========================================================================
    D3 STYLES
    ========================================================================== */
-   
-   
+
+
 /***** D3 STYLES *****/
 /*D3 Boxplot - styles affecting whole chart*/
 .boxChart {
@@ -492,7 +502,7 @@ stroke-width: 1px;
 fill: #B8C9EB;
 }
 .boxChart .boxHQ {
-fill: #7C89A4; 
+fill: #7C89A4;
 }
 
 .boxLegend {
@@ -578,8 +588,8 @@ html, body {
 
 .chosen_major {
     /*max-width: 150px;
-    overflow: hidden; 
-    text-overflow: ellipsis; 
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;*/
     display:none;
 }
@@ -607,6 +617,11 @@ html, body {
 	font-size: 0.9em;
 	color: #666;
 	margin-left: -5px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.gpa-small {
+	margin-left: 15px;
 }
 /* Slight tweak of major name on course page */
 .major-heading-course {
@@ -718,9 +733,9 @@ p.course-table-row {
 .yourgpa-heading{
 	 font-size: 1em;s
 	 margin-top: 0px;
-	 
+
  }
- 
+
 .compare-heading{
 	margin-right: 10px;
 }
@@ -744,12 +759,13 @@ ul {
 	list-style: none;
 	padding-left: 10px;
     padding-right: 10px;
-}  
+}
 
 /*  course GPA table */
 
 .table {
-	width: 90%;
+	width: 94%;
+	margin-left:-20px;
 }
 
 /*  override the Table.less' s vertical  */
@@ -760,23 +776,24 @@ ul {
 .table>thead{
 	background-color: #ddd;
 }
-.table-striped>tbody>tr:nth-child(even)>td, 
+.table-striped>tbody>tr:nth-child(even)>td,
 .table-striped>tbody>tr:nth-child(even)>th {
    background-color: #f9f9f9;
  }
 
-.table-striped>tbody>tr:nth-child(odd)>td, 
+.table-striped>tbody>tr:nth-child(odd)>td,
 .table-striped>tbody>tr:nth-child(odd)>th {
    background-color: #fff;
  }
- 
+
 /* ColorBrewer YlGn styles for course GPA table */
-.q0-9{background-color:rgb(255,255,229)} .q1-9{background-color:rgb(247,252,185)} .q2-9{background-color:rgb(217,240,163)} .q3-9{background-color:rgb(173,221,142)} .q4-9{background-color:rgb(120,198,121)} .q5-9{background-color:rgb(65,171,93)} .q6-9{background-color:rgb(35,132,67); color:#ffffff;} .q7-9{background-color:rgb(0,104,55); color:#ffffff;} .q8-9{background-color:rgb(0,69,41); color:#ffffff;}
+.q0-9{background-color:rgb(255,255,229); border: #aaa solid 1px;} .q1-9{background-color:rgb(217,240,163); border: #aaa solid 1px;} .q2-9{background-color:rgb(120,198,121); border: #73a184 solid 1px;} .q3-9{background-color:rgb(35,132,67); border: #567661 solid 1px; color:#ffffff;} .q4-9{background-color:rgb(0,69,41); border: #004529 solid 1px; color:#ffffff;}
+/*.q0-9{background-color:rgb(255,255,229); border: #aaa solid 1px;} .q1-9{background-color:rgb(247,252,185); border: #aaa solid 1px;} .q2-9{background-color:rgb(217,240,163); border: #aaa solid 1px;} .q3-9{background-color:rgb(173,221,142); border: #73a184 solid 1px;} .q4-9{background-color:rgb(120,198,121); border: #73a184 solid 1px;} .q5-9{background-color:rgb(65,171,93); border: #73a184 solid 1px;} .q6-9{background-color:rgb(35,132,67); border: #567661 solid 1px; color:#ffffff;} .q7-9{background-color:rgb(0,104,55);; border: #567661 solid 1px; color:#ffffff;} .q8-9{background-color:rgb(0,69,41); border: #004529 solid 1px; color:#ffffff;}*/
 
 .color-block {
-    min-width:11%;
+    width:20%;
     min-height:15px;
-    float:left;
+    /* float:left;*/
 }
 
 /* CONTACT ADVISOR TAB */

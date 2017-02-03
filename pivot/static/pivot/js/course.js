@@ -55,12 +55,12 @@ function updateEvents() {
 function displayResults() {
     $("#suggestions").css("display","block");
     var count = 0;
-    var search_val = $("#search").val().toLowerCase();
+    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     for(var maj in _completeMajorMap) {
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
-        if (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " ")) {
+        if (search_val.length > 0 && index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
             //Find substring matching search term to make bold
-            var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, $("#search").val().length);
+            var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
             if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val())
                 appendTo = "#selectedCollege";
@@ -71,16 +71,23 @@ function displayResults() {
             $(".chosen_major").each(function() {
                if ($(this).text() == maj) {
                    checked = "checked";
-               } 
+               }
             });
             //Bolds search terms that appear at beginning of word other than first
-            var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + $("#search").val(), "ig"), "<b>" + substring + "</b>");
+            var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
             $(appendTo).append("<li class='suggested_major'><a href='#'>" + majText + "</a></li>");
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
+        //else if nothing has been entered but a college is selected, load all majors in college
+        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val()) {
+            var appendTo = "#selectedCollege";
+            $(appendTo).append("<li class='suggested_major'><a href='#'>" + _completeMajorMap[maj]["major_full_nm"] + "</a></li>");
+            $(appendTo + " li:last").data("code", maj);
+            count++;
+        }
     }
-    if (count == 0) {
+    if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
             noResults();
             return;
@@ -133,8 +140,8 @@ function goSearch() {
         maj = $("#suggestions li.suggested_major").data("code");
     }
     else if ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") {
-       maj = $("#currentCampus li.suggested_major").data("code"); 
-    } 
+       maj = $("#currentCampus li.suggested_major").data("code");
+    }
     else if (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1)
         maj = $("#selectedCollege li.suggested_major").data("code");
     else if ($("#suggestions li.suggested_major").length > 1)
@@ -176,18 +183,18 @@ $("html").click(function (e) {
 function listCoursesForMajor(maj) {
     //updates the session storage for selected major
     sessionStorage.setItem("courses", maj);
-    
+
     //Hide sample data, replace other major data, clear any warnings
     $(".sample-data").css("display","none");
     $("#courselist").html("");
     $("#clear_majors").css("display","inline");
     $(".results-section").css("display","inline");
     $(".no-results-warning").css("display", "none");
-    
+
     //maj = major code A A-0
     var id = maj.replace(" ","_");
-    var h = "<div class='course-card row' id='" + id + "'><p class='college-heading'>" + _completeMajorMap[maj]["college"] + " - " + _completeMajorMap[maj]["campus"] + " campus</p><div class='col-xs-9'><h3 class='major-heading-course'>" + _completeMajorMap[maj]["major_full_nm"] + "</h3>"
-+ "<span class='major-gpa-line'> [ Median GPA of this major is " + round(Number(_majorLookup[maj]["median"]), 2) + " ]</span>"
+    var h = "<div class='course-card row' id='" + id + "'><p class='college-heading'>" + _completeMajorMap[maj]["college"] + " - " + _completeMajorMap[maj]["campus"] + " campus</p><div class='col-xs-9'><h3 class='major-heading-course'>" + displayMajorStatusURL(maj) + "</h3>"
++ "<div class='major-gpa-line'>  " + displayMajorStatusIcon(maj) + "   " + displayMajorStatusText(maj) + " <span class='gpa-small'>  Median GPA: " + round(Number(_majorLookup[maj]["median"]), 2) + " </span></div>"
     +"</div>"
     + "</div></div></p><div class='col-xs-10'><table class='table table-striped'><thead><tr><th><p class='data-heading'>% <a class='inlineHelp' id='percentHelp' tabindex='0' role='button' data-toggle='popover' data-trigger='focus' data-content=''><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p></th><th><p class='data-heading'>Code</p></th><th><p class='data-heading'>Most Commonly Taken Courses</p></th><th><p class='data-heading'>Median Course Grade <a class='inlineHelp' id='courseGradeHelp' tabindex='0' role='button' data-toggle='popover' data-trigger='focus' data-content=''><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p></th></tr></thead><tbody>";
     var courses = _completeMajorMap[maj]["courses"];
@@ -201,17 +208,13 @@ function listCoursesForMajor(maj) {
         } else break;
     }
     h += "</tbody></table></div><div class='col-xs-2 panel panel-default bar-legend'><p>Color Legend:</p><div id='color-legend'>"
-    + "<div class='q0-9 color-block'></div>"
-    + "<div class='q1-9 color-block'></div>"
-    + "<div class='q2-9 color-block'></div>"
-    + "<div class='q3-9 color-block'></div>"
-    + "<div class='q4-9 color-block'></div>"
-    + "<div class='q5-9 color-block'></div>"
-    + "<div class='q6-9 color-block'></div>"
-    + "<div class='q7-9 color-block'></div>"
-    + "<div class='q8-9 color-block'></div>"
-    + "<div class='q9-9 color-block'></div>"
-    + "<div><span class='pull-left bar-legend-0'>1.4</span><span class='pull-right'>4.0</span></div></div>";
+    + "<div class='q0-9 color-block'></div><div class='bar-legend-0'> 1.50 to 1.99</div>"
+    + "<div class='q1-9 color-block'></div><div class='bar-legend-0'> 2.00 to 2.49</div>"
+    + "<div class='q2-9 color-block'></div><div class='bar-legend-0'> 2.50 to 2.99</div>"
+    + "<div class='q3-9 color-block'></div><div class='bar-legend-0'> 3.00 to 3.49</div>"
+    + "<div class='q4-9 color-block'></div><div class='bar-legend-0'> 3.50 to 4.00</div>"
+    + "<div class='q9-9 color-block'>"
+    ;
     $("#courselist").append(h);
     $("#percentHelp").popover({
         placement: "top",
@@ -228,15 +231,25 @@ function listCoursesForMajor(maj) {
     $("#loadingModal").modal('hide');
 }
 
+//Clears all data
+$("#clear_majors").click(function(e) {
+    $("#clear_majors").css("display","none");
+    $(".chosen_major").remove();
+    $(".no-results-warning").css("display","none");
+    $("input#search").val("");
+    $("#courselist").html("");
+});
 
 //returns the ColorBrewer bucket index for the given GPA
 function colorBucket(gpa) {
     var min = 1.5
     var max = 4.0
-    var div = (4.0 - 1.5) / 9;
-    for (var i = 1; i < 10; i++) {
+    var div = (4.0 - 1.5) / 5;//9;
+    for (var i = 1; i < 6; i++) {
         if (gpa > 1.5 + div * (i - 1) && gpa <= 1.5 + div * i)
-            return i - 1;
+            /*if ((i-1)%2 == 0)
+                return i - 1;
+            else*/ return i-1;
     }
     return 0;
 }
