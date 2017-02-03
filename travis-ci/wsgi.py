@@ -1,6 +1,12 @@
-from django.conf.urls import include, url
+"""
+WSGI config for project project.
+It exposes the WSGI callable as a module-level variable named ``application``.
+For more information on this file, see
+https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/
+"""
 
-urlpatterns = [
-    '',
-    url(r'^', include('pivot.urls')),
-]
+import os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "travis-ci.settings")
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
