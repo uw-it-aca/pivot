@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block web_content %}
+<!-- TOP PURPLE BANNER -->
+<div class="page-wrap"> <!-- another wrap to make a sticky footer -->
+	<header class="topbanner-bg">
+		<div class="container" role="banner">	
+	<!-- NAV -->		
+			<section class="topbanner" role="navigation">
+				<nav class="navbar navbar-default">
+					<a href="major-gpa" class="no-hover"><span class="sitename">Pivot</span></a>
+					<span class="tagline"> Help your students make the best move</span>
+			<!-- Hide NetID for Beta 		<div class="login"> Hi, netid123 </div> -->
+			<!-- Hamberger for 768px -->		
+					<div class="navbar-header" >
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu" aria-expanded="true">
+						        <span class="sr-only">Toggle navigation</span>
+						        <span class="icon-bar"></span>
+						        <span class="icon-bar"></span>
+						        <span class="icon-bar"></span>
+						    </button>
+					</div>	<!-- END OF navbar-header -->
+					<!-- END OF hamburger view -->
+					<div class="navbar-collapse collapse" id="menu" aria-expanded="true">
+				    	<ul class="nav navbar-nav underline">
+					    	<li role="presentation"><a href="major-gpa">View Major GPAs</a></li>
+					    	<li role="presentation"><a href="course-gpa">View Course GPAs</a></li>
+					    	<li role="presentation"class="active"><a href="#">Resources</a></li>
+					    </ul>
+				    </div><!-- END OF navbar-collapse -->
+				    
+				</nav>
+			</section>
+		</div>	<!-- END OF CONTAINER -->
+	</header>
+
+<!-- MAIN CONTENT BELOW THE BANNER -->	
+  	<div class="container" role="main">
+		<section class="main-content">  <!-- //NFS: UNSURE NEED A SECTION OF NOT// -->
+		    <h1 class="page-title">Resources</h1>
+			<section>
+				<ul>
+					<li><a href="#faq">Frequently Asked Questions</a></li>
+					<li><a href="#terms">Term Definitions</a></li>
+					<li><a href="#data-viz">Data Visualization</a></li>
+				</ul>
+			</section>	
+		    <section>
+				<h2 id="faq">Frequently Asked Questions</h2>   
+				<p class="faq-chunk"><span class="faq-q">Q: How is the data gathered and processed? </span><br>
+				A: Data on course grades and cumulative GPA comes from UW databases. 
+				</p>
+				<p class="faq-chunk"><span class="faq-q">Q: How far back does the data go?</span><br>
+				A: Pivot uses data from fall quarter 2012 to summer quarter 2016.</p>
+				<p class="faq-chunk"><span class="faq-q">Q: Why isn’t there data for all majors / courses?</span><br>
+				A: Newer majors that include fewer than 10 students produce samples  that are too small to generate reliable statistics. </p>
+				<p class="faq-chunk"><span class="faq-q">Q: What is Pivot?</span><br>
+				A: Pivot is an academic planning tool that shows  the median cumulative GPA for declared majors at the time of their acceptance into a degree program. You can also view the most commonly taken courses for each UW degree program and the median grade received for declared majors in these courses.</p>
+
+		    </section><!-- end of 1st H2 chunk, FAQ -->
+
+		    <section>
+				<h2 id="terms">Term Definitions</h2> 
+				<dl>
+					<dt>College</dt>
+					<dd>College refers to an aggregation of one or more academic departments into a broader academic organization.
+				</dl>	
+				<dl>
+					<dt>Declared major</dt>
+					<dd>A major is declared once the student is officially accepted into the degree program.  </dl>
+				<dl>
+					<dt>Median grade </dt>
+					<dd>This is the midpoint of the frequency distribution of final grades earned in a course over time.</dl>
+				<dl>
+					<dt>Cumulative grade point average</dt>
+					<dd>This is the average of the accumulated final grades earned in courses over time, weighted by the number of units per course. </dl>
+				<dl>
+					<dt>Median cumulative grade point average</dt>
+					<dd>This is the midpoint GPA (grade point average), considering the cumulative GPAs of all students who have declared for the selected major within the specified range of time.</dl>			
+									
+			</section><!-- end of 2nd H2 chunk -->
+			
+			<section>
+				<h2 id="data-viz">Data visualization</h2> 
+				<p>Grade data is visualized using a boxplot. Below is a guide to understanding the boxplot data.</p>
+				
+				<section id="boxplot-legend"> <img src="{% static "pivot/img/Boxplot-key_V4.png" %}" alt="Boxplot legend">
+				</section>
+				<p>
+					<dfn>Median</dfn> : The midpoint of the data sample: half the data in the sample falls above the median and the other half falls below it.
+				</p>	
+				<p>
+					<dfn>Upper quartile</dfn> : The middle number between the median and the highest number in the data set.
+				</p>
+				<p>
+					<dfn>Lower quartile</dfn> : The middle number between the median and the lowest number in the data set
+.
+				</p>	
+			</section><!-- end of 3rd H2 chunk -->
+
+		</section>	<!-- end of main -->
+	
+	</div>  <!-- end of main container -->
+</div> <!-- end of .page-wrap  -->
+<!-- FOOTER STUFF -->
+
+<div role="contentinfo">
+	<footer class="site-footer">
+		<div class="container center">
+				<div class="footer-links">
+	                <ul>
+		                <li><a href="resources" title="">Resources</a></li>
+		                <li><a href="feedback" title="">Feedback</a></li>
+	                    <li><a href="http://www.washington.edu/online/terms/" target="_blank" title="Go to the University of Washington Website Terms and Conditions of Use">Terms </a></li>
+	                    <li><a href="http://www.washington.edu/online/privacy/" target="_blank" title="G to the University of Washington Online Privacy Statement">Privacy</a></li>
+	                    <li><a href="/logout" target="" title="">Log out</a></li>                   
+	                </ul>
+	            </div><!-- end of footer links -->
+	            <p class="credit">©2016 University of Washington Information Technology </p>
+	            <div><img src="{% static "pivot/img/InfoTech_UW_vsml.footer.png" %}"  class="uw-it-logo" alt="UW-IT logo"></div>
+		</div><!-- end of footer content -->		
+	</footer>
+</div><!-- footer role -->
+{% endblock %}
