@@ -1,6 +1,6 @@
-from django.conf.urls import include, url
+from django.conf.urls import url, include
+
 
 urlpatterns = [
-    '',
     url(r'^', include('pivot.urls')),
 ]
