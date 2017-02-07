@@ -9,8 +9,9 @@ course_name_map = {}
 major_name_map = {}
 campus_name_map = {}
 
+
 def sort_by_course_and_popularity(a, b):
-    print 
+    print
     return -1
 
 with open('gps/Assets/v6 - Majors and Courses.csv') as f:
@@ -49,7 +50,7 @@ with open('gps/Assets/v6 - Majors and Courses.csv') as f:
                                                   MajorID, Campus)
 
             if combo_key not in data:
-                data[combo_key] = { "base": row }
+                data[combo_key] = {"base": row}
 
             data[combo_key][percentile] = course_gpa
 
@@ -69,7 +70,11 @@ with open('data_map.csv', 'wb') as outf:
 
 with open('demo.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
-    csv_out.writerow(["major_abbr","pathway","dept_abbrev","course_number","student_count","students_in_major","course_gpa_50pct","CourseLongName","major_full_nm","MajorID","CoursePopularityRank","Campus"])
+    csv_out.writerow(["major_abbr", "pathway", "dept_abbrev",
+                      "course_number", "student_count",
+                      "students_in_major", "course_gpa_50pct",
+                      "CourseLongName", "major_full_nm", "MajorID",
+                      "CoursePopularityRank", "Campus"])
 
     for key in sorted(data.keys()):
         original_row = data[key]["base"]
@@ -87,4 +92,3 @@ with open('demo.csv', 'wb') as outf:
             original_row[11],
             campus_name_map[original_row[12]],
         ])
-

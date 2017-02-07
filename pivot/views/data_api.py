@@ -7,11 +7,9 @@ from django.conf import settings
 class DataFileView(View):
     file_name = None
 
-
     def get(self, request):
         csv = self._get_csv()
         return HttpResponse(csv)
-
 
     def _get_csv(self):
         path = settings.CSV_ROOT + self.file_name

@@ -22,13 +22,14 @@ with open('gps/Assets/v6 - Student Data - All Majors.csv') as f:
         key = "%s - %s" % (major_abbr, pathway)
 
         if key not in data:
-            data[key] = { "raw": row, "gpas": [] }
+            data[key] = {"raw": row, "gpas": []}
 
         data[key]["gpas"].append(float(gpa))
 
 with open('demo.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
-    csv_out.writerow(["major_abbr","pathway","College", "iqr_min", "q1", "median", "q3", "iqr_max"])
+    csv_out.writerow(["major_abbr", "pathway", "College", "iqr_min",
+                      "q1", "median", "q3", "iqr_max"])
 
     for key in data:
         gpas = sorted(data[key]["gpas"])
