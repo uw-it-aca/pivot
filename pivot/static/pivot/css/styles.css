@@ -341,10 +341,21 @@ fieldset[disabled] .btn-GPS-primary.active {
 .page-title {
 	padding-bottom:20px;
 }
+
+/* for BETA tag  */
 .betatag{
 	font-size: .7em;
 	color: #fff;
 }
+
+sup {
+  vertical-align: baseline;
+  position: relative;
+  top: -1.7em;
+  font-size: .3em;
+  padding-left: 5px;
+}
+
 
 /* content loading modal  */
 .center-modalcontent {
