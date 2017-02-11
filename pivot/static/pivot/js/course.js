@@ -158,8 +158,11 @@ function goSearch() {
 function noResults() {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","inline")
-    $(".no-results-warning").html("<p><b>Can't find keyword \"" + $("input#search").val() + "\" in UW major list.</b></p><p>Check your spelling. Refer to the list of undergraduate majors in <a href='http://www.washington.edu/uaa/advising/academic-planning/majors-and-minors/list-of-undergraduate-majors/' target='_blank'>Seattle</a>, <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>, and <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.</p>");
+    $(".no-results-warning").css("display","inline");
+    var source = $("#no-results").html();
+    var template = Handlebars.compile(source);
+    var search_key = $("input#search").val();
+    $(".no-results-warning").html(template({search: search_key}));
 
 }
 

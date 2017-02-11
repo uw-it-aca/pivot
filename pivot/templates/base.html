@@ -100,6 +100,7 @@
 <!--<script src="{% static "pivot/js/major.js" %}"></script>-->
 {% if request.path == '/major-gpa' %}<script src="{% static "pivot/js/major.js" %}"></script>{% endif %}
 {% if request.path == '/course-gpa' %}<script src="{% static "pivot/js/course.js" %}"></script>{% endif %}
+{% include "include/handlebars/no-results.html" %}
 </body>
 </html>
 
