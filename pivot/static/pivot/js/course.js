@@ -7,7 +7,7 @@ function checkStoredData() {
     if (sessionStorage.getItem("courses") != null && paramCode == null) {
         listCoursesForMajor(sessionStorage.getItem("courses"));
     } else if (paramCode != null) {
-        listCoursesForMajor(paramCode.replace("_", " ")); 
+        listCoursesForMajor(paramCode.replace("_", " "));
     } else $(".sample-data").css("display","block");
 }
 
@@ -18,13 +18,13 @@ function updateEvents() {
     $("#suggestions li").hover(
         function () {
           $(this).parents("li").css({"background-color":"blue"});
-        }, 
+        },
         function () {
           $(this).parents("li").css({"background-color":"white"});
         }
     );
-    
-    
+
+
     $("#suggestions li, #suggestions a").click(function (e) {
         e.preventDefault();
         var list = [];
@@ -38,22 +38,29 @@ function updateEvents() {
                     return;
                 }
             });
-            if (!selected)
-                $(".selected").html("<div class='chosen_major'>" + code + "</div>");
+            if (!selected) {
+                var source = $("#update-events").html();
+                var template = Handlebars.compile(source);
+                $(".selected").html(template({chosen: code}));
                 //FOR MULTIPLE SELECTIONS $(".selected").append("<div class='chosen_major'>" + code + "</div>");
+            }
             $(".chosen_major").each(function() {
                 list.push($(this).text());
-               $("#loadingModal").modal('show'); setTimeout(listCoursesForMajor($(this).text()), 300);
+                $("#loadingModal").modal('show');
+                setTimeout(listCoursesForMajor($(this).text()), 300);
             });
             closeSuggestions();
         }
     });
 }
-    
-    
+
+
 //Displays majors matching search term in the search suggestions
 function displayResults() {
     $("#suggestions").css("display","block");
+    var source = $("#display-results").html();
+    var template = Handlebars.compile(source);
+
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     for(var maj in _completeMajorMap) {
@@ -75,14 +82,14 @@ function displayResults() {
             });
             //Bolds search terms that appear at beginning of word other than first
             var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
-            $(appendTo).append("<li class='suggested_major'><a href='#'>" + majText + "</a></li>");
+            $(appendTo).append(template({major: majorText}));
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
         //else if nothing has been entered but a college is selected, load all majors in college
         else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val()) {
-            var appendTo = "#selectedCollege";
-            $(appendTo).append("<li class='suggested_major'><a href='#'>" + _completeMajorMap[maj]["major_full_nm"] + "</a></li>");
+            var majorText = _completeMajorMap[maj]["major_full_nm"];
+            $("#selectedCollege").append(template({major: majorText}));
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
@@ -101,14 +108,20 @@ function displayResults() {
 //Shows any currently selected majors in the search suggestions
 function showCurrentSelections() {
     $("#suggestions").css("display","block");
+    var source = $("#display-results").html();
+    var template = Handlebars.compile(source);
+
     $(".chosen_major").each(function() {
         var appendTo = "";
-        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val())
+        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val()) {
             appendTo = "#selectedCollege";
-        else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus)
+        } else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus) {
             appendTo = "#currentCampus";
-        else appendTo ="#" + _completeMajorMap[$(this).text()]["campus"].toLowerCase() + "Campus";
-        $(appendTo).append("<li class='suggested_major'><a href='#'>" + _completeMajorMap[$(this).text()]["major_full_nm"] + "</a></li>");
+        } else {
+            appendTo ="#" + _completeMajorMap[$(this).text()]["campus"].toLowerCase() + "Campus";
+        }
+        var majorText = _completeMajorMap[$(this).text()]["major_full_nm"];
+        $(appendTo).append(template({major: majorText}));
         $(appendTo + " li:last").data("code", $(this).text());
     });
 }
@@ -256,4 +269,3 @@ function colorBucket(gpa) {
     }
     return 0;
 }
-
