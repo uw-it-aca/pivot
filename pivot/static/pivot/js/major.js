@@ -262,17 +262,6 @@ function showCurrentSelections() {
         $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' checked/>&nbsp;" + _completeMajorMap[$(this).text()]["major_full_nm"] + "</a></li>");
         $(appendTo + " li:last").data("code", $(this).text());
     });
-    /* THIS BLOCK USED IF CURRENT SELECTIONS SHOWN AS PILLS BELOW SEARCH FIELD - IGNORE FOR NOW */
-    /*$(".chosen_major").each(function() {
-        var appendTo = "";
-        if (_completeMajorMap[$(this).children(".code").text()]["college"] == $("#dropdownMenu:first-child").val())
-            appendTo = "#selectedCollege";
-        else if (_completeMajorMap[$(this).children(".code").text()]["campus"] == _currentCampus)
-            appendTo = "#currentCampus";
-        else appendTo ="#" + _completeMajorMap[$(this).children(".code").text()]["campus"].toLowerCase() + "Campus";
-        $(appendTo).append("<li><a href='#'><input type='checkbox' checked/>&nbsp;" + _completeMajorMap[$(this).children(".code").text()]["major_full_nm"] + "</a></li>");
-        $(appendTo + " li:last").data("code", $(this).children(".code").text());
-    });*/
 }
 
 //Checks if multiple majors have been selected
@@ -328,7 +317,6 @@ function updateEvents() {
             $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
         }
         var list = [];
-        //var names = [];//USED FOR DISPLAYING SELECTIONS AS PILLS/PLACEHOLDERS
         var code = $(this).parent("li").data("code");
 
         if ($(this).children("input:checkbox").prop("checked")) {
@@ -346,26 +334,6 @@ function updateEvents() {
             list.push($(this).text());
 
         });
-
-        /* THIS BLOCK USED WHEN SELECTED MAJORS SHOWN AS PILL BELOW SEARCH FIELD - IGNORE FOR NOW */
-        /*if ($(this).children("input:checkbox").prop("checked")) {
-            $(".selected").append("<div class='chosen_major label label-default'><span class='code'>" + code + "</span>" + _completeMajorMap[code]["major_full_nm"] + "</div>");
-        }
-        else {
-            $(".chosen_major").each(function () {
-                if ($(this).children(".code").text() == code)
-                    $(this).addClass("remove");
-            })
-            $(".remove").remove();
-        }
-        $(".chosen_major").each(function() {
-            list.push($(this).children(".code").text());
-            names.push(_completeMajorMap[$(this).children(".code").text()]["major_full_nm"]);
-
-        });*/
-
-        //TESTING SHOWING CURRENT SELECTIONS IN INPUT FIELD
-        //$("#search").attr("placeholder",names.join(", "));
 
         //start timer to make suggestions box disappear after 3sec
         clearTimeout(_timer);
@@ -434,8 +402,6 @@ function goSearch() {
         for (var maj in _completeMajorMap) {
             if (_completeMajorMap[maj]["college"] == selectedCol) {
                 newMajors += "<div class='chosen_major'>" + maj + "</div>";
-                /* THIS LINE USED TO SHOW CURRENT SELECTIONS AS PILLS BELOW SEARCH */
-                /*$(".selected").append("<div class='chosen_major label label-default'><span class='code'>" + maj + "</span>" + _completeMajorMap[maj]["major_full_nm"] + "</div>");*/
             }
         }
         results = true;
