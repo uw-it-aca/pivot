@@ -82,14 +82,14 @@ function displayResults() {
             });
             //Bolds search terms that appear at beginning of word other than first
             var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
-            $(appendTo).append(template({major: majorText}));
+            $(appendTo).append(template({major: majText}));
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
         //else if nothing has been entered but a college is selected, load all majors in college
         else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val()) {
-            var majorText = _completeMajorMap[maj]["major_full_nm"];
-            $("#selectedCollege").append(template({major: majorText}));
+            var majText = _completeMajorMap[maj]["major_full_nm"];
+            $("#selectedCollege").append(template({major: majText}));
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
@@ -120,8 +120,8 @@ function showCurrentSelections() {
         } else {
             appendTo ="#" + _completeMajorMap[$(this).text()]["campus"].toLowerCase() + "Campus";
         }
-        var majorText = _completeMajorMap[$(this).text()]["major_full_nm"];
-        $(appendTo).append(template({major: majorText}));
+        var majText = _completeMajorMap[$(this).text()]["major_full_nm"];
+        $(appendTo).append(template({major: majText}));
         $(appendTo + " li:last").data("code", $(this).text());
     });
 }
