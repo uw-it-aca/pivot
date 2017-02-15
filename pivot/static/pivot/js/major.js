@@ -71,7 +71,7 @@ function createBoxForMajor(i, median, majorId) {
         h += "<p class='data-heading'>Median GPA <a class='inlineHelp' id='medianHelp' tabindex='0' role='button' data-toggle='popover' data-trigger='focus' data-content=''><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p>";
     h += "<p class='median-value'>" + display_median + "</p></div><div class='data-display col-xs-9 col-md-6'>";
     if (i == 0)
-        h += "<p class='data-heading'>Distribution <a class='inlineHelp' id='distributionHelp' tabindex='0' role='button' data-placement='top' data-toggle='popover' data-trigger='focus' data-html='true' data-content='<p><b>Distribution<\/b><\/p><p><img width=\"100%\" src=\"Assets/images/Boxplot-key_V4-crop.png\" alt=\"Boxplot legend\"><\/p><p><a href=\"resources.html\"> Learn more about the Lower Quartile, Median GPA, and Upper Quartile.<\/a> <\/p>'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p>";
+        h += "<p class='data-heading'>Distribution <a class='inlineHelp' id='distributionHelp' tabindex='0' role='button' data-placement='top' data-toggle='popover' data-trigger='focus' data-html='true' data-content='<p><b>Distribution<\/b><\/p><p><img width=\"100%\" src=\"" +images_paths["boxplot"]+ "\" alt=\"Boxplot legend\"><\/p><p><a href=\"resources.html\"> Learn more about the Lower Quartile, Median GPA, and Upper Quartile.<\/a> <\/p>'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p>";
     h+= "</div><div class='course-link col-xs-12'><a href='course-gpa?code=" + majorId + "'>&gt; View most commonly taken courses in this major</a></div>";
     $("#" + majorId).append(h);
 
