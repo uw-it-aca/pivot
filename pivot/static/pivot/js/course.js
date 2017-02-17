@@ -151,15 +151,16 @@ function goSearch() {
     //if there is one exact match or multiple matches but 1 in the current campus, show the courses for that major
     if ($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") {
         maj = $("#suggestions li.suggested_major").data("code");
-    }
-    else if ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") {
-       maj = $("#currentCampus li.suggested_major").data("code");
-    }
-    else if (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1)
+    } else if ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") {
+        maj = $("#currentCampus li.suggested_major").data("code");
+    } else if (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1) {
         maj = $("#selectedCollege li.suggested_major").data("code");
-    else if ($("#suggestions li.suggested_major").length > 1)
+    } else if ($("#suggestions li.suggested_major").length > 1) {
         multipleResults();
-    else noResults();
+    } else {
+        noResults();
+    }
+
     if (maj != "") {
         closeSuggestions();
         $("#loadingModal").modal('show');
@@ -184,7 +185,10 @@ function multipleResults() {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
     $(".no-results-warning").css("display","inline")
-    $(".no-results-warning").html("<p><b>Multiple results found for keyword \"" + $("input#search").val() + "\" in UW major list.</b></p><p>Select a single major. Refer to the list of undergraduate majors in <a href='http://www.washington.edu/uaa/advising/academic-planning/majors-and-minors/list-of-undergraduate-majors/' target='_blank'>Seattle</a>, <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>, and <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.</p>");
+    var source = $("#multiple-results").html();
+    var template = Handlebars.compile(source);
+    var search_key = $("input#search").val();
+    $(".no-results-warning").html(template({search: search_key}));
 }
 
 //Hides the suggestion box if user clicks outside it
@@ -209,29 +213,50 @@ function listCoursesForMajor(maj) {
 
     //maj = major code A A-0
     var id = maj.replace(" ","_");
-    var h = "<div class='course-card row' id='" + id + "'><p class='college-heading'>" + _completeMajorMap[maj]["college"] + " - " + _completeMajorMap[maj]["campus"] + " campus</p><div class='col-xs-9'><h3 class='major-heading-course'>" + displayMajorStatusURL(maj) + "</h3>"
-+ "<div class='major-gpa-line'>  " + displayMajorStatusIcon(maj) + "   " + displayMajorStatusText(maj) + " <span class='gpa-small'>  Median GPA: " + round(Number(_majorLookup[maj]["median"]), 2) + " </span></div>"
-    +"</div>"
-    + "</div></div></p><div class='col-xs-10'><table class='table table-striped'><thead><tr><th><p class='data-heading'>% <a class='inlineHelp' id='percentHelp' tabindex='0' role='button' data-toggle='popover' data-trigger='focus' data-content=''><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p></th><th><p class='data-heading'>Code</p></th><th><p class='data-heading'>Most Commonly Taken Courses</p></th><th><p class='data-heading'>Median Course Grade <a class='inlineHelp' id='courseGradeHelp' tabindex='0' role='button' data-toggle='popover' data-trigger='focus' data-content=''><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p></th></tr></thead><tbody>";
+
+    // Compile the dynamic table data and pass it as a variable to outer template.
     var courses = _completeMajorMap[maj]["courses"];
-    var ct = 0;//show 10 max
+    var count = 0;
+    // Create a list of all the inner table data
+    var inner_table_data = [];
     for (var c in courses) {
-        if (ct < 10) {
+        // Show only upto 10 results
+        if (count < 10) {
             var popularity = Math.round((courses[c]["student_count"] / _completeMajorMap[maj]["students_in_major"]) * 100) + "%";
             var col = "q" + colorBucket(courses[c]["percentiles"][5])+ "-9";
-            h+= "<tr><td><p>" + popularity + "</p></td><td><p class='coursecode'>" + courses[c]["dept_abbrev"] + " " + courses[c]["course_number"] + "</p></td><td><p>" + courses[c]["course_long_name"] + "</p></td><td><p class='course-median course-table-row " + col + "'>" + round(parseFloat(courses[c]["percentiles"][5]),2) + "</p></td></tr>";
-            ct++;
-        } else break;
+            var percentile = round(parseFloat(courses[c]["percentiles"][5]), 2);
+            // Create a dict of all single line data and push it to the list
+            var collection = {
+                popularity: popularity,
+                dept_abbrev: courses[c]["dept_abbrev"],
+                course_number: courses[c]["course_number"],
+                course_long_name: courses[c]["course_long_name"],
+                col: col,
+                percentile: percentile
+            };
+            inner_table_data.push(collection);
+            count++;
+        } else {
+            break;
+        }
     }
-    h += "</tbody></table></div><div class='col-xs-2 panel panel-default bar-legend'><p>Color Legend:</p><div id='color-legend'>"
-    + "<div class='q0-9 color-block'></div><div class='bar-legend-0'> 1.50 to 1.99</div>"
-    + "<div class='q1-9 color-block'></div><div class='bar-legend-0'> 2.00 to 2.49</div>"
-    + "<div class='q2-9 color-block'></div><div class='bar-legend-0'> 2.50 to 2.99</div>"
-    + "<div class='q3-9 color-block'></div><div class='bar-legend-0'> 3.00 to 3.49</div>"
-    + "<div class='q4-9 color-block'></div><div class='bar-legend-0'> 3.50 to 4.00</div>"
-    + "<div class='q9-9 color-block'>"
-    ;
-    $("#courselist").append(h);
+
+    // Compile the outer body with this.
+    var source = $("#list-courses-for-major-outer").html();
+    var template = Handlebars.compile(source);
+    $("#courselist").append(template(
+        {
+            id: id,
+            college: _completeMajorMap[maj]["college"],
+            campus: _completeMajorMap[maj]["campus"],
+            major_status_url: displayMajorStatusURL(maj),
+            major_status_icon: displayMajorStatusIcon(maj),
+            major_status_text: displayMajorStatusText(maj),
+            median_gpa: round(Number(_majorLookup[maj]["median"]), 2),
+            inner_table_data: inner_table_data
+        }
+    ));
+
     $("#percentHelp").popover({
         placement: "top",
         html: true,
@@ -260,12 +285,14 @@ $("#clear_majors").click(function(e) {
 function colorBucket(gpa) {
     var min = 1.5
     var max = 4.0
-    var div = (4.0 - 1.5) / 5;//9;
+    var div = (4.0 - 1.5) / 5; //9;
     for (var i = 1; i < 6; i++) {
-        if (gpa > 1.5 + div * (i - 1) && gpa <= 1.5 + div * i)
+        if (gpa > 1.5 + div * (i - 1) && gpa <= 1.5 + div * i) {
             /*if ((i-1)%2 == 0)
                 return i - 1;
-            else*/ return i-1;
+            else*/
+            return i-1;
+        }
     }
     return 0;
 }
