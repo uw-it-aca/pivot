@@ -1,0 +1,8 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "feedback" %}
+
+<div class="alert {{ message_type }}">
+    {{ message }}
+</div>
+
+{% endtplhandlebars %}
