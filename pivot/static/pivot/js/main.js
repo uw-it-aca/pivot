@@ -405,7 +405,9 @@ function populateCollegeDropdown() {
 
     //Show selection in button
     $("#college-dropdown .dropdown-menu li a").click(function(){
-        $("#dropdownMenu:first-child").html('<span id="college-selection">' + $(this).text()  + ' </span><span class="caret"></span>');
+        var source = $("#populate-college-dropdown-college-selection").html();
+        var template = Handlebars.compile(source);
+        $("#dropdownMenu:first-child").html(template({college_selection: $(this).text()}));
         $("#dropdownMenu:first-child").val($(this).text());
         toggleGo();
     });

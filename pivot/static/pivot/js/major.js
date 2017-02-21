@@ -6,10 +6,15 @@ function checkStoredData() {
     //Check for stored major selections and gpa
     if (sessionStorage.getItem("majors")) {
         var majors = JSON.parse(sessionStorage.getItem("majors"));
-        var gpa = sessionStorage.getItem("gpa"); //GPA previously entered by user in compare gpa module
+        //GPA previously entered by user in compare gpa module
+        var gpa = sessionStorage.getItem("gpa");
+        // Compile the Handlebars template
+        var source = $("#update-events").html();
+        var template = Handlebars.compile(source);
+
         //Add selected majors to hidden area
         for (var m in majors)
-            $(".selected").append("<div class='chosen_major'>" + majors[m] + "</div>");
+            $(".selected").append(template({chosen: majors[m]}));
         //Populate data table
         if (majors != null)
             createMajorCard(majors, gpa = gpa == "null" ? null:gpa);
@@ -513,5 +518,3 @@ $("#clear_majors").click(function(e) {
     $(".yourgpa-box").remove();
     storeSelections(null);
 });
-
-
