@@ -41,15 +41,26 @@ function createMajorCard(majors, gpa = null) {
     $(".results-section").css("display","inline"); //Changes css of results section - not sure why
     gpa = gpa == "" ? null:gpa;
 
+    // Compile template with Handlebars
+    var source = $("#create-major-card").html();
+    var template = Handlebars.compile(source);
+
     //For each selected major...
     for (var l in majors) {
 
         //draw the major's data "card" in the table
         var id = majors[l].replace(" ","_");
-        $("#boxplots").append("<div class='major-card row' id='" + id + "'></div>");
-        $("#" + id).data("code", majors[l]);
 
-        $("#" + id).html("<div class='card-heading col-xs-12 col-md-4'><p class='college-heading'>" + _completeMajorMap[majors[l]]["college"] + " - " + _completeMajorMap[majors[l]]["campus"] + "</p><h3 class='major-heading row'>" + displayMajorStatusURL(majors[l]) + "<br/>" + displayMajorStatusIcon(majors[l]) + "</h3></div>");
+        // Add the card
+        $("#boxplots").append(template({
+            id: id,
+            college: _completeMajorMap[majors[l]]["college"],
+            campus: _completeMajorMap[majors[l]]["campus"],
+            major_status_url: displayMajorStatusURL(majors[l]),
+            major_status_icon: displayMajorStatusIcon(majors[l])
+        }));
+
+        $("#" + id).data("code", majors[l]);
         var major = filterByMajors([majors[l]]);
         var med = major[0]["median"];
 
@@ -69,16 +80,16 @@ function createMajorCard(majors, gpa = null) {
 //Creates the table cells for a major
 function createBoxForMajor(i, median, majorId) {
     var display_median = parseFloat(median).toFixed(2); //formats the median major GPA for text display
-
+    // Compile the Handlebars template
+    var source = $("#create-box-for-major").html();
+    var template = Handlebars.compile(source);
     //Create the data boxes, only show titles for first box
-    var h = "<div class='median-box col-xs-3 col-md-2'>";
-    if (i == 0)
-        h += "<p class='data-heading'>Median GPA <a class='inlineHelp' id='medianHelp' tabindex='0' role='button' data-toggle='popover' data-trigger='focus' data-content=''><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p>";
-    h += "<p class='median-value'>" + display_median + "</p></div><div class='data-display col-xs-9 col-md-6'>";
-    if (i == 0)
-        h += "<p class='data-heading'>Distribution <a class='inlineHelp' id='distributionHelp' tabindex='0' role='button' data-placement='top' data-toggle='popover' data-trigger='focus' data-html='true' data-content='<p><b>Distribution<\/b><\/p><p><img width=\"100%\" src=\"Assets/images/Boxplot-key_V4-crop.png\" alt=\"Boxplot legend\"><\/p><p><a href=\"resources.html\"> Learn more about the Lower Quartile, Median GPA, and Upper Quartile.<\/a> <\/p>'><span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span></a></p>";
-    h+= "</div><div class='course-link col-xs-12'><a href='course-gpa?code=" + majorId + "'>&gt; View most commonly taken courses in this major</a></div>";
-    $("#" + majorId).append(h);
+    var yes_or_no = i>=1 ? 0 : 1;
+    $("#" + majorId).append(template({
+        i: yes_or_no,
+        display_median: display_median,
+        major_id:majorId
+    }));
 
     //Create the inline help popovers, only needed for major in first row
     if (i == 0) {
