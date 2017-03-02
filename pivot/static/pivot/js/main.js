@@ -405,9 +405,9 @@ function populateCollegeDropdown() {
 
     //Show selection in button
     $("#college-dropdown .dropdown-menu li a").click(function(){
-        var source = $("#populate-college-dropdown-college-selection").html();
-        var template = Handlebars.compile(source);
-        $("#dropdownMenu:first-child").html(template({college_selection: $(this).text()}));
+        var selection_source = $("#populate-college-dropdown-college-selection").html();
+        var selection_template = Handlebars.compile(selection_source);
+        $("#dropdownMenu:first-child").html(selection_template({college_selection: $(this).text()}));
         $("#dropdownMenu:first-child").val($(this).text());
         toggleGo();
     });

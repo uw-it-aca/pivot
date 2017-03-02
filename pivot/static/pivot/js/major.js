@@ -93,13 +93,18 @@ function createBoxForMajor(i, median, majorId) {
 
     //Create the inline help popovers, only needed for major in first row
     if (i == 0) {
+        // Compile the popover template if condition to display satisfies.
+        var source = $("#median-help-popover").html();
+        var template = Handlebars.compile(source);
+
         $("#medianHelp").popover({
             placement: "top",
             html: true,
             container: "body",
-            content: "<p><b>Median GPA</b></p><p>This is the GPA (Grade Point Average) that falls at the midpoint, considering the cumulative GPAs of all students who have declared for the selected major within the specified range of time.</p>"
+            content: template({})
         });
         $("#distributionHelp").popover({
+            // Add some action here
         });
     }
 }
@@ -162,7 +167,16 @@ function storeSelections(majors, gpa) {
 
 //Initializes the popover for a boxplot
 function addPopover(id) {
-    $("#" + id + " .boxPopover").attr("data-content","<div><div class='boxLegend LQ'></div><p style='display:inline-block;'>Lower&nbsp;quartile:&nbsp;" + round(Number($("#" + id + " .boxLQ").attr("data")),2) + "</p></div><div><div class='boxLegend MD'></div><p style='display:inline-block;'>Median:&nbsp;" + round(Number($("#" + id + " .median").attr("data")),2) + "</p></div><div><div class='boxLegend UQ'></div><p style='display:inline-block;'>Upper&nbsp;quartile:&nbsp;" + round(Number($("#" + id + " .boxHQ").attr("data")),2) + "</p></div>");
+    // Compile the Handlebars template
+    var source = $("#add-popover").html();
+    var template = Handlebars.compile(source);
+
+    $("#" + id + " .boxPopover").attr("data-content", template({
+        lower_quartile: round(Number($("#" + id + " .boxLQ").attr("data")),2),
+        median: round(Number($("#" + id + " .median").attr("data")),2),
+        upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2)
+    }));
+
     $("#" + id + " .boxPopover").popover({
         trigger: "hover click",
         placement: "top",
@@ -213,6 +227,10 @@ function iqr(k) {
 
 //Displays majors matching search term
 function displayResults() {
+    // Compile the Handlebars template for displaying results
+    var source = $("#major-display-results").html();
+    var template = Handlebars.compile(source);
+
     $("#suggestions").css("display","block");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
@@ -236,8 +254,10 @@ function displayResults() {
             });
             //Bolds search terms that appear at beginning of word other than first
             ///^(A|B|AB)$/
-            var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
-            $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' " + checked + "/>&nbsp;" + majText + "</a></li>");
+            $(appendTo).append(template({
+                status: checked,
+                data: _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>")
+            }));
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
@@ -250,11 +270,13 @@ function displayResults() {
                    checked = "checked";
                }
             });
-            $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' " + checked + "/>&nbsp;" + _completeMajorMap[maj]["major_full_nm"] + "</a></li>");
+            $(appendTo).append(template({
+                status: checked,
+                data: _completeMajorMap[maj]["major_full_nm"]
+            }));
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
-
     }
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
@@ -267,15 +289,24 @@ function displayResults() {
 
 //Shows any currently selected majors
 function showCurrentSelections() {
+    // Compile the Handlebars major-display-results template (shared template)
+    var source = $("#major-display-results").html();
+    var template = Handlebars.compile(source);
+
     $("#suggestions").css("display","block");
     $(".chosen_major").each(function() {
-       var appendTo = "";
-       if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val())
+        var appendTo = "";
+        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val()) {
             appendTo = "#selectedCollege";
-        else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus)
+        } else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus) {
             appendTo = "#currentCampus";
-        else appendTo ="#" + _completeMajorMap[$(this).text()]["campus"].toLowerCase() + "Campus";
-        $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' checked/>&nbsp;" + _completeMajorMap[$(this).text()]["major_full_nm"] + "</a></li>");
+        } else {
+            appendTo ="#" + _completeMajorMap[$(this).text()]["campus"].toLowerCase() + "Campus";
+        }
+        $(appendTo).append(template({
+            status: "checked",
+            data: _completeMajorMap[$(this).text()]["major_full_nm"]
+        }));
         $(appendTo + " li:last").data("code", $(this).text());
     });
     /* THIS BLOCK USED IF CURRENT SELECTIONS SHOWN AS PILLS BELOW SEARCH FIELD - IGNORE FOR NOW */
@@ -307,27 +338,42 @@ function toggleGo() {
 
 //Displays message when no results found anywhere in the UW major list
 function noResults() {
+    // Compile no-results Handlebars template
+    var source = $("#no-results").html();
+    var template = Handlebars.compile(source);
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
     $(".no-results-warning").css("display","block");
     if (multipleSelected())
         $(".no-results-warning").addClass("alert alert-info");
-    $(".no-results-warning").html("<p><b>Can't find keyword \"" + $("input#search").val() + "\" in UW major list.</b></p><p>Check your spelling. Refer to the list of undergraduate majors in <a href='http://www.washington.edu/uaa/advising/academic-planning/majors-and-minors/list-of-undergraduate-majors/' target='_blank'>Seattle</a>, <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>, and <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.</p>");
+    $(".no-results-warning").html(template({
+        search: $("input#search").val()
+    }));
     $("#loadingModal").modal('hide');
 }
 
 //Displays message when no results found in selected college
 function noResultsCollege(col) {
+    // Compile no-results-college Handlebars template
+    var source = $("#no-results-college").html();
+    var template = Handlebars.compile(source);
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
     $(".no-results-warning").css("display","block");
     if (multipleSelected())
         $(".no-results-warning").addClass("alert alert-info");
-    $(".no-results-warning").html("<p><b>Can't find keyword \"" + $("input#search").val() + "\" in " + col + ".</b></p><p>Check your spelling or select \"All\" from the dropdown menu. Refer to the list of undergraduate majors in <a href='http://www.washington.edu/uaa/advising/academic-planning/majors-and-minors/list-of-undergraduate-majors/' target='_blank'>Seattle</a>, <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>, and <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.</p>");
+    $(".no-results-warning").html(template({
+        search: $("input#search").val(),
+        college: col
+    }));
 }
 
 //Item selection
 function updateEvents() {
+    // Compile update-events Handlebars template
+    var source = $("#update-events").html();
+    var template = Handlebars.compile(source);
+
     $("#suggestions li").hover(
         function () {
           $(this).parents("li").css({"background-color":"blue"});
@@ -348,19 +394,19 @@ function updateEvents() {
         var code = $(this).parent("li").data("code");
 
         if ($(this).children("input:checkbox").prop("checked")) {
-            $(".selected").prepend("<div class='chosen_major'>" + code + "</div>");
+            $(".selected").prepend(template({
+                chosen: code
+            }));
             _searchResultsChecked = true;
-        }
-        else {
+        } else {
             $(".chosen_major").each(function () {
                 if ($(this).text() == code)
                     $(this).addClass("remove");
-            })
+            });
             $(".remove").remove();
         }
         $(".chosen_major").each(function() {
             list.push($(this).text());
-
         });
 
         /* THIS BLOCK USED WHEN SELECTED MAJORS SHOWN AS PILL BELOW SEARCH FIELD - IGNORE FOR NOW */
@@ -402,12 +448,16 @@ $("html").click(function (e) {
 //hides search results and clears input
 function hideSearchSuggestions() {
     $("#suggestions").css("display","none");
-       $("#search").val("");
-       $("#search").blur();
+    $("#search").val("");
+    $("#search").blur();
 }
 
 //Search major list for text in input field
 function goSearch() {
+    // Compile update-events Handlebars template (shared)
+    var source = $("#update-events").html();
+    var template = Handlebars.compile(source);
+
     //First clear everything already shown then show all majors in college
     $("#loadingModal").modal('show');
     $("#boxplots").html("");
@@ -423,7 +473,9 @@ function goSearch() {
         //Only if user has not made new selections
         if (!_searchResultsChecked) {
             $("#suggestions li.suggested_major").each(function() {
-                newMajors += "<div class='chosen_major'>" + $(this).data("code") + "</div>";
+                newMajors += template({
+                    chosen: $(this).data("code")
+                });
             });
         }
         results = true;
@@ -439,7 +491,9 @@ function goSearch() {
             //Only if user has not made new selections
             if (!_searchResultsChecked) {
                 $("#selectedCollege li.suggested_major").each(function() {
-                    newMajors += "<div class='chosen_major'>" + $(this).data("code") + "</div>";
+                    newMajors += template({
+                        chosen: $(this).data("code")
+                    });
                 });
             }
             results = true;
@@ -449,7 +503,9 @@ function goSearch() {
     else if (search == "" && selectedCol != "All") {
         for (var maj in _completeMajorMap) {
             if (_completeMajorMap[maj]["college"] == selectedCol) {
-                newMajors += "<div class='chosen_major'>" + maj + "</div>";
+                newMajors += template({
+                    chosen: maj
+                });
                 /* THIS LINE USED TO SHOW CURRENT SELECTIONS AS PILLS BELOW SEARCH */
                 /*$(".selected").append("<div class='chosen_major label label-default'><span class='code'>" + maj + "</span>" + _completeMajorMap[maj]["major_full_nm"] + "</div>");*/
             }
@@ -474,8 +530,14 @@ function goSearch() {
 /*** COMPARE GPA MODULE ***/
 //Adds the "Compare your GPA" module
 function showCompareModule(gpa) {
-    var h = "<div class='panel panel-default yourgpa-box'><div class='col-xs-small panel-body yourgpa' id='compare-module'><h2 class='yourgpa-heading sr-only'>Compare your GPA against selected majors</h2><form class='form-inline yourgpa-form'><label for='compare' class='compare-heading'>Compare GPA </label><input id='compare' class='form-control' type='text' placeholder='Enter a GPA' value='" + gpa + "'/><button id='compareBtn' class='btn btn-default compare-gpa' type='button'>Add</button><div id='compare-msg'></div></form></div></div>";
-    $("#header-row").append(h);
+    // Compile show-compare-module Handlebars template
+    var source =  $("#show-compare-module").html();
+    var template = Handlebars.compile(source);
+
+    $("#header-row").append(template({
+        gpa: gpa
+    }));
+
     //only allow numbers and decimal point and delete/backspace
     $("#compare").keydown(function(e) {
         if (e.which == 13) {
@@ -493,12 +555,13 @@ function showCompareModule(gpa) {
 function validateGPA() {
     //check GPA is under 4, round to 2 dp
     if (isNaN($("#compare").val()) || $("#compare").val() > 4 || $("#compare").val() < 1.5) {
+        var source = $("#validate-gpa").html();
+        var template = Handlebars.compile(source);
         //showGPA(null);
         $(".myGPA, #gpaLabel").remove();
         $("#compare").focus();
-        $("#compare-msg").html('<div class="alert alert-danger">Please enter a valid GPA between 1.5 and 4.0</div>');
-    }
-    else {
+        $("#compare-msg").html(template({}));
+    } else {
         showGPA(round(Number($("#compare").val()), 2));
     }
 }
