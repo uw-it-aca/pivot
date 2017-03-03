@@ -200,24 +200,30 @@ function displayResults() {
     $("#suggestions").css("display","block");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
+        var prevSelected = false;
+        $(".chosen_major").each(function() {
+           if ($(this).text() == maj) {
+               prevSelected = true;
+               //break;
+           }
+        });
         //check matches for search term
         if (search_val.length > 0 && index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
             //Find substring matching search term to make bold - should only highlight matches at beginning of word
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val())
+            //check that college is from appropriate campus
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
                 appendTo = "#selectedCollege";
             else if (_completeMajorMap[maj]["campus"] == _currentCampus)
                 appendTo = "#currentCampus";
             else appendTo ="#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
             var checked = "";
-            $(".chosen_major").each(function() {
-               if ($(this).text() == maj) {
-                   checked = "checked";
-               }
-            });
+            if (prevSelected)
+                checked = "checked";
             //Bolds search terms that appear at beginning of word other than first
             ///^(A|B|AB)$/
             var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
@@ -225,18 +231,23 @@ function displayResults() {
             $(appendTo + " li:last").data("code", maj);
             count++;
         }
-        //else if nothing has been entered but a college is selected, load all majors in college
-        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val()) {
-            var appendTo = "#selectedCollege";
-            var checked = "";
-            $(".chosen_major").each(function() {
-               if ($(this).text() == maj) {
-                   checked = "checked";
-               }
-            });
-            $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' " + checked + "/>&nbsp;" + _completeMajorMap[maj]["major_full_nm"] + "</a></li>");
-            $(appendTo + " li:last").data("code", maj);
-            count++;
+        //else if nothing has been entered but a college is selected, load all majors in college & any previous selections
+        else if (search_val.length == 0 ) {
+            //if major is in selected college,
+            var appendTo = "";
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+                appendTo = "#selectedCollege";
+            } else if (prevSelected) {
+                appendTo = "#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
+            }
+            if (appendTo != "") {
+                var checked = "";
+                if (prevSelected)
+                    checked = "checked";
+                $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' " + checked + "/>&nbsp;" + _completeMajorMap[maj]["major_full_nm"] + "</a></li>");
+                $(appendTo + " li:last").data("code", maj);
+                count++;
+            }
         }
 
     }
@@ -252,14 +263,16 @@ function displayResults() {
 //Shows any currently selected majors
 function showCurrentSelections() {
     $("#suggestions").css("display","block");
+    console.log("SHOW CURRENT SELECTIONS");
     $(".chosen_major").each(function() {
-       var appendTo = "";
-       if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val())
+        var appendTo = "";
+       if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[$(this).text()]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
             appendTo = "#selectedCollege";
         else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus)
             appendTo = "#currentCampus";
         else appendTo ="#" + _completeMajorMap[$(this).text()]["campus"].toLowerCase() + "Campus";
         $(appendTo).append("<li class='suggested_major'><a href='#'><input type='checkbox' checked/>&nbsp;" + _completeMajorMap[$(this).text()]["major_full_nm"] + "</a></li>");
+        console.log("append " + $(this).text() + " to " + appendTo);
         $(appendTo + " li:last").data("code", $(this).text());
     });
 }
@@ -368,7 +381,7 @@ function goSearch() {
 
     var search = $("#search").val();
     var selectedCol = $("#dropdownMenu:first-child").val();
-    console.log(search + ", " + selectedCol);
+    var campus = $("#dropdownMenu:first-child").attr("data-campus");
     var newMajors = "";
     //if any text in the search field and dropdown = All, show all matching majors + any that are currently selected
     if (search != "" && selectedCol == "All") {
@@ -384,7 +397,6 @@ function goSearch() {
     else if (search != "" && selectedCol != "All") {
         //Add error message if nothing found
         if ($("#selectedCollege li.suggested_major").length == 0) {
-            noResultsCollege(selectedCol);
             results = true; //not technically true but used to override generic error
         }
         else {
@@ -400,7 +412,7 @@ function goSearch() {
     //else if no text and dropdown != All... show all majors in college
     else if (search == "" && selectedCol != "All") {
         for (var maj in _completeMajorMap) {
-            if (_completeMajorMap[maj]["college"] == selectedCol) {
+            if (_completeMajorMap[maj]["college"] == selectedCol && _completeMajorMap[maj]["campus"] == campus) {
                 newMajors += "<div class='chosen_major'>" + maj + "</div>";
             }
         }
