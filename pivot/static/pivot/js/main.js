@@ -270,11 +270,12 @@ function prepareResults(e) {
         $("#dropdownMenu").dropdown("toggle");
     $("#suggestions").html('<ul id="selectedCollege"><li class="dropdown-header">' + $("#dropdownMenu:first-child").val() + '</li></ul><ul id="currentCampus"><li class="dropdown-header">' + _currentCampus + ' campus</li></ul><ul id="bothellCampus"><li class="dropdown-header">Bothell campus</li></ul><ul id="seattleCampus"><li class="dropdown-header">Seattle campus</li></ul><ul id="tacomaCampus"><li class="dropdown-header">Tacoma campus</li></ul>');
     //If a college is selected from the dropdown menu or text has been entered in the input field
+    //if college selected, should show everything in college AND current selections
     if ($("#dropdownMenu:first-child").val() != "All" || $("#search").val().length > 0) {
-        console.log('prep1')
+        console.log('prep1');
         displayResults();
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
-        console.log('prep2')
+        console.log('prep2');
         showCurrentSelections();
     } else { //Nothing to display
         console.log('prep')
@@ -345,7 +346,7 @@ function populateCollegeDropdown() {
         }
         colleges.sort();
         for (var col in colleges) {
-            $("#college-dropdown .dropdown-menu").append('<li><a href="#">' + colleges[col] + '</a></li>');
+            $("#college-dropdown .dropdown-menu").append('<li><a href="#" class="' + campuses[c] + '">' + colleges[col] + '</a></li>');
         }
 
     }
@@ -354,6 +355,7 @@ function populateCollegeDropdown() {
     $("#college-dropdown .dropdown-menu li a").click(function(){
         $("#dropdownMenu:first-child").html('<span id="college-selection">' + $(this).text()  + ' </span><span class="caret"></span>');
         $("#dropdownMenu:first-child").val($(this).text());
+        $("#dropdownMenu:first-child").attr("data-campus", $(this).attr("class"));
         toggleGo();
     });
 
