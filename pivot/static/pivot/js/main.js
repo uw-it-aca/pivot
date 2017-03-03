@@ -287,11 +287,12 @@ function prepareResults(e) {
         current_campus: _currentCampus
     }));
     //If a college is selected from the dropdown menu or text has been entered in the input field
+    //if college selected, should show everything in college AND current selections
     if ($("#dropdownMenu:first-child").val() != "All" || $("#search").val().length > 0) {
-        console.log('prep1')
+        console.log('prep1');
         displayResults();
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
-        console.log('prep2')
+        console.log('prep2');
         showCurrentSelections();
     } else { //Nothing to display
         console.log('prep')
@@ -409,6 +410,7 @@ function populateCollegeDropdown() {
         var selection_template = Handlebars.compile(selection_source);
         $("#dropdownMenu:first-child").html(selection_template({college_selection: $(this).text()}));
         $("#dropdownMenu:first-child").val($(this).text());
+        $("#dropdownMenu:first-child").attr("data-campus", $(this).attr("class"));
         toggleGo();
     });
 
