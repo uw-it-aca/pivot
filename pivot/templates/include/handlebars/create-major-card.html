@@ -1,0 +1,11 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "create-major-card" %}
+
+<div class='major-card row' id='{{ id }}'>
+    <div class='card-heading col-xs-12 col-md-4'>
+        <p class='college-heading'>{{ college }} - {{ campus }}</p>
+        <h3 class='major-heading row'>{{{ major_status_url }}}<br/>{{{ major_status_icon }}}</h3>
+    </div>
+</div>
+
+{% endtplhandlebars %}

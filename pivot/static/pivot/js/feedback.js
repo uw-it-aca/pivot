@@ -5,19 +5,28 @@
 //feedbackForm
 $("#feedbackForm").submit(function(event) {
     // Stop the browser from submitting the form.
-   event.preventDefault();
+    event.preventDefault();
     var formData = $("#feedbackForm").serialize();
     formData += "&_cc=lyle3@uw.edu";
+    // Compile the feedback template
+    var source = $("#feedback").html();
+    var template = Handlebars.compile(source);
     $.ajax({
         type: 'POST',
-        url: 'https://formspree.io/abievans@uw.edu',//$("#feedbackForm").attr('action'),
+        url: 'https://formspree.io/abievans@uw.edu', //$("#feedbackForm").attr('action'),
         data: formData,
         dataType: "json"
     }).done(function(response) {
-        $("#returnMessage").html('<div class="alert alert-success">Message sent!</div>');
         $("#senderEmail").val('');
         $("#message").val('');
+        $("#returnMessage").html(template({
+            message_type: "alert-success",
+            message: "Message sent!"
+        }));
     }).fail(function(data) {
-        $("#returnMessage").html('<div class="alert alert-danger">Message could not be sent! Please email lyle3@uw.edu directly.</div>');
+        $("#returnMessage").html(template({
+            message_type: "alert-danger",
+            message: "Message could not be sent! Please email lyle3@uw.edu directly."
+        }));
     });
 });
