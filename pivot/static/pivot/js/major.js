@@ -538,8 +538,8 @@ function validateGPA() {
     if (isNaN($("#compare").val()) || $("#compare").val() > 4 || $("#compare").val() < 1.5) {
         var source = $("#validate-gpa").html();
         var template = Handlebars.compile(source);
-        //showGPA(null);
-        $(".myGPA, #gpaLabel").remove();
+        showGPA(null);
+        //$(".myGPA, #gpaLabel").remove();
         $("#compare").focus();
         $("#compare-msg").html(template({}));
     } else {
