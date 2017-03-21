@@ -1,0 +1,15 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "no-results-college" %}
+
+<p>
+    <b>Can't find keyword "{{ search }}" in {{ college }}.</b>
+</p>
+<p>
+    Check your spelling or select "All" from the dropdown menu.
+    Refer to the list of undergraduate majors in
+    <a href='http://www.washington.edu/uaa/advising/academic-planning/majors-and-minors/list-of-undergraduate-majors/' target='_blank'>Seattle</a>,
+    <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>, and
+    <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.
+</p>
+
+{% endtplhandlebars %}

@@ -1,0 +1,11 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "major-display-results" %}
+
+<li class='suggested_major'>
+    <a href='#'>
+        <input type='checkbox' {{ status }}/>
+        &nbsp;{{{ data }}}
+    </a>
+</li>
+
+{% endtplhandlebars %}
