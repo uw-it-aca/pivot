@@ -268,6 +268,9 @@ function init_search_events() {
                     $("a:focus").parent("li").parent("ul").prev().children("li").children("a").last().focus();
                 else ($("#suggestions a").last().focus());
             }
+        } else if (e.which == 32) { //select with space key
+            e.preventDefault();
+            $("a:focus").trigger("click");
         }
     });
 }
@@ -289,13 +292,10 @@ function prepareResults(e) {
     //If a college is selected from the dropdown menu or text has been entered in the input field
     //if college selected, should show everything in college AND current selections
     if ($("#dropdownMenu:first-child").val() != "All" || $("#search").val().length > 0) {
-        console.log('prep1');
         displayResults();
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
-        console.log('prep2');
         showCurrentSelections();
     } else { //Nothing to display
-        console.log('prep')
         $("#suggestions").css("display","none");
     }
     toggleGo(); //Update the "go" button display

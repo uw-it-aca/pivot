@@ -125,7 +125,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover").attr("tabindex",i).attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover").attr("tabindex",i).attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
     //draw the axes
     svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text")
@@ -138,7 +138,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
             $(this).hide();
         }
     });
-    addPopover(majorId);
+    addPopover(majorId, y(median));
 }
 
 //Draw line representing user-entered GPA
@@ -167,22 +167,31 @@ function storeSelections(majors, gpa) {
 
 
 //Initializes the popover for a boxplot
-function addPopover(id) {
+function addPopover(id, med) {
     // Compile the Handlebars template
     var source = $("#add-popover").html();
     var template = Handlebars.compile(source);
 
-    $("#" + id + " .boxPopover").attr("data-content", template({
+    $("#" + id + " .boxPopover").popover({
+        trigger: "manual",
+        placement: "top",
+        html: true,
+        content: template({
         lower_quartile: round(Number($("#" + id + " .boxLQ").attr("data")),2),
         median: round(Number($("#" + id + " .median").attr("data")),2),
         upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2)
-    }));
-
-    $("#" + id + " .boxPopover").popover({
-        trigger: "hover click",
-        placement: "top",
-        html: true,
+            }),
         container: "#" + id
+    });
+    
+    $("#" + id + " .boxPopover").focusin(function() {
+        $(this).popover("show");
+        $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
+        //console.log();
+    });
+    
+    $("#" + id + " .boxPopover").focusout(function() {
+        $(this).popover("hide");
     });
 }
 
@@ -307,7 +316,6 @@ function showCurrentSelections() {
     var template = Handlebars.compile(source);
 
     $("#suggestions").css("display","block");
-    console.log("SHOW CURRENT SELECTIONS");
     $(".chosen_major").each(function() {
         var appendTo = "";
         if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[$(this).text()]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
@@ -426,6 +434,11 @@ $("html").click(function (e) {
     if ($("#suggestions").css("display") == "block" && !$(e.target).parents('div#suggestions').length && e.target.getAttribute("id") != 'search') {
        hideSearchSuggestions();
    }
+});
+//hides search results and clears input when user presses the esc key
+$("html").keydown(function (e) {
+    if (e.which == 27)
+        hideSearchSuggestions();
 });
 
 //hides search results and clears input

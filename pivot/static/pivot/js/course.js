@@ -197,6 +197,11 @@ $("html").click(function (e) {
        closeSuggestions();
    }
 });
+//hides search results and clears input when user presses the esc key
+$("html").keydown(function (e) {
+    if (e.which == 27)
+        closeSuggestions();
+});
 
 /**** SHOW COURSE DATA ****/
 //Creates and displays the course data
