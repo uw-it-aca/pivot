@@ -296,7 +296,6 @@ function prepareResults(e) {
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
         showCurrentSelections();
     } else { //Nothing to display
-        console.log('prep')
         $("#suggestions").css("display","none");
     }
     toggleGo(); //Update the "go" button display
