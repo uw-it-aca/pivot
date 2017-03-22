@@ -307,7 +307,6 @@ function showCurrentSelections() {
     var template = Handlebars.compile(source);
 
     $("#suggestions").css("display","block");
-    console.log("SHOW CURRENT SELECTIONS");
     $(".chosen_major").each(function() {
         var appendTo = "";
         if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[$(this).text()]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
