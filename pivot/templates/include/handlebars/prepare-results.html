@@ -1,0 +1,20 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "prepare-results" %}
+
+<ul id="selectedCollege">
+    <li class="dropdown-header">{{ selected_campus }}</li>
+</ul>
+<ul id="currentCampus">
+    <li class="dropdown-header">{{ current_campus }} campus</li>
+</ul>
+<ul id="bothellCampus">
+    <li class="dropdown-header">Bothell campus</li>
+</ul>
+<ul id="seattleCampus">
+    <li class="dropdown-header">Seattle campus</li>
+</ul>
+<ul id="tacomaCampus">
+    <li class="dropdown-header">Tacoma campus</li>
+</ul>
+
+{% endtplhandlebars %}
