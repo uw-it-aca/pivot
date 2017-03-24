@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block web_content %}
-<div class="page-wrap"> <!-- another wrap to make a sticky footer -->
+
 <!-- MAIN CONTENT BELOW THE BANNER -->
-  	<div class="container" role="main">
-		<section class="main-content">  <!-- //NFS: UNSURE NEED A SECTION OF NOT// -->
+  	<main class="container" role="main">
+		<div class="main-content"> 
 		    <h1 class="page-title">View Course GPAs</h1>
 		    <section>
 			    <div class="panel panel-default search-box">
@@ -71,7 +71,7 @@
 				</div> <!-- end of .panel panel-default --> 
 		    </section>
 		
-		</section>	<!-- end of main -->
+		</div>	<!-- end of main -->
 	
-	</div>  <!-- end of main container -->
+	</main>  <!-- end of main container -->
 {% endblock %}
