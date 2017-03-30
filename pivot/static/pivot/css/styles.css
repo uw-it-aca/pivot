@@ -620,11 +620,13 @@ html, body {
     margin:12px 12px 0px 12px;
 }
 
+p.college-heading{
+	margin-left: auto;
+}
+
 .major-heading {
     font-weight: bold;
     margin-bottom: 12px;
-    margin-left: 12px;
-    font-size: 1.5em;
 }
 
 .major-gpa-line {

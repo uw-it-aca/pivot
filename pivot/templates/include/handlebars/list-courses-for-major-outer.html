@@ -20,6 +20,7 @@
 	    <caption class="sr-only">Most commonly taken courses among {{{ major_status_url }}} students</caption>
         <thead>
             <tr>
+                <th scope="col" class="sr-only">courses</th>
                 <th scope="col">
                     <p class='data-heading'>%
                         <a class='inlineHelp' id='percentHelp' tabindex='0' role='button' aria-label='Show info about the percent' data-toggle='popover' data-trigger='focus' data-content=''>
@@ -46,6 +47,7 @@
             <!-- Inner table data goes here-->
             {{ #each inner_table_data }}
             <tr>
+	            <th scope="row" class="sr-only">{{ dept_abbrev }} {{ course_number }}</th>
                 {{ #with this }}
                 <td>
                     <p>{{ popularity }}</p>
