@@ -641,6 +641,7 @@ html, body {
 .major-heading-course {
 margin-left: -5px;
 margin-bottom: 2px;
+font-size: 1.75em;
 }
 
 /* course code  */
@@ -671,6 +672,7 @@ p.course-table-row {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
+	padding-top:10px;
 }
 
 .course-link {
