@@ -4,14 +4,14 @@
 <div class='median-box col-xs-3 col-md-2'>
     <!--Check if i is one-->
     {{ #if i }}
-    <p class='data-heading'>Median GPA
+    <div class='data-heading'><p>Median GPA
         <a class='inlineHelp' id='medianHelp' tabindex='0' role='button' aria-label='Info about median GPA' data-toggle='popover' data-trigger='focus' data-content=''>
             <span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span>
-        </a>
-    </p>
+        </a></p>
+    </div>
     {{ /if }}
     <!--end of check-->
-    <p class='median-value'>{{ display_median }}</p>
+    <h4 class='median-value'>{{ display_median }}</h4>
 </div>
 <div class='data-display col-xs-9 col-md-6'>
     <!--Check if i is one-->
