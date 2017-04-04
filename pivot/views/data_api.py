@@ -31,4 +31,4 @@ class StudentData(DataFileView):
 
 
 class StatusLookup(DataFileView):
-    file_name = "status-lookup-2016-12.csv"
+    file_name = "status-lookup-2017-04.csv"
