@@ -47,7 +47,7 @@
             <!-- Inner table data goes here-->
             {{ #each inner_table_data }}
             <tr>
-	            <th scope="row" class="sr-only">{{ dept_abbrev }} {{ course_number }}</th>
+	            <th scope="row"><h3 class="sr-only">{{ dept_abbrev }} {{ course_number }}</h3></th>
                 {{ #with this }}
                 <td>
                     <p>{{ popularity }}</p>
@@ -59,7 +59,7 @@
                     <p>{{ course_long_name }}</p>
                 </td>
                 <td>
-                    <p class='course-median course-table-row {{ col }}'>{{ percentile }}</p>
+                    <h4 class='course-median course-table-row {{ col }}'>{{ percentile }}</h4>
                 </td>
                 {{ /with }}
             </tr>
