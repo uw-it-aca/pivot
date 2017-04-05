@@ -394,12 +394,16 @@ sup {
 }
 
 #status-legend {
+    display: block;
     float:right;
-    margin-top:1.8em;
+    clear: both;
+    margin-top:1em;
+    font-size: .9em;
 }
 
 .major-status-icon {
     margin-left:1em;
+    line-height: 4em;
 }
 
 .faq-q {
@@ -735,6 +739,7 @@ p.course-table-row {
 	/*margin-left: -15px;
 	margin-top: 0px;
 	margin-right: -15px;*/
+    clear: both;
     margin:0px 0px 0px 0px;
 	border-radius: 4px 4px 0 0 ;
 	background: #f7f7f7;
