@@ -336,6 +336,7 @@ fieldset[disabled] .btn-GPS-primary.active {
 
 .main-content {
 	margin: 40px 0px;
+	min-height: 100%;
 }
 
 .page-title {
