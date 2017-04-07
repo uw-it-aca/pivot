@@ -183,13 +183,13 @@ function addPopover(id, med) {
             }),
         container: "#" + id
     });
-    
+
     $("#" + id + " .boxPopover").focusin(function() {
         $(this).popover("show");
         $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
         //console.log();
     });
-    
+
     $("#" + id + " .boxPopover").focusout(function() {
         $(this).popover("hide");
     });
@@ -584,5 +584,7 @@ $("#clear_majors").click(function(e) {
     $("input#search").val("");
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
+    // Displays the sample data image
+    // $(".sample-data").css("display", "block");
     storeSelections(null);
 });
