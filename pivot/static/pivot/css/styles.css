@@ -60,7 +60,6 @@ html, body {
     margin:0;
     height: 100%;
    /* font-size: 100%;*/
-    line-height: 1;
 }
 p {
    margin: 0;
@@ -396,6 +395,7 @@ sup {
   top: -1.7em;
   font-size: .3em;
   padding-left: 5px;
+  color:#f7b670;
 }
 
 
@@ -662,6 +662,7 @@ shape-rendering: crispEdges;
 
 p.college-heading{
 	margin-left: auto;
+	font-size: 16px;
 }
 
 .major-heading {
@@ -694,7 +695,7 @@ font-size: 1.75em;
 /* Tweaking the padding for the bar graph on course page */
 
 .course-median {
-	padding-left: 5px;
+	padding-top: 7px;
 	text-align: center;
 	font-weight: bold;
 	font-size: medium;
@@ -707,7 +708,7 @@ p.course-table-row {
 }
 
 .data-heading {
-	color: #777;
+	color: #333;
 	font-size: .9em;
 }
 .median-value {
