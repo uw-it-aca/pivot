@@ -372,9 +372,7 @@ sup {
 
 /*placeholder image on major & course pages*/
 .sample-data {
-    /*display:none;*/
-    pointer-events: none;
-    opacity: 0.4;  
+    display:none;
 }
 
 /* Placing contnet slots temporarily */

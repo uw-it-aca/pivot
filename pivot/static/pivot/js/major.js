@@ -4,10 +4,11 @@
 //If majors were already loaded (this session), automatically load them again
 function checkStoredData() {
     //Check for stored major selections and gpa
-    if (sessionStorage.getItem("majors")) {
+    if (sessionStorage.length > 0 && sessionStorage.getItem("majors") != "null") {
         var majors = JSON.parse(sessionStorage.getItem("majors"));
         //GPA previously entered by user in compare gpa module
         var gpa = sessionStorage.getItem("gpa");
+        gpa = gpa == "null" ? null : gpa;
         // Compile the Handlebars template
         var source = $("#update-events").html();
         var template = Handlebars.compile(source);
@@ -16,9 +17,10 @@ function checkStoredData() {
         for (var m in majors)
             $(".selected").append(template({chosen: majors[m]}));
         //Populate data table
-        if (majors != null)
-            createMajorCard(majors, gpa = gpa == "null" ? null:gpa);
-    } else $(".sample-data").css("display","block");
+        createMajorCard(majors, gpa);
+    } else {
+        $(".sample-data").css("display","block");
+    }
 }
 
 /**** DISPLAY DATA FOR SELECTED MAJOR(S) ****/
@@ -424,8 +426,13 @@ function updateEvents() {
         clearTimeout(_timer);
         _timer = setTimeout(hideSearchSuggestions, 3000);
 
-        //Draw data table(s)
-        createMajorCard(list, $("#compare").val());
+        // Draw data table(s) if list is not empty otherwise clear
+        // the table
+        if(list.length > 0) {
+            createMajorCard(list, $("#compare").val());
+        } else {
+            clear_results();
+        }
     });
 }
 
@@ -571,12 +578,7 @@ function showGPA(gpa) {
     createMajorCard(list,gpa);
 }
 
-/**** MISC ****/
-//redraw data table if window is resized
-d3.select(window).on('resize', resizeCharts);
-
-//Clears all data
-$("#clear_majors").click(function(e) {
+function clear_results() {
     $("#clear_majors").css("display","none");
     $(".chosen_major").remove();
     $(".no-results-warning").css("display","none");
@@ -584,7 +586,13 @@ $("#clear_majors").click(function(e) {
     $("input#search").val("");
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
-    // Displays the sample data image
-    // $(".sample-data").css("display", "block");
-    storeSelections(null);
-});
+    $(".results-section").css("display","none");
+    storeSelections(null, null);
+}
+
+/**** MISC ****/
+//redraw data table if window is resized
+d3.select(window).on('resize', resizeCharts);
+
+//Clears all data
+$("#clear_majors").on("click", clear_results);
