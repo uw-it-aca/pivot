@@ -106,8 +106,8 @@ h2 {
 }
 /* compensate 'Row' margin*/
 .course-h2 {
-	margin-left: 14px;
-}
+	margin-left: 5px;
+} 
 
 /* Hyperlink style:*/
 a, a:hover {
