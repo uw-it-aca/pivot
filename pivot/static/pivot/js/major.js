@@ -193,7 +193,7 @@ function addPopover(id, med) {
     });
 
     $("#" + id + " .boxPopover").focusout(function() {
-        $(this).popover("hide");
+       $(this).popover("hide"); 
     });
 }
 
