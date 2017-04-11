@@ -4,16 +4,16 @@
 
 <!-- MAIN CONTENT BELOW THE BANNER -->
   	<main class="container" role="main">
-		<div class="main-content"> 
+		<div class="main-content">
 		    <h1 class="page-title">View Course GPAs</h1>
 		    <section>
 			    <div class="panel panel-default search-box">
 				  <div class="panel-body">
                       <div class="container" role="search">
-				   
+
 					<div class="row no-gutters">
                       <p class="search-text">Enter a major name to view most commonly taken courses among declared students.</p>
-                          
+
                         <div class="col-xs-12 col-sm-2"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
                             <div class="form-group">
                                 <!-- college search: button and ul tags create dropdown -->
@@ -31,7 +31,7 @@
                         <div class="col-xs-12 col-sm-5"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
                             <div class="form-group">
                                 <!-- major search -->
-                                <label for="search" class="sr-only">Enter a major name to look up</label> 
+                                <label for="search" class="sr-only">Enter a major name to look up</label>
                                 <input id="search" class="form-control" type="text" name="searchQuery" value="" size="30" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Computer Science, Art History" autocomplete="off"/><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
 					            <!-- search results go in #suggestions -->
 					            <div id="suggestions"></div>
@@ -54,24 +54,25 @@
             <!-- placeholder for 0 results warning -->
             <section class='no-results-warning'>
             </section>
-    <!-- Sample data placeholder -->	
-    		<section class="sample-data"><img src="{% static "pivot/img/sample-courseGPA.png" %}" alt="a sample course GPAs list - informatics" width="743px" height="666px">
+    <!-- Sample data placeholder -->
+    		<section class="sample-data">
+                <img src="{% static "pivot/img/sample-courseGPA.png" %}" alt="a sample course GPAs list - informatics" width="743px" height="666px">
 	    	</section><!-- end of sample data placeholder -->
-	<!-- DISPLAY DATA -->	
+	<!-- DISPLAY DATA -->
 		    <section class="results-section">
-				<h2>Most commonly taken courses among students who declared</h2>   
+				<h2>Most commonly taken courses among students who declared</h2>
 				<div>
 				  <div class="panel-body major-data-look">
-				  
+
 				<!-- data display in #courselist -->
 			        <div id="courselist"></div>
-			        
-				  
+
+
 				  </div> <!-- end of .panel-body major-data-look -->
-				</div> <!-- end of .panel panel-default --> 
+				</div> <!-- end of .panel panel-default -->
 		    </section>
-		
+
 		</div>	<!-- end of main -->
-	
+
 	</main>  <!-- end of main container -->
 {% endblock %}
