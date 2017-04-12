@@ -1,6 +1,6 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "no-results" %}
-
+<div class="no-results-warning alert alert-info" role="alert" aria-atomic="true">
 <p>
     <b>Can't find keyword {{ search }} in UW major list.</b>
 </p>
@@ -9,5 +9,5 @@
     <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>,
     and <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.
 </p>
-
+</div>
 {% endtplhandlebars %}

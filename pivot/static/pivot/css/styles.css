@@ -50,8 +50,30 @@
 /* ++++++++++++++++++++++++++ GLOBAL ELEMENTS ++++++++++++++++++++++++++ */
 /* color: #cc721e; orange */
 /* color: #f7b670;  lite orange */
-/* color:#4b2e83;  UW Purple * /
+/* color:#4b2e83;  UW Purple */
 
+/*********** Global Reset ***********/
+
+html, body {
+    font-family: 'Open Sans', Helvetica, arial, san-serif;
+    padding:0;
+    margin:0;
+    height: 100%;
+   /* font-size: 100%;*/
+}
+p {
+   margin: 0;
+   padding: 0;
+   line-height: 1.45em;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section {
+  display: block;
+} 
+img {
+   border: 0;
+   max-width: 100%;
+   height: auto;
+}
 /*********** Spacing ***********/
 
 /* align center */
@@ -84,6 +106,10 @@ h2 {
   margin-top: 1em;
   margin-bottom: 10px;
 }
+/* compensate 'Row' margin*/
+.course-h2 {
+	margin-left: 5px;
+} 
 
 /* Hyperlink style:*/
 a, a:hover {
@@ -99,6 +125,26 @@ a.no-hover:hover, a.no-hover:focus {
     text-decoration: none;
     border:none;
 }
+/* Skip to #main-content button at top */
+a.skip-to-main {
+	position: absolute;
+	left:.5em;
+	top:-99px;	
+}
+a.skip-to-main:focus {
+	z-index: 999;
+	font-size: 1em;
+	font-weight: 800;
+	text-decoration: none;
+	top: 6px;
+    padding: 15px 23px 14px;
+    background-color: #f1f1f1;
+    color: #4b2e83;
+    box-shadow: 0 0 2px 2px rgba(0,0,0,.6);
+}
+
+
+}/* CLEAN UP: WHERE'S THE OPENING?*/
 
 /* Remove bold from the form */
 label{
@@ -278,7 +324,10 @@ fieldset[disabled] .btn-GPS-primary.active {
   background-image: none;
   color: #777;
 }
-
+/*   Override bootstrap color   */
+.btn-link{
+	color:#2e78b6;
+}
 /*   Buttons   */
 .compare-gpa {
 	margin-left: 10px;
@@ -336,6 +385,7 @@ fieldset[disabled] .btn-GPS-primary.active {
 
 .main-content {
 	margin: 40px 0px;
+	min-height: 100%;
 }
 
 .page-title {
@@ -354,6 +404,7 @@ sup {
   top: -1.7em;
   font-size: .3em;
   padding-left: 5px;
+  color:#f7b670;
 }
 
 
@@ -394,12 +445,16 @@ sup {
 }
 
 #status-legend {
+    display: block;
     float:right;
-    margin-top:1.8em;
+    clear: both;
+    margin-top:1em;
+    font-size: .9em;
 }
 
 .major-status-icon {
     margin-left:1em;
+    line-height: 4em;
 }
 
 .faq-q {
@@ -525,7 +580,6 @@ fill: #7C89A4;
     float:left;
     margin-top:5px;
     margin-right:5px;
-    margin-bottom: 10px;
 }
 
 .LQ {
@@ -573,12 +627,6 @@ shape-rendering: crispEdges;
 
 /***** EVERYTHING ELSE *****/
 
-html, body {
-    font-family: 'Open Sans', Helvetica, arial, san-serif;
-    padding:0;
-    margin:0;
-    height: 100%;
-}
 
 /* may not be needed once Bootstrap is in use */
 #boxplots {
@@ -621,9 +669,13 @@ html, body {
 }
 
 p.college-heading{
-	margin-left: auto;
+	font-size: 16px;
+	margin-left: 0px;
 }
 
+.link-arrow{
+	font-size: .8em;
+}
 .major-heading {
     font-weight: bold;
     margin-bottom: 12px;
@@ -654,7 +706,7 @@ font-size: 1.75em;
 /* Tweaking the padding for the bar graph on course page */
 
 .course-median {
-	padding-left: 5px;
+	padding-top: 7px;
 	text-align: center;
 	font-weight: bold;
 	font-size: medium;
@@ -667,7 +719,7 @@ p.course-table-row {
 }
 
 .data-heading {
-	color: #777;
+	color: #333;
 	font-size: .9em;
 }
 .median-value {
@@ -735,6 +787,7 @@ p.course-table-row {
 	/*margin-left: -15px;
 	margin-top: 0px;
 	margin-right: -15px;*/
+    clear: both;
     margin:0px 0px 0px 0px;
 	border-radius: 4px 4px 0 0 ;
 	background: #f7f7f7;
