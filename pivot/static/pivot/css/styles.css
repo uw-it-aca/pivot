@@ -71,6 +71,8 @@ article, aside, details, figcaption, figure, footer, header, hgroup, main, menu,
 } 
 img {
    border: 0;
+   max-width: 100%;
+   height: auto;
 }
 /*********** Spacing ***********/
 
