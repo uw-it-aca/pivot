@@ -4,7 +4,7 @@
 //If majors were already loaded (this session), automatically load them again
 function checkStoredData() {
     //Check for stored major selections and gpa
-    if (sessionStorage.length > 0 && sessionStorage.getItem("majors") != "null") {
+    if (sessionStorage.length > 0 && sessionStorage.getItem("majors") != null && sessionStorage.getItem("majors") != "null") {
         var majors = JSON.parse(sessionStorage.getItem("majors"));
         //GPA previously entered by user in compare gpa module
         var gpa = sessionStorage.getItem("gpa");
