@@ -6,7 +6,7 @@ function checkStoredData() {
     var paramCode = getParameterByName("code");
     if (paramCode != null) {
         listCoursesForMajor(paramCode.replace("_", " "));
-    } else if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != "null") {
+    } else if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != null && sessionStorage.getItem("courses") != "null") {
         listCoursesForMajor(sessionStorage.getItem("courses"));
     } else {
         $(".sample-data").css("display","block");
