@@ -4,11 +4,13 @@
 //If major was already loaded (this session), automatically load it again
 function checkStoredData() {
     var paramCode = getParameterByName("code");
-    if (sessionStorage.getItem("courses") != null && paramCode == null) {
-        listCoursesForMajor(sessionStorage.getItem("courses"));
-    } else if (paramCode != null) {
+    if (paramCode != null) {
         listCoursesForMajor(paramCode.replace("_", " "));
-    } else $(".sample-data").css("display","block");
+    } else if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != null && sessionStorage.getItem("courses") != "null") {
+        listCoursesForMajor(sessionStorage.getItem("courses"));
+    } else {
+        $(".sample-data").css("display","block");
+    }
 }
 
 /***SEARCH***/
@@ -207,7 +209,7 @@ $("html").keydown(function (e) {
 //Creates and displays the course data
 function listCoursesForMajor(maj) {
     //updates the session storage for selected major
-    sessionStorage.setItem("courses", maj);
+    storeSelections(maj);
 
     //Hide sample data, replace other major data, clear any warnings
     $(".sample-data").css("display","none");
@@ -277,13 +279,20 @@ function listCoursesForMajor(maj) {
     $("#loadingModal").modal('hide');
 }
 
+// Stores courses in sessionStorage to pass between pages
+function storeSelections(courses) {
+    sessionStorage.setItem("courses", courses);
+}
+
 //Clears all data
-$("#clear_majors").click(function(e) {
+$("#clear_majors").on("click", function(e) {
     $("#clear_majors").css("display","none");
     $(".chosen_major").remove();
     $(".no-results-warning").css("display","none");
     $("input#search").val("");
     $("#courselist").html("");
+    $(".results-section").css("display", "none");
+    storeSelections(null);
 });
 
 //returns the ColorBrewer bucket index for the given GPA

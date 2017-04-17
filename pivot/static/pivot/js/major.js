@@ -4,10 +4,11 @@
 //If majors were already loaded (this session), automatically load them again
 function checkStoredData() {
     //Check for stored major selections and gpa
-    if (sessionStorage.getItem("majors")) {
+    if (sessionStorage.length > 0 && sessionStorage.getItem("majors") != null && sessionStorage.getItem("majors") != "null") {
         var majors = JSON.parse(sessionStorage.getItem("majors"));
         //GPA previously entered by user in compare gpa module
         var gpa = sessionStorage.getItem("gpa");
+        gpa = gpa == "null" ? null : gpa;
         // Compile the Handlebars template
         var source = $("#update-events").html();
         var template = Handlebars.compile(source);
@@ -16,9 +17,10 @@ function checkStoredData() {
         for (var m in majors)
             $(".selected").append(template({chosen: majors[m]}));
         //Populate data table
-        if (majors != null)
-            createMajorCard(majors, gpa = gpa == "null" ? null:gpa);
-    } else $(".sample-data").css("display","block");
+        createMajorCard(majors, gpa);
+    } else {
+        $(".sample-data").css("display","block");
+    }
 }
 
 /**** DISPLAY DATA FOR SELECTED MAJOR(S) ****/
@@ -116,7 +118,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var width = $(".data-display").width();
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
-    var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
+    var svg = d3.select("#" + majorId + " .data-display").append("h4").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
 
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
@@ -125,7 +127,9 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
+
     svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+
 
     //draw the axes
     svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text")
@@ -183,15 +187,15 @@ function addPopover(id, med) {
             }),
         container: "#" + id
     });
-    
+
     $("#" + id + " .boxPopover").focusin(function() {
         $(this).popover("show");
         $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
         //console.log();
     });
-    
+
     $("#" + id + " .boxPopover").focusout(function() {
-        $(this).popover("hide");
+       $(this).popover("hide"); 
     });
 }
 
@@ -424,8 +428,13 @@ function updateEvents() {
         clearTimeout(_timer);
         _timer = setTimeout(hideSearchSuggestions, 3000);
 
-        //Draw data table(s)
-        createMajorCard(list, $("#compare").val());
+        // Draw data table(s) if list is not empty otherwise clear
+        // the table
+        if(list.length > 0) {
+            createMajorCard(list, $("#compare").val());
+        } else {
+            clear_results();
+        }
     });
 }
 
@@ -571,12 +580,7 @@ function showGPA(gpa) {
     createMajorCard(list,gpa);
 }
 
-/**** MISC ****/
-//redraw data table if window is resized
-d3.select(window).on('resize', resizeCharts);
-
-//Clears all data
-$("#clear_majors").click(function(e) {
+function clear_results() {
     $("#clear_majors").css("display","none");
     $(".chosen_major").remove();
     $(".no-results-warning").css("display","none");
@@ -584,5 +588,13 @@ $("#clear_majors").click(function(e) {
     $("input#search").val("");
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
-    storeSelections(null);
-});
+    $(".results-section").css("display","none");
+    storeSelections(null, null);
+}
+
+/**** MISC ****/
+//redraw data table if window is resized
+d3.select(window).on('resize', resizeCharts);
+
+//Clears all data
+$("#clear_majors").on("click", clear_results);
