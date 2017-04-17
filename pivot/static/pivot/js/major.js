@@ -117,7 +117,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
     var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
-
+    
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
     var yAxis = d3.svg.axis().scale(y).orient("left");
@@ -137,7 +137,12 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
         if ($(this).text().indexOf(".5") > 0) {
             $(this).hide();
         }
+        $(this).attr("aria-hidden", true);
     });
+    
+    //Add numbers for screen reader
+    $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
+    
     addPopover(majorId, y(median));
 }
 
