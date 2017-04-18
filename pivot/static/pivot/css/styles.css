@@ -723,12 +723,14 @@ p.course-table-row {
 .data-heading {
 	color: #333;
 	font-size: .9em;
+	margin-left: -10px;
 }
 .median-value {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
 	padding-top:10px;
+	margin-left: -15px;
 }
 
 .course-link {
@@ -977,6 +979,10 @@ ul {
 .form-control {
 	display: inline;
 	width: 110px;
+}
+/* Setting left for mobile */
+.yourgpa { 
+	padding-left: 15px;
 }
 
 } /* end of small screen style */
