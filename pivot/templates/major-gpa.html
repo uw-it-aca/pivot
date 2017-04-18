@@ -3,21 +3,25 @@
 {% block web_content %}
 
   	<main class="container" role="main">
-		<div class="main-content">  
+
+		<div class="main-content" id="maincontent">  
+
 		    <h1 class="page-title">View Major GPAs</h1>
 		    <section>
 			    <div class="panel panel-default search-box">
 				  <div class="panel-body">
-                      <div class="container" role="search">
+
+                      <div class="container">
 				   
-					<div class="row no-gutters">
+					  	<div class="row no-gutters" role="search">
+
                       <p class="search-text">Select a college to view all of its majors OR enter the name of a major to view its median GPA.</p>
-                          
+
                         <div class="col-xs-12 col-sm-2"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
                             <div class="form-group">
                                 <!-- college search: button and ul tags create dropdown -->
                                 <div class="btn-group" id="college-dropdown" style="width:100%">
-                                    <button class="btn btn-default" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width:100%;text-align:left;">
+                                    <button class="btn btn-default" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width:100%;text-align:left;" label="College" aria-label='college'>
                                     All
                                     <span class="caret"></span>
                                     </button>
@@ -30,7 +34,7 @@
                         <div class="col-xs-12 col-sm-5"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
                             <div class="form-group">
                                 <!-- major search -->
-                                <label for="search" class="sr-only" >Enter a major name to look up</label> 
+                                <label for="search" class="sr-only" >Enter a major name to look up</label>
                                 <input id="search" class="form-control" type="text" name="searchQuery" value="" size="30" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Computer Science, Art History" autocomplete="off"/><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
 					            <!-- search results go in #suggestions -->
 					            <div id="suggestions"></div>
@@ -41,8 +45,8 @@
                         <div class="col-xs-12 col-sm-4"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
                             <div class="form-group no-btm-margin">
                                 <!-- search buttons -->
-                                <button class="btn btn-GPS-primary disabled" type="submit" id="goBtn">Go</button>
-					            <button type="button" class="btn btn-link" id="clear_majors">Clear selections</button>
+                                <button class="btn btn-GPS-primary disabled" type="submit" id="goBtn" label="">Go</button>
+					            <button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button>
                             </div>
                         </div>
                           </div><!-- end of .row -->
@@ -53,27 +57,28 @@
            <!-- placeholder for 0 results warning -->
             <div class='no-results-warning'>
             </div>
-    <!-- Sample data placeholder -->	
-    		<section class="sample-data"><img src="{% static "pivot/img/sample-majorGPA.png" %}" alt="Sample major data - informatics" width="743px" height="666px">
+    <!-- Sample data placeholder -->
+    		<section class="sample-data">
+                <img src="{% static "pivot/img/sample-majorGPA.png" %}" alt="Sample major data - informatics" width="743px" height="666px">
 	    	</section><!-- end of sample data placeholder -->
-	<!-- DISPLAY DATA -->	
-		    <section class="results-section"> 
-				<div class="panel-default"> 
+	<!-- DISPLAY DATA -->
+		    <section class="results-section">
+				<div class="panel-default">
 				  <div class="panel-body major-data-look">
 				    <div class="row" id="header-row">
                         <h2> Showing median cumulative GPAs of ...</h2>
-                          <div id="status-legend"><small><span class="major-status-icon"><img src="{% static "pivot/img/major_open.gif" %}" alt="Open admission icon"/> open</span><span class="major-status-icon"><img src="{% static "pivot/img/major_capacity-constrained.gif" %}" alt="Capacity-constrained admission icon"/> capacity-constrained</span><span class="major-status-icon"><img src="{% static "pivot/img/major_minimum.gif" %}" alt="Minimum admission icon"/> minimum</span><span class="major-status-icon"><img src="{% static "pivot/img/major_mixed.gif" %}" alt="Mixed admission icon"/> mixed</span></small></div>
+                          <div id="status-legend" aria-hidden="true"><span class="major-status-icon"><img src="{% static "pivot/img/major_open.gif" %}" alt="Open admission icon"/> open</span><span class="major-status-icon"><img src="{% static "pivot/img/major_capacity-constrained.gif" %}" alt="Capacity-constrained admission icon"/> capacity-constrained</span><span class="major-status-icon"><img src="{% static "pivot/img/major_minimum.gif" %}" alt="Minimum admission icon"/> minimum</span><span class="major-status-icon"><img src="{% static "pivot/img/major_mixed.gif" %}" alt="Mixed admission icon"/> mixed</span></div>
                     </div>
 				<!-- data display in #boxplots -->
 			        <div id="boxplots"></div>
-			        
-				  
+
+
 				  </div> <!-- end of .panel-body major-data-look -->
-				</div> <!-- end of .panel panel-default --> 
+				</div> <!-- end of .panel panel-default -->
 		    </section>
-		
+
 		</div>	<!-- end of main -->
-	
+
 	</main>  <!-- end of main container -->
 
 {% endblock %}
