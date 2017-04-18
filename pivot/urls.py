@@ -1,4 +1,5 @@
 from django.conf.urls import include, url
+from django.views.generic.base import RedirectView
 from pivot.views import (
     HomeView,
     PivotTemplateView,
@@ -15,7 +16,8 @@ from pivot.views.data_api import (
 )
 
 urlpatterns = [
-    url(r'^$', MajorGPAView.as_view(), name='majorgpa'),
+    # Home
+    url(r'^$', RedirectView.as_view(url='/major-gpa')),
     url(r'^course-gpa$', CourseGPAView.as_view(), name='coursegpa'),
     url(r'^major-gpa$', MajorGPAView.as_view(), name='majorgpa'),
     url(r'^feedback$', FeedbackView.as_view(), name='feedback'),
