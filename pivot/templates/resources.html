@@ -1,42 +1,9 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block web_content %}
-<!-- TOP PURPLE BANNER -->
-<div class="page-wrap"> <!-- another wrap to make a sticky footer -->
-	<header class="topbanner-bg">
-		<div class="container" role="banner">	
-	<!-- NAV -->		
-			<section class="topbanner" role="navigation">
-				<nav class="navbar navbar-default">
-					<a href="major-gpa" class="no-hover"><span class="sitename">Pivot</span></a>
-					<span class="tagline"> Help your students make the best move</span>
-			<!-- Hide NetID for Beta 		<div class="login"> Hi, netid123 </div> -->
-			<!-- Hamberger for 768px -->		
-					<div class="navbar-header" >
-							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu" aria-expanded="true">
-						        <span class="sr-only">Toggle navigation</span>
-						        <span class="icon-bar"></span>
-						        <span class="icon-bar"></span>
-						        <span class="icon-bar"></span>
-						    </button>
-					</div>	<!-- END OF navbar-header -->
-					<!-- END OF hamburger view -->
-					<div class="navbar-collapse collapse" id="menu" aria-expanded="true">
-				    	<ul class="nav navbar-nav underline">
-					    	<li role="presentation"><a href="major-gpa">View Major GPAs</a></li>
-					    	<li role="presentation"><a href="course-gpa">View Course GPAs</a></li>
-					    	<li role="presentation"class="active"><a href="#">Resources</a></li>
-					    </ul>
-				    </div><!-- END OF navbar-collapse -->
-				    
-				</nav>
-			</section>
-		</div>	<!-- END OF CONTAINER -->
-	</header>
-
 <!-- MAIN CONTENT BELOW THE BANNER -->	
-  	<div class="container" role="main">
-		<section class="main-content">  <!-- //NFS: UNSURE NEED A SECTION OF NOT// -->
+  	<main class="container" role="main">
+		<div class="main-content">  
 		    <h1 class="page-title">Resources</h1>
 			<section>
 				<ul>
@@ -84,7 +51,7 @@
 				<h2 id="data-viz">Data visualization</h2> 
 				<p>Grade data is visualized using a boxplot. Below is a guide to understanding the boxplot data.</p>
 				
-				<section id="boxplot-legend"> <img src="{% static "pivot/img/Boxplot-key_V4.png" %}" alt="Boxplot legend">
+				<section id="boxplot-legend"> <img src="{% static "pivot/img/Boxplot-key_V4.png" %}" alt="an example of Boxplot indicating the range from the lower quartile to the upper quartile that 50% of GPAs fall in. The median GPA is the midpoint of this range.">
 				</section>
 				<p>
 					<dfn>Median</dfn> : The midpoint of the data sample: half the data in the sample falls above the median and the other half falls below it.
@@ -98,27 +65,7 @@
 				</p>	
 			</section><!-- end of 3rd H2 chunk -->
 
-		</section>	<!-- end of main -->
+		</div>	<!-- end of main -->
 	
-	</div>  <!-- end of main container -->
-</div> <!-- end of .page-wrap  -->
-<!-- FOOTER STUFF -->
-
-<div role="contentinfo">
-	<footer class="site-footer">
-		<div class="container center">
-				<div class="footer-links">
-	                <ul>
-		                <li><a href="resources" title="">Resources</a></li>
-		                <li><a href="feedback" title="">Feedback</a></li>
-	                    <li><a href="http://www.washington.edu/online/terms/" target="_blank" title="Go to the University of Washington Website Terms and Conditions of Use">Terms </a></li>
-	                    <li><a href="http://www.washington.edu/online/privacy/" target="_blank" title="G to the University of Washington Online Privacy Statement">Privacy</a></li>
-	                    <li><a href="/logout" target="" title="">Log out</a></li>                   
-	                </ul>
-	            </div><!-- end of footer links -->
-	            <p class="credit">©2016 University of Washington Information Technology </p>
-	            <div><img src="{% static "pivot/img/InfoTech_UW_vsml.footer.png" %}"  class="uw-it-logo" alt="UW-IT logo"></div>
-		</div><!-- end of footer content -->		
-	</footer>
-</div><!-- footer role -->
+	</main>  <!-- end of main container -->
 {% endblock %}

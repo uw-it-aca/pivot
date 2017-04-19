@@ -1,0 +1,15 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "multiple-results" %}
+<div role="alert" aria-atomic="true"> 
+<p>
+    <b>Multiple results found for keyword {{ search }} in UW major list.</b>
+</p>
+
+<p>
+    Select a single major. Refer to the list of undergraduate majors in
+    <a href='http://www.washington.edu/uaa/advising/academic-planning/majors-and-minors/list-of-undergraduate-majors/' target='_blank'>Seattle</a>,
+    <a href='http://www.uwb.edu/academics' target='_blank'>Bothell</a>, and
+    <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.
+</p>
+</div>
+{% endtplhandlebars %}
