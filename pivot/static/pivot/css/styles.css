@@ -720,10 +720,14 @@ p.course-table-row {
 	padding: 5px 5px;
 }
 
+/* Major GPA table style  */
 .data-heading {
 	color: #333;
 	font-size: .9em;
-	margin-left: -10px;
+	margin-left: -15px;
+}
+.inline-help {
+	color:#333;
 }
 .median-value {
 	font-size: 1.75em;
@@ -936,7 +940,7 @@ ul {
    SMALL SCREEN
    ========================================================================== */
 
- /* Small devices (tablets, 768px and up) */
+ /* Small devices (tablets, mobile) */
 @media (max-width: 768px) {
 	.login {
 	float: right;
