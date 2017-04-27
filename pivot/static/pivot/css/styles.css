@@ -108,7 +108,7 @@ h2 {
 }
 /* compensate 'Row' margin*/
 .course-h2 {
-	margin-left: 5px;
+	margin-left: 0px;
 } 
 
 /* Hyperlink style:*/
@@ -682,11 +682,14 @@ p.college-heading{
     font-weight: bold;
     margin-bottom: 12px;
 }
-
+/* Compensate the row left margin */
+.course-table {
+	padding-left: 0px;
+}
 .major-gpa-line {
 	font-size: 0.9em;
 	color: #666;
-	margin-left: -5px;
+	margin-left:0px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
@@ -695,7 +698,6 @@ p.college-heading{
 }
 /* Slight tweak of major name on course page */
 .major-heading-course {
-margin-left: -5px;
 margin-bottom: 2px;
 font-size: 1.75em;
 }
@@ -844,7 +846,7 @@ ul {
 
 .table {
 	width: 94%;
-	margin-left:-20px;
+	margin-left:-15px;
 }
 
 /*  override the Table.less' s vertical  */
