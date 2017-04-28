@@ -91,7 +91,8 @@ function createBoxForMajor(i, median, majorId) {
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        boxplot_image: images_paths["boxplot"]
+        boxplot_image: images_paths["boxplot"],
+        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
     }));
 
     //Create the inline help popovers, only needed for major in first row
