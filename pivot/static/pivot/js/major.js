@@ -130,7 +130,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
 
     //draw the boxplot
 
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
@@ -184,7 +184,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-        trigger: "manual",
+        /*trigger: "focus",*/
         placement: "top",
         html: true,
         content: template({
@@ -459,6 +459,7 @@ $("html").keydown(function (e) {
 
 //hides search results and clears input
 function hideSearchSuggestions() {
+    console.log("hide me!");
     $("#suggestions").css("display","none");
     $("#search").val("");
     $("#search").blur();
