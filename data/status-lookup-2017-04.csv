@@ -111,3 +111,34 @@ ENV H,Environmental Health,http://www.washington.edu/students/gencat/academic/en
 HIHIME,Health Informatics and Health Information Management,http://www.washington.edu/students/gencat/academic/school_public_health.html,capacity-constrained
 PH,Public Health,http://www.washington.edu/students/gencat/academic/school_public_health.html,capacity-constrained
 SOC WF,Social Welfare,http://www.washington.edu/students/gencat/academic/school_social_work.html,capacity-constrained
+T ACCT,Accounting                              ,,capacity-constrained
+T BUS ,Business Administration,,capacity-constrained
+T FIN ,Business Administration (Finance),,capacity-constrained
+T HISP,Hispanic Studies,,open
+T HIST,History (Tacoma),,open
+T INFO,Information Technology (Tacoma),,capacity-constrained
+T MGMT,Business Administration (Management),,capacity-constrained
+T MKTG,Business Administration (Marketing),,capacity-constrained
+T NURS,Nursing (Tacoma Campus),,capacity-constrained
+T SUD ,Sustainable Urban Development (Tacoma),,open
+T URB ,URBAN STUDIES,,open
+TAM   ,American Studies (Tacoma),,open
+TAMC  ,"Arts, Media and Culture (Tacoma)",,open
+TCES  ,Computer Engineering and Systems,,capacity-constrained
+TCJUS ,Criminal Justice (Tacoma Campus),,open
+TCJUSO,Criminal Justice (Tacoma Online),,open
+TCOMM ,Communications - Tacoma,,minimum
+TCSCI ,Computer Science and Systems,,capacity-constrained
+TEGL  ,"Ethnic, Gender, and Labor Studies (Tac)",,open
+TENSCI,Environmental Science - Tacoma Campus,,open
+TESC  ,Interdisciplinary Arts & Sciences (ESC),,open
+TEST  ,Environmental Studies (Tacoma),,open
+TGLBST,Interdisciplinary Arts & Sciences (GLBS),,open
+THLEAD,Healthcare Leadership (Tacoma Campus),,capacity-constrained
+TIAS  ,Interdisciplinary Arts & Sciences,,open
+TLAWPL,Law and Policy (Tacoma),,open
+TMATH ,Mathematics (Tacoma),,open
+TPPE  ,"Politics, Philosophy, & Economics (Tac)",,open
+TPSYCH,Psychology (Tacoma),,minimum
+TSOCWF,Social Welfare (Tacoma),,open
+TWRT  ,Writing Studies (Tacoma),,minimum

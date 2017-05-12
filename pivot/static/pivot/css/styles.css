@@ -332,6 +332,8 @@ fieldset[disabled] .btn-GPS-primary.active {
 .compare-gpa {
 	margin-left: 10px;
 	font-weight: bold;
+	padding-left: 20px;
+	padding-right: 20px;
 	/* margin-bottom: 10px;
     color: black; */
 }
@@ -718,15 +720,21 @@ p.course-table-row {
 	padding: 5px 5px;
 }
 
+/* Major GPA table style  */
 .data-heading {
 	color: #333;
 	font-size: .9em;
+	margin-left: -15px;
+}
+.inline-help {
+	color:#333;
 }
 .median-value {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
 	padding-top:10px;
+	margin-left: -15px;
 }
 
 .course-link {
@@ -932,7 +940,7 @@ ul {
    SMALL SCREEN
    ========================================================================== */
 
- /* Small devices (tablets, 768px and up) */
+ /* Small devices (tablets, mobile) */
 @media (max-width: 768px) {
 	.login {
 	float: right;
@@ -967,5 +975,18 @@ ul {
 	border-left:5px solid #b46100;
 	color:white;
 	}
-
+ /* Move the  your GPA form to left */	
+.yourgpa-form {
+	float: left;
 }
+
+.form-control {
+	display: inline;
+	width: 110px;
+}
+/* Setting left for mobile */
+.yourgpa { 
+	padding-left: 15px;
+}
+
+} /* end of small screen style */
