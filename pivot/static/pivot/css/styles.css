@@ -282,6 +282,12 @@ label{
  }
 
 /* Button styles : Yellow Look */
+.btn-search {
+  color: #000;
+  padding: 6px 40px;
+}
+
+
 .btn-GPS-primary {
   color: #000;
   background-color: #fedf82;
