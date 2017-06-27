@@ -15,42 +15,71 @@
 				   
 					  	<div class="row no-gutters" role="search">
 
-                      <p class="search-text">Select a college to view all of its majors OR enter the name of a major to view its median GPA.</p>
+	                      <p class="search-text">Select a college to view all of its majors OR enter the name of a major to view its median GPA.</p>
+	                      <div class="col-xs-12 col-sm-10">
+						    <!-- NEW SEARCH FORM BEGINS -->
+						    <div class="input-group">
+						      <div id="college-dropdown" class="input-group-btn">
+						        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="dropdownMenu" style="width:100%;text-align:left;" label="College" aria-label='college'>All<span class="caret"></span></button>
+						        <!-- JS generated college list goes in ul -->
+						        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">  
+						        </ul>
+						      </div><!-- .input-group-btn -->
+							  <!-- major search -->
+						      <label for="search" class="sr-only" >Enter a major name to look up</label>
+						      <input type="text" class="form-control" name="searchQuery" value="" size="" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Computer Science, Biology, etc.">
+						      <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
+						      
+						      <!-- search results go in #suggestions -->
+					            <div id="suggestions"></div>
+					            <!-- hidden div to track selected majors -->
+                                <div class="selected"></div>
 
-                        <div class="col-xs-12 col-sm-2"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
-                            <div class="form-group">
-                                <!-- college search: button and ul tags create dropdown -->
+						      <span class="input-group-btn">
+							      	<button class="btn btn-default" type="submit" id="goBtn">Go!</button>
+								  	<button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button>
+							  </span><!--.input-group-btn -->
+  
+                          	</div><!--  .input-group -->                
+                          </div><!--  .col-xs-12 col-sm-10??? --> 
+<!-------------- OLD MODULE TO COPY FROM <div class="form-group">
+                              -----  college search: button and ul tags create dropdown --
                                 <div class="btn-group" id="college-dropdown" style="width:100%">
                                     <button class="btn btn-default" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width:100%;text-align:left;" label="College" aria-label='college'>
                                     All
                                     <span class="caret"></span>
                                     </button>
-                                    <!-- JS generated college list goes in ul -->
+                                    !-- JS generated college list goes in ul --
                                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
                                     </ul>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-5"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
+                            </div> <!-- .form-group --
+						  </div> <!-- .col-xs-12..College dropdown -->
+					
+						  <!--<div class="col-xs-12 col-sm-5">
+                            -- .form-group: search input 
                             <div class="form-group">
-                                <!-- major search -->
+                                <!-- major search 
                                 <label for="search" class="sr-only" >Enter a major name to look up</label>
                                 <input id="search" class="form-control" type="text" name="searchQuery" value="" size="30" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Computer Science, Art History" autocomplete="off"/><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
-					            <!-- search results go in #suggestions -->
+					            
+					            <!-- search results go in #suggestions 
 					            <div id="suggestions"></div>
-					            <!-- hidden div to track selected majors -->
-                                <div class="selected"></div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-4"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
+					            <!-- hidden div to track selected majors 
+                                <div class="selected"></div> 
+
+                            </div> .form-group: search input 
+                        </div> --
+                        <div class="col-xs-12 col-sm-4">
                             <div class="form-group no-btm-margin">
-                                <!-- search buttons -->
+                                !-- search buttons --
                                 <button class="btn btn-GPS-primary disabled" type="submit" id="goBtn" label="">Go</button>
 					            <button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button>
                             </div>
-                        </div>
+                        </div><!-- end of .form-group: Button & clear link -->
+						  
                           </div><!-- end of .row -->
-                    </div><!-- of .container -->
+					   </div><!-- of .container -->
 				  </div><!-- end of .panel-body -->
 				</div><!-- end of .panel panel-default -->
 		    </section>
