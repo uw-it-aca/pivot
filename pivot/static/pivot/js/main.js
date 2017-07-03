@@ -278,7 +278,6 @@ function init_search_events() {
 
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
-    console.log('prep')
     //close college dropdown menu if it is currently open
     if ($(".dropdown-menu").css("display") != "none") {
         $("#dropdownMenu").dropdown("toggle");

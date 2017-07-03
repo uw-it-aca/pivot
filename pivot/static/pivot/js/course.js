@@ -31,6 +31,7 @@ function updateEvents() {
         e.preventDefault();
         var list = [];
         var code = $(this).parent("li").data("code");
+        console.log("code=" + code);
         if (code != undefined) {
             var selected = false;
             $(".chosen_major").each(function () {
@@ -99,6 +100,7 @@ function displayResults() {
         }
         //else if nothing has been entered but a college is selected, load all majors in college
         else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+            var appendTo = "#selectedCollege";
             var majText = _completeMajorMap[maj]["major_full_nm"];
             $("#selectedCollege").append(template({major: majText}));
             $(appendTo + " li:last").data("code", maj);
