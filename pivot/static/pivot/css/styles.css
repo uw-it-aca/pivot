@@ -769,14 +769,12 @@ p.course-table-row {
 
 #suggestions {
     position: absolute;
-    top:45px;
-    left:0px;
     z-index: 1000;
     display: none;
     float: left;
     min-width: 160px;
     padding: 5px 0;
-    margin: 0px 0px 0px 0px;
+    margin: 45px 0px 0px 0px;
     font-size: 14px;
     text-align: left;
     list-style: none;
@@ -796,7 +794,9 @@ p.course-table-row {
     overflow: hidden;
     background-color: #e5e5e5;
 }
-
+.clear-btn {
+	margin-left: -20px;
+}
 /* Compare GPA */
 #header-row h2 {
     display: inline-block;
