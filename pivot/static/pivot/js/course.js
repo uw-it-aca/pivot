@@ -54,6 +54,15 @@ function updateEvents() {
             closeSuggestions();
         }
     });
+    
+    //for the benefit of mobile devices trying to read a long suggestion list
+    window.addEventListener("scroll", function() {
+        if ($("#suggestions").css("display") == "block") {
+            //start timer to make suggestions box disappear after 3sec
+            clearTimeout(_timer);
+            _timer = setTimeout(hideSearchSuggestions, 3000);
+        }
+    });
 }
 
 
@@ -104,6 +113,10 @@ function displayResults() {
 
         // If we're still loading data, show that we're loading...
         update_results_on_load = true;
+    } else {
+        //start timer to make suggestions box disappear after 3sec
+        clearTimeout(_timer);
+        _timer = setTimeout(hideSearchSuggestions, 3000);
     }
 }
 

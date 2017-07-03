@@ -304,6 +304,9 @@ function displayResults() {
             }
         }
     }
+    //start timer to make suggestions box disappear after 1sec
+    clearTimeout(_timer);
+    _timer = setTimeout(hideSearchSuggestions, 3000);
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -336,6 +339,9 @@ function showCurrentSelections() {
         console.log("append " + $(this).text() + " to " + appendTo);
         $(appendTo + " li:last").data("code", $(this).text());
     });
+    //start timer to make suggestions box disappear after 3sec
+    clearTimeout(_timer);
+    _timer = setTimeout(hideSearchSuggestions, 3000);
 }
 
 //Checks if multiple majors have been selected
@@ -436,7 +442,19 @@ function updateEvents() {
             clear_results();
         }
     });
+    
+    //for the benefit of mobile devices trying to read a long suggestion list
+    window.addEventListener("scroll", function() {
+        if ($("#suggestions").css("display") == "block") {
+            //start timer to make suggestions box disappear after 3sec
+            clearTimeout(_timer);
+            _timer = setTimeout(hideSearchSuggestions, 3000);
+        }
+    });
 }
+
+//detect if mobile, 
+//window.addEventListener('scroll', function() { alert("Scrolled"); });
 
 //hides search results and clears input when user clicks outside the results
 $("html").click(function (e) {
@@ -449,13 +467,6 @@ $("html").keydown(function (e) {
     if (e.which == 27)
         hideSearchSuggestions();
 });
-
-//hides search results and clears input
-function hideSearchSuggestions() {
-    $("#suggestions").css("display","none");
-    $("#search").val("");
-    $("#search").blur();
-}
 
 //Search major list for text in input field
 function goSearch() {
