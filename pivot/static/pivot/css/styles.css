@@ -357,7 +357,7 @@ fieldset[disabled] .btn-GPS-primary.active {
 #clear_majors{
 	display:none; /*default hidden unless major selected*/
     font-size: .9em;
-    margin: 10px 0px 0px 10px;
+	padding-left: 0px;
 }
 
 #search {
@@ -795,7 +795,7 @@ p.course-table-row {
     background-color: #e5e5e5;
 }
 .clear-btn {
-	margin-left: -20px;
+	margin-left: 0px;
 }
 /* Compare GPA */
 #header-row h2 {
