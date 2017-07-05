@@ -388,7 +388,6 @@ fieldset[disabled] .btn-GPS-primary.active {
 
 
 
-
 /**************** Main stuff *************/
 
 .main-content {
@@ -952,6 +951,7 @@ ul {
 
  /* Small devices (tablets, mobile) */
 @media (max-width: 768px) {
+	
 	.login {
 	float: right;
     margin: auto;
@@ -963,9 +963,16 @@ ul {
     font-size: .9em;
 	}
 
-.btn-GPS-primary {
-  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left */
-  }
+/* .btn-GPS-primary {
+  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left 
+  }*/
+
+/* collge drop-down for narrow width */
+#college-dropdown .dropdown-menu>li>a {
+	white-space: normal;
+	min-width: 260px;
+}
+
   /* Selelected: Active & hover  */
 .underline > li.active > a, .underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
 	background-color: #b46100;	 /* orange */
