@@ -497,6 +497,8 @@ dfn {
 	float: right;
 	margin-top: -15px;
 	color: #777;
+	line-height: 1.5em;
+	padding-bottom: .5em;
 }
 
 /* footer  Stuff*/
@@ -1044,7 +1046,7 @@ ul {
 	font-size: 1em;
 	margin-bottom: 10px;
 	margin-left: -15px;
-	padding: 20px;
+	padding: 10px;
 	width: 160px;
 }
 
