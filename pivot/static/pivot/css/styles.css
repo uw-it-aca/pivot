@@ -487,8 +487,12 @@ dfn {
 	margin-bottom: 10px;
 	padding: 10px;
 	width: 110px;
+	margin-left: 50px;
 }
-
+.bar-legend-header {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
 .bar-legend-0 {
 	float: right;
 	margin-top: -15px;
@@ -690,6 +694,7 @@ p.college-heading{
 /* Compensate the row left margin */
 .course-table {
 	padding-left: 0px;
+	padding-right: 0px;
 }
 .major-gpa-line {
 	font-size: 0.9em;
@@ -857,7 +862,7 @@ ul {
 }
 
 .table {
-	width: 94%;
+	/* width: 94%;
 	/* margin-left:-15px; */
 }
 
@@ -962,6 +967,18 @@ ul {
 
 }
 
+  /* ==========================================================================
+   Med SCREEN
+   ========================================================================== */
+ @media (max-width: 992px) {
+	 .bar-legend {
+	font-size: 1em;
+	margin-bottom: 10px;
+	margin-left: -15px;
+	padding: 20px;
+	width: 160px;
+}
+}
  /* ==========================================================================
    SMALL SCREEN
    ========================================================================== */
@@ -1021,6 +1038,14 @@ ul {
 /* Setting left for mobile */
 .yourgpa { 
 	padding-left: 15px;
+}
+/* Setting left for mobile */
+.bar-legend {
+	font-size: 1em;
+	margin-bottom: 10px;
+	margin-left: -15px;
+	padding: 20px;
+	width: 160px;
 }
 
 } /* end of small screen style */
