@@ -682,8 +682,10 @@ shape-rendering: crispEdges;
 }
 
 p.college-heading{
-	font-size: 16px;
+	font-size: 1em;
 	margin-left: 0px;
+	text-transform: uppercase;
+	color: #777;
 }
 
 .link-arrow{
