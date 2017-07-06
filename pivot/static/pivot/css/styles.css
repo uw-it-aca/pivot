@@ -731,7 +731,6 @@ p.course-table-row {
 .data-heading {
 	color: #333;
 	font-size: .9em;
-	margin-left: -15px;
 }
 .inline-help {
 	color:#333;
@@ -851,10 +850,17 @@ ul {
 
 /*  course GPA table */
 
+/*  Remove extra padding for th  */
+.table>th {
+	padding: 1px;
+	background-color: aqua;
+}
+
 .table {
 	width: 94%;
-	margin-left:-15px;
+	/* margin-left:-15px; */
 }
+
 
 /*  override the Table.less' s vertical  */
 .table>tbody>tr>td, .table>tbody>tr>th {
@@ -873,6 +879,17 @@ ul {
 .table-striped>tbody>tr:nth-child(odd)>th {
    background-color: #fff;
  }
+.col0 {
+	padding: 1px;
+	background-color: red;
+}
+
+/* Removing extra spacing on left */
+.table>tbody>tr>th {
+	padding-left:0px;
+	padding-right:0px;
+}
+
 
 /* ColorBrewer YlGn styles for course GPA table */
 .q0-9{background-color:rgb(255,255,229); border: #aaa solid 1px;} .q1-9{background-color:rgb(217,240,163); border: #aaa solid 1px;} .q2-9{background-color:rgb(120,198,121); border: #73a184 solid 1px;} .q3-9{background-color:rgb(35,132,67); border: #567661 solid 1px; color:#ffffff;} .q4-9{background-color:rgb(0,69,41); border: #004529 solid 1px; color:#ffffff;}
