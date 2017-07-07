@@ -463,7 +463,11 @@ sup {
     margin-left:1em;
     line-height: 4em;
 }
-
+.major-status {
+	font-size: .777em; /* .777 x 18px = 14px(body) */
+    margin: 10px 0px;
+    font-weight: normal;
+}
 .faq-q {
 	font-weight: bold;
 	font-size: 100%;
