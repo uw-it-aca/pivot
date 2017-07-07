@@ -14,7 +14,6 @@ function checkStoredData() {
 }
 
 /***SEARCH***/
-
 //Item selection
 function updateEvents() {
     $("#suggestions li").hover(

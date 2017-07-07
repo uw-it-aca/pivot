@@ -59,7 +59,8 @@ function createMajorCard(majors, gpa = null) {
             college: _completeMajorMap[majors[l]]["college"],
             campus: _completeMajorMap[majors[l]]["campus"],
             major_status_url: displayMajorStatusURL(majors[l]),
-            major_status_icon: displayMajorStatusIcon(majors[l])
+            major_status_icon: displayMajorStatusIcon(majors[l]),
+            major_status_text: displayMajorStatusText(majors[l]),
         }));
 
         $("#" + id).data("code", majors[l]);
