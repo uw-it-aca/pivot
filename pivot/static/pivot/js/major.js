@@ -77,7 +77,7 @@ function createMajorCard(majors, gpa = null) {
     }
     overlayGPA(gpa);
     showCompareModule(gpa = (gpa == null) ? "":gpa);
-    $("#loadingModal").modal('hide');
+    //$("#loadingModal").modal('hide');
 }
 
 //Creates the table cells for a major
@@ -372,7 +372,7 @@ function noResults() {
     $(".no-results-warning").html(template({
         search: $("input#search").val()
     }));
-    $("#loadingModal").modal('hide');
+    //$("#loadingModal").modal('hide');
 }
 
 //Displays message when no results found in selected college
@@ -476,7 +476,7 @@ function goSearch() {
     var template = Handlebars.compile(source);
 
     //First clear everything already shown then show all majors in college
-    $("#loadingModal").modal('show');
+    //$("#loadingModal").modal('show');
     $("#boxplots").html("");
     var list = [];
     var results = false;
@@ -538,7 +538,7 @@ function goSearch() {
         setTimeout(createMajorCard(list),300);
     } else if (!results)
         noResults();
-    else $("#loadingModal").modal('hide');
+    //else $("#loadingModal").modal('hide');
 }
 
 

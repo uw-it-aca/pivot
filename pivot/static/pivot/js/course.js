@@ -48,7 +48,7 @@ function updateEvents() {
             }
             $(".chosen_major").each(function() {
                 list.push($(this).text());
-                $("#loadingModal").modal('show');
+                //$("#loadingModal").modal('show');
                 setTimeout(listCoursesForMajor($(this).text()), 300);
             });
             closeSuggestions();
@@ -179,7 +179,7 @@ function goSearch() {
 
     if (maj != "") {
         closeSuggestions();
-        $("#loadingModal").modal('show');
+        //$("#loadingModal").modal('show');
         setTimeout(listCoursesForMajor(maj), 300);
     }
 }
@@ -290,7 +290,7 @@ function listCoursesForMajor(maj) {
         container: "body",
         content: "<p>Median course grade of students who had taken the course by the time they declared for the major that you've selected.</p>"
     });
-    $("#loadingModal").modal('hide');
+    //$("#loadingModal").modal('hide');
 }
 
 // Stores courses in sessionStorage to pass between pages
