@@ -119,7 +119,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var width = $(".data-display").width();
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
-    var svg = d3.select("#" + majorId + " .data-display").append("h4").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
+    var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
 
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
