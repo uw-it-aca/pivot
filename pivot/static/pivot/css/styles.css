@@ -965,6 +965,11 @@ ul {
     color:#333;
 }
 
+/* Override Bootstrap positioning */
+#college-dropdown .dropdown-menu {
+    top:42px;
+}
+
 
 /* Search suggestion list header spacing */
 .dropdown-header {
@@ -1013,6 +1018,7 @@ ul {
 /* .btn-GPS-primary {
   margin: 10px 15px 10px 0px;  /* Remove the left margin for align left 
   }*/
+    
 
 /* collge drop-down for narrow width */
 #college-dropdown .dropdown-menu>li>a {
