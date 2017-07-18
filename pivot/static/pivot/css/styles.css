@@ -83,8 +83,12 @@ img {
 	text-align: center;
 }
 
-.search-text {
+/*.search-text {
 	margin-top: 10px;
+}*/
+.search-module { /* remove extra padding  */
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .no-btm-margin {
@@ -358,6 +362,7 @@ fieldset[disabled] .btn-GPS-primary.active {
 	display:none; /*default hidden unless major selected*/
     font-size: .9em;
 	padding-left: 0px;
+	padding-bottom: 0px;
 }
 
 #search {
