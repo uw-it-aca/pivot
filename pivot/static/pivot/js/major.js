@@ -159,7 +159,7 @@ function overlayGPA(gpa) {
         });
         $(".data-display:first").append('<div class="gpaLabel">Your GPA<br/>' + gpa + '</div>');
         $(".gpaLabel").css("left",(left - $(".gpaLabel").width()/2) + "px");
-        $(".data-display:first .gpaLabel").css({"top":"0px","background-color":"#fff"});
+        $(".data-display:first .gpaLabel").css({"top":"28px","background-color":"#fff"});
 
     }
 }

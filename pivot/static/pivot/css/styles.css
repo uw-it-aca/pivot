@@ -861,6 +861,8 @@ p.course-table-row {
     text-align: center;
     position:absolute;
     color:red;
+    font-size: 0.85em;
+    font-weight: bold;
     z-index: 1000;
 }
 
