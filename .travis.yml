@@ -14,7 +14,7 @@ before_script:
   - python manage.py migrate --noinput
   - npm install mocha
   - npm install jquery
-  - npm install jsdom
+  - npm install jsdom@10
 script:
   - pep8 pivot/ utils/ --exclude=migrations
   - coverage run --source=pivot/ --omit=pivot/migrations/* manage.py test pivot

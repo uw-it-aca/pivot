@@ -32,7 +32,7 @@ $(function () {
 
 //Reads file that maps data from course file to major file
 function getDataNameMap() {
-    d3.csv("api/v1/data_map", function(d) {
+    d3.csv("/api/v1/data_map", function(d) {
         return {
             is_course: d.is_course.trim(),
             is_major: d.is_major.trim(),
@@ -58,7 +58,7 @@ function getDataNameMap() {
 
 //Reads major and course data file
 function getCompleteMajorMap() {
-    d3.csv("api/v1/major_course", function(d) {
+    d3.csv("/api/v1/major_course", function(d) {
         return {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
@@ -119,7 +119,7 @@ function getCompleteMajorMap() {
 
 //Reads seattle major status file
 function getMajorStatus() {
-    d3.csv("api/v1/status_lookup", function (d) {
+    d3.csv("/api/v1/status_lookup", function (d) {
         return {
             code: d.Code.trim(),
             url: d.URL.trim(),
@@ -177,7 +177,7 @@ function displayMajorStatusText(code) {
 
 //Reads student data file
 function addStudents() {
-    d3.csv("api/v1/student_data", function (d) {
+    d3.csv("/api/v1/student_data", function (d) {
         return {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
