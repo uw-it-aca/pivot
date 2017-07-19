@@ -92,7 +92,8 @@ function createBoxForMajor(i, median, majorId) {
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        boxplot_image: images_paths["boxplot"]
+        boxplot_image: images_paths["boxplot"],
+        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
     }));
 
     //Create the inline help popovers, only needed for major in first row
@@ -120,7 +121,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
     var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
-
+    
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
     var yAxis = d3.svg.axis().scale(y).orient("left");
@@ -129,7 +130,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
 
     //draw the boxplot
 
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
@@ -142,7 +143,12 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
         if ($(this).text().indexOf(".5") > 0) {
             $(this).hide();
         }
+        $(this).attr("aria-hidden", true);
     });
+    
+    //Add numbers for screen reader
+    $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
+    
     addPopover(majorId, y(median));
 }
 
@@ -179,7 +185,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-        trigger: "manual",
+        /*trigger: "focus",*/
         placement: "top",
         html: true,
         content: template({
@@ -469,6 +475,14 @@ $("html").keydown(function (e) {
     if (e.which == 27)
         hideSearchSuggestions();
 });
+
+//hides search results and clears input
+function hideSearchSuggestions() {
+    console.log("hide me!");
+    $("#suggestions").css("display","none");
+    $("#search").val("");
+    $("#search").blur();
+}
 
 //Search major list for text in input field
 function goSearch() {

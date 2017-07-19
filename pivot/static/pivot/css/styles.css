@@ -215,6 +215,7 @@ label{
 }
 
 /* override the Bootstrap style for nav  */
+body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
 .navbar {
 	margin-bottom: 0px;
@@ -1057,6 +1058,7 @@ ul {
 .form-control {
 	display: inline;
 	width: 110px;
+    font-size:16px;
 }
 /* Setting left for mobile */
 .yourgpa { 
