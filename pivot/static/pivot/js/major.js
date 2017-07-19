@@ -59,7 +59,8 @@ function createMajorCard(majors, gpa = null) {
             college: _completeMajorMap[majors[l]]["college"],
             campus: _completeMajorMap[majors[l]]["campus"],
             major_status_url: displayMajorStatusURL(majors[l]),
-            major_status_icon: displayMajorStatusIcon(majors[l])
+            major_status_icon: displayMajorStatusIcon(majors[l]),
+            major_status_text: displayMajorStatusText(majors[l]),
         }));
 
         $("#" + id).data("code", majors[l]);
@@ -76,7 +77,7 @@ function createMajorCard(majors, gpa = null) {
     }
     overlayGPA(gpa);
     showCompareModule(gpa = (gpa == null) ? "":gpa);
-    $("#loadingModal").modal('hide');
+    //$("#loadingModal").modal('hide');
 }
 
 //Creates the table cells for a major
@@ -119,7 +120,6 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var width = $(".data-display").width();
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
-
     var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
     
     //create the axes
@@ -165,7 +165,8 @@ function overlayGPA(gpa) {
         });
         $(".data-display:first").append('<div class="gpaLabel">Your GPA<br/>' + gpa + '</div>');
         $(".gpaLabel").css("left",(left - $(".gpaLabel").width()/2) + "px");
-        $(".data-display:first .gpaLabel").css({"top":"0px","background-color":"#fff"});
+        $(".data-display:first .gpaLabel").css({"top":"28px","background-color":"#fff"});
+        $(".myGPA:first").css({"top":"28px","height":($(".data-display:first").height() - 28) + "px"});
 
     }
 }
@@ -311,6 +312,9 @@ function displayResults() {
             }
         }
     }
+    //start timer to make suggestions box disappear after 1sec
+    clearTimeout(_timer);
+    _timer = setTimeout(hideSearchSuggestions, 3000);
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -343,6 +347,9 @@ function showCurrentSelections() {
         console.log("append " + $(this).text() + " to " + appendTo);
         $(appendTo + " li:last").data("code", $(this).text());
     });
+    //start timer to make suggestions box disappear after 3sec
+    clearTimeout(_timer);
+    _timer = setTimeout(hideSearchSuggestions, 3000);
 }
 
 //Checks if multiple majors have been selected
@@ -366,13 +373,13 @@ function noResults() {
     var template = Handlebars.compile(source);
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","block");
+    $(".no-results-warning").css("display","inline");
     if (multipleSelected())
-        $(".no-results-warning").addClass("alert alert-info");
+        $(".no-results-warning");
     $(".no-results-warning").html(template({
         search: $("input#search").val()
     }));
-    $("#loadingModal").modal('hide');
+    //$("#loadingModal").modal('hide');
 }
 
 //Displays message when no results found in selected college
@@ -443,7 +450,19 @@ function updateEvents() {
             clear_results();
         }
     });
+    
+    //for the benefit of mobile devices trying to read a long suggestion list
+    window.addEventListener("scroll", function() {
+        if ($("#suggestions").css("display") == "block") {
+            //start timer to make suggestions box disappear after 3sec
+            clearTimeout(_timer);
+            _timer = setTimeout(hideSearchSuggestions, 3000);
+        }
+    });
 }
+
+//detect if mobile, 
+//window.addEventListener('scroll', function() { alert("Scrolled"); });
 
 //hides search results and clears input when user clicks outside the results
 $("html").click(function (e) {
@@ -472,7 +491,7 @@ function goSearch() {
     var template = Handlebars.compile(source);
 
     //First clear everything already shown then show all majors in college
-    $("#loadingModal").modal('show');
+    //$("#loadingModal").modal('show');
     $("#boxplots").html("");
     var list = [];
     var results = false;
@@ -534,7 +553,7 @@ function goSearch() {
         setTimeout(createMajorCard(list),300);
     } else if (!results)
         noResults();
-    else $("#loadingModal").modal('hide');
+    //else $("#loadingModal").modal('hide');
 }
 
 

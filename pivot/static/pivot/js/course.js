@@ -14,7 +14,6 @@ function checkStoredData() {
 }
 
 /***SEARCH***/
-
 //Item selection
 function updateEvents() {
     $("#suggestions li").hover(
@@ -31,6 +30,7 @@ function updateEvents() {
         e.preventDefault();
         var list = [];
         var code = $(this).parent("li").data("code");
+        console.log("code=" + code);
         if (code != undefined) {
             var selected = false;
             $(".chosen_major").each(function () {
@@ -48,10 +48,19 @@ function updateEvents() {
             }
             $(".chosen_major").each(function() {
                 list.push($(this).text());
-                $("#loadingModal").modal('show');
+                //$("#loadingModal").modal('show');
                 setTimeout(listCoursesForMajor($(this).text()), 300);
             });
             closeSuggestions();
+        }
+    });
+    
+    //for the benefit of mobile devices trying to read a long suggestion list
+    window.addEventListener("scroll", function() {
+        if ($("#suggestions").css("display") == "block") {
+            //start timer to make suggestions box disappear after 3sec
+            clearTimeout(_timer);
+            _timer = setTimeout(hideSearchSuggestions, 3000);
         }
     });
 }
@@ -90,6 +99,7 @@ function displayResults() {
         }
         //else if nothing has been entered but a college is selected, load all majors in college
         else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+            var appendTo = "#selectedCollege";
             var majText = _completeMajorMap[maj]["major_full_nm"];
             $("#selectedCollege").append(template({major: majText}));
             $(appendTo + " li:last").data("code", maj);
@@ -104,6 +114,10 @@ function displayResults() {
 
         // If we're still loading data, show that we're loading...
         update_results_on_load = true;
+    } else {
+        //start timer to make suggestions box disappear after 3sec
+        clearTimeout(_timer);
+        _timer = setTimeout(hideSearchSuggestions, 3000);
     }
 }
 
@@ -165,7 +179,7 @@ function goSearch() {
 
     if (maj != "") {
         closeSuggestions();
-        $("#loadingModal").modal('show');
+        //$("#loadingModal").modal('show');
         setTimeout(listCoursesForMajor(maj), 300);
     }
 }
@@ -276,7 +290,7 @@ function listCoursesForMajor(maj) {
         container: "body",
         content: "<p>Median course grade of students who had taken the course by the time they declared for the major that you've selected.</p>"
     });
-    $("#loadingModal").modal('hide');
+    //$("#loadingModal").modal('hide');
 }
 
 // Stores courses in sessionStorage to pass between pages

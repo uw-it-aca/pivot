@@ -83,8 +83,12 @@ img {
 	text-align: center;
 }
 
-.search-text {
+/*.search-text {
 	margin-top: 10px;
+}*/
+.search-module { /* remove extra padding  */
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .no-btm-margin {
@@ -106,10 +110,7 @@ h2 {
   margin-top: 1em;
   margin-bottom: 10px;
 }
-/* compensate 'Row' margin*/
-.course-h2 {
-	margin-left: 5px;
-} 
+
 
 /* Hyperlink style:*/
 a, a:hover {
@@ -283,6 +284,12 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
  }
 
 /* Button styles : Yellow Look */
+.btn-search {
+  color: #000;
+  padding: 6px 20px;
+}
+
+
 .btn-GPS-primary {
   color: #000;
   background-color: #fedf82;
@@ -352,7 +359,8 @@ fieldset[disabled] .btn-GPS-primary.active {
 #clear_majors{
 	display:none; /*default hidden unless major selected*/
     font-size: .9em;
-    margin: 10px 0px 0px 10px;
+	padding-left: 0px;
+	padding-bottom: 0px;
 }
 
 #search {
@@ -380,7 +388,6 @@ fieldset[disabled] .btn-GPS-primary.active {
     right: 8px;
     top: 15px;
 }
-
 
 
 
@@ -459,7 +466,11 @@ sup {
     margin-left:1em;
     line-height: 4em;
 }
-
+.major-status {
+	font-size: .777em; /* .777 x 18px = 14px(body) */
+    margin: 10px 0px;
+    font-weight: normal;
+}
 .faq-q {
 	font-weight: bold;
 	font-size: 100%;
@@ -483,12 +494,18 @@ dfn {
 	margin-bottom: 10px;
 	padding: 10px;
 	width: 110px;
+	margin-left: 50px;
 }
-
+.bar-legend-header {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
 .bar-legend-0 {
 	float: right;
 	margin-top: -15px;
 	color: #777;
+	line-height: 1.5em;
+	padding-bottom: .5em;
 }
 
 /* footer  Stuff*/
@@ -672,8 +689,10 @@ shape-rendering: crispEdges;
 }
 
 p.college-heading{
-	font-size: 16px;
+	font-size: .8em;
 	margin-left: 0px;
+	text-transform: uppercase;
+	color: #777;
 }
 
 .link-arrow{
@@ -683,11 +702,15 @@ p.college-heading{
     font-weight: bold;
     margin-bottom: 12px;
 }
-
+/* Compensate the row left margin */
+.course-table {
+	padding-left: 0px;
+	padding-right: 0px;
+}
 .major-gpa-line {
 	font-size: 0.9em;
 	color: #666;
-	margin-left: -5px;
+	margin-left:0px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
@@ -696,7 +719,6 @@ p.college-heading{
 }
 /* Slight tweak of major name on course page */
 .major-heading-course {
-margin-left: -5px;
 margin-bottom: 2px;
 font-size: 1.75em;
 }
@@ -725,8 +747,12 @@ p.course-table-row {
 .data-heading {
 	color: #333;
 	font-size: .9em;
-	margin-left: -15px;
 }
+
+.data-heading p {
+    margin-left: 0px;
+}
+
 .inline-help {
 	color:#333;
 }
@@ -767,7 +793,7 @@ p.course-table-row {
     float: left;
     min-width: 160px;
     padding: 5px 0;
-    margin: 0px;
+    margin: 45px 0px 0px 0px;
     font-size: 14px;
     text-align: left;
     list-style: none;
@@ -787,7 +813,9 @@ p.course-table-row {
     overflow: hidden;
     background-color: #e5e5e5;
 }
-
+.clear-btn {
+	margin-left: 0px;
+}
 /* Compare GPA */
 #header-row h2 {
     display: inline-block;
@@ -831,6 +859,8 @@ p.course-table-row {
     text-align: center;
     position:absolute;
     color:red;
+    font-size: 0.85em;
+    font-weight: bold;
     z-index: 1000;
 }
 
@@ -843,10 +873,17 @@ ul {
 
 /*  course GPA table */
 
-.table {
-	width: 94%;
-	margin-left:-20px;
+/*  Remove extra padding for th  */
+.table>th {
+	padding: 1px;
+	background-color: aqua;
 }
+
+.table {
+	/* width: 94%;
+	/* margin-left:-15px; */
+}
+
 
 /*  override the Table.less' s vertical  */
 .table>tbody>tr>td, .table>tbody>tr>th {
@@ -865,6 +902,17 @@ ul {
 .table-striped>tbody>tr:nth-child(odd)>th {
    background-color: #fff;
  }
+.col0 {
+	padding: 1px;
+	background-color: red;
+}
+
+/* Removing extra spacing on left */
+.table>tbody>tr>th {
+	padding-left:0px;
+	padding-right:0px;
+}
+
 
 /* ColorBrewer YlGn styles for course GPA table */
 .q0-9{background-color:rgb(255,255,229); border: #aaa solid 1px;} .q1-9{background-color:rgb(217,240,163); border: #aaa solid 1px;} .q2-9{background-color:rgb(120,198,121); border: #73a184 solid 1px;} .q3-9{background-color:rgb(35,132,67); border: #567661 solid 1px; color:#ffffff;} .q4-9{background-color:rgb(0,69,41); border: #004529 solid 1px; color:#ffffff;}
@@ -922,6 +970,11 @@ ul {
     color:#333;
 }
 
+/* Override Bootstrap positioning */
+#college-dropdown .dropdown-menu {
+    top:42px;
+}
+
 
 /* Search suggestion list header spacing */
 .dropdown-header {
@@ -937,12 +990,25 @@ ul {
 
 }
 
+  /* ==========================================================================
+   Med SCREEN
+   ========================================================================== */
+ @media (max-width: 992px) {
+	 .bar-legend {
+	font-size: 1em;
+	margin-bottom: 10px;
+	margin-left: -15px;
+	padding: 20px;
+	width: 160px;
+}
+}
  /* ==========================================================================
    SMALL SCREEN
    ========================================================================== */
 
  /* Small devices (tablets, mobile) */
 @media (max-width: 768px) {
+	
 	.login {
 	float: right;
     margin: auto;
@@ -954,9 +1020,17 @@ ul {
     font-size: .9em;
 	}
 
-.btn-GPS-primary {
-  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left */
-  }
+/* .btn-GPS-primary {
+  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left 
+  }*/
+    
+
+/* collge drop-down for narrow width */
+#college-dropdown .dropdown-menu>li>a {
+	white-space: normal;
+	min-width: 260px;
+}
+
   /* Selelected: Active & hover  */
 .underline > li.active > a, .underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
 	background-color: #b46100;	 /* orange */
@@ -989,6 +1063,14 @@ ul {
 /* Setting left for mobile */
 .yourgpa { 
 	padding-left: 15px;
+}
+/* Setting left for mobile */
+.bar-legend {
+	font-size: 1em;
+	margin-bottom: 10px;
+	margin-left: -15px;
+	padding: 10px;
+	width: 160px;
 }
 
 } /* end of small screen style */

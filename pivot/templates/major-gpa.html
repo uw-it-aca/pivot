@@ -11,46 +11,42 @@
 			    <div class="panel panel-default search-box">
 				  <div class="panel-body">
 
-                      <div class="container">
+                      <div class="container search-module ">
 				   
 					  	<div class="row no-gutters" role="search">
 
-                      <p class="search-text">Select a college to view all of its majors OR enter the name of a major to view its median GPA.</p>
-
-                        <div class="col-xs-12 col-sm-2"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
-                            <div class="form-group">
-                                <!-- college search: button and ul tags create dropdown -->
-                                <div class="btn-group" id="college-dropdown" style="width:100%">
-                                    <button class="btn btn-default" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="width:100%;text-align:left;" label="College" aria-label='college'>
-                                    All
-                                    <span class="caret"></span>
-                                    </button>
-                                    <!-- JS generated college list goes in ul -->
-                                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-5"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
-                            <div class="form-group">
-                                <!-- major search -->
-                                <label for="search" class="sr-only" >Enter a major name to look up</label>
-                                <input id="search" class="form-control" type="text" name="searchQuery" value="" size="30" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Computer Science, Art History" autocomplete="off"/><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
-					            <!-- search results go in #suggestions -->
+	                      <p class="search-text">Select a college to view all of its majors OR enter the name of a major to view its median GPA.</p>
+	                      <div class="col-xs-12 col-sm-10">
+						    <!-- NEW SEARCH FORM BEGINS -->
+						    <div class="input-group">
+						      <div id="college-dropdown" class="input-group-btn">
+						        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="dropdownMenu" style="width:100px;text-align:left;" label="College" aria-label='college'>All<span class="caret"></span></button>
+						        <!-- JS generated college list goes in ul -->
+						        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">  
+						        </ul>
+						      </div><!-- .input-group-btn -->
+							  <!-- major search -->
+						      
+						     <div class="form-group">
+							      <label for="search" class="sr-only" >Enter a major name to look up</label>
+								  <input id="search" type="text" class="form-control" name="searchQuery" value="" size="" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Biology, English, etc." autocomplete="off">
+								  <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
+						      
+						      <!-- search results go in #suggestions -->
 					            <div id="suggestions"></div>
 					            <!-- hidden div to track selected majors -->
                                 <div class="selected"></div>
-                            </div>
-                        </div>
-                        <div class="col-xs-12 col-sm-4"><!-- TODO ADD BOOTSTRAP CLASS TO REMOVE LEFT & RIGHT GUTTERS -->
-                            <div class="form-group no-btm-margin">
-                                <!-- search buttons -->
-                                <button class="btn btn-GPS-primary disabled" type="submit" id="goBtn" label="">Go</button>
-					            <button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button>
-                            </div>
-                        </div>
-                          </div><!-- end of .row -->
-                    </div><!-- of .container -->
+							</div>	<!-- .form-group for Search label +input -->
+						      <div class="input-group-btn">
+							      	<button class="btn btn-default btn-search" type="submit" id="goBtn"><i class="glyphicon glyphicon-search" aria-hidden="true"></i><span class="sr-only">search</span></button>
+							  </div><!--Go button .input-group-btn -->
+  
+                          	</div><!--  .input-group -->  
+                          	<div class="clear-btn"><button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button> 
+                          	</div>             
+                          </div><!--  .col-xs-12 col-sm-10??? --> 
+                        </div><!-- end of .row -->
+					  </div><!-- of .container -->
 				  </div><!-- end of .panel-body -->
 				</div><!-- end of .panel panel-default -->
 		    </section>
@@ -67,7 +63,6 @@
 				  <div class="panel-body major-data-look">
 				    <div class="row" id="header-row">
                         <h2> Showing median cumulative GPAs of ...</h2>
-                          <div id="status-legend" aria-hidden="true"><span class="major-status-icon"><img src="{% static "pivot/img/major_open.gif" %}" alt="Open admission icon"/> open</span><span class="major-status-icon"><img src="{% static "pivot/img/major_capacity-constrained.gif" %}" alt="Capacity-constrained admission icon"/> capacity-constrained</span><span class="major-status-icon"><img src="{% static "pivot/img/major_minimum.gif" %}" alt="Minimum admission icon"/> minimum</span><span class="major-status-icon"><img src="{% static "pivot/img/major_mixed.gif" %}" alt="Mixed admission icon"/> mixed</span></div>
                     </div>
 				<!-- data display in #boxplots -->
 			        <div id="boxplots"></div>
