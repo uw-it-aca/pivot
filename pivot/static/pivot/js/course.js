@@ -51,7 +51,9 @@ function updateEvents() {
                 //$("#loadingModal").modal('show');
                 setTimeout(listCoursesForMajor($(this).text()), 300);
             });
-            closeSuggestions();
+            $("#suggestions").css("display","none");
+            clearTimeout(_timer);
+            //closeSuggestions();
         }
     });
     
@@ -60,7 +62,8 @@ function updateEvents() {
         if ($("#suggestions").css("display") == "block") {
             //start timer to make suggestions box disappear after 3sec
             clearTimeout(_timer);
-            _timer = setTimeout(hideSearchSuggestions, 3000);
+            _timer = setTimeout(hideCourseSearchSuggestions, 3000);
+            //_timer = setTimeout(hideSearchSuggestions, 3000);
         }
     });
 }
@@ -74,51 +77,69 @@ function displayResults() {
 
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
-    for(var maj in _completeMajorMap) {
-        var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
-        if (search_val.length > 0 && index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
-            //Find substring matching search term to make bold
-            var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
-            var appendTo = "";
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
-                appendTo = "#selectedCollege";
-            else if (_completeMajorMap[maj]["campus"] == _currentCampus)
-                appendTo = "#currentCampus";
-            else appendTo ="#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
-            var checked = "";
-            $(".chosen_major").each(function() {
-               if ($(this).text() == maj) {
-                   checked = "checked";
-               }
-            });
-            //Bolds search terms that appear at beginning of word other than first
-            var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
-            $(appendTo).append(template({major: majText}));
-            $(appendTo + " li:last").data("code", maj);
-            count++;
-        }
-        //else if nothing has been entered but a college is selected, load all majors in college
-        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
-            var appendTo = "#selectedCollege";
-            var majText = _completeMajorMap[maj]["major_full_nm"];
-            $("#selectedCollege").append(template({major: majText}));
-            $(appendTo + " li:last").data("code", maj);
-            count++;
+    count = findSearchText($("#search").val(), template);
+    if (search_val.length == 0 && $("#dropdownMenu:first-child").val() != "All") {
+        for(var maj in _completeMajorMap) {
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+                var appendTo = "#selectedCollege";
+                var majText = _completeMajorMap[maj]["major_full_nm"];
+                $("#selectedCollege").append(template({major: majText}));
+                $(appendTo + " li:last").data("code", maj);
+                count++;
+            }
         }
     }
-    if (count == 0 && search_val.length > 0) {
+    else if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
             noResults();
             return;
         }
-
         // If we're still loading data, show that we're loading...
         update_results_on_load = true;
     } else {
         //start timer to make suggestions box disappear after 3sec
         clearTimeout(_timer);
-        _timer = setTimeout(hideSearchSuggestions, 3000);
+        _timer = setTimeout(hideCourseSearchSuggestions, 3000);
+        //_timer = setTimeout(hideSearchSuggestions, 3000);
     }
+}
+
+//looks for the search string in major full names
+function findSearchText(orig_val, template) {
+    //1. remove parentheses from the search term and make it lowercase
+    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    var words = search_val.split(" ");
+    var count = 0;
+    for (var maj in _completeMajorMap) {
+        var allFound = false;
+        var majText = _completeMajorMap[maj]["major_full_nm"];
+        for (var word in words) {
+            if (words[word].length > 0) {
+                var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(words[word]);
+                if (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
+                    allFound = true;
+                    var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, words[word].length);
+                    var appendTo = "";
+                    if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
+                        appendTo = "#selectedCollege";
+                    else if (_completeMajorMap[maj]["campus"] == _currentCampus)
+                        appendTo = "#currentCampus";
+                    else appendTo ="#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
+                    majText = majText.replace(new RegExp("\\b" + words[word], "ig"), "<b>" + substring + "</b>");
+                } else {
+                    //A word is missing from the current major, stop looking at this major
+                    allFound = false;
+                    break;
+                }
+            }
+        }
+        if (allFound) {
+            $(appendTo).append(template({major: majText}));
+            $(appendTo + " li:last").data("code", maj);
+            count++;
+        }
+    }
+    return count;
 }
 
 //Shows any currently selected majors in the search suggestions
@@ -142,11 +163,21 @@ function showCurrentSelections() {
     });
 }
 
-//Hide the search suggestions box
-function closeSuggestions() {
-   $("#suggestions").css("display","none");
-   $("#search").val("");
-   $("#search").blur();
+//Close the suggestion tray and display the currently selected major in the search field
+//If nothing selected, clear the field
+function hideCourseSearchSuggestions() {
+    $("#suggestions").css("display", "none");
+    $(".chosen_major").each(function() {
+        $("#search").val(_completeMajorMap[$(this).text()]["major_full_nm"]);
+    });
+    if (sessionStorage.getItem("courses") != null) {
+        $("#search").val(_completeMajorMap[sessionStorage.getItem("courses")]["major_full_nm"]);
+        $("#goBtn").removeClass("disabled");
+    } else {
+        $("#search").val("");
+        $("#search").blur();
+        $("#goBtn").addClass("disabled");
+    }
 }
 
 //Toggles the Go button if search enabled/disabled
@@ -171,15 +202,19 @@ function goSearch() {
         maj = $("#currentCampus li.suggested_major").data("code");
     } else if (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1) {
         maj = $("#selectedCollege li.suggested_major").data("code");
-    } else if ($("#suggestions li.suggested_major").length > 1) {
+    } 
+    else if (search == _completeMajorMap[sessionStorage.getItem("courses")]["major_full_nm"]) {
+        maj = sessionStorage.getItem("courses");
+    }
+    else if ($("#suggestions li.suggested_major").length > 1) {
         multipleResults();
     } else {
         noResults();
     }
 
     if (maj != "") {
-        closeSuggestions();
-        //$("#loadingModal").modal('show');
+        $("#suggestions").css("display","none");
+        clearTimeout(_timer);
         setTimeout(listCoursesForMajor(maj), 300);
     }
 }
@@ -210,13 +245,13 @@ function multipleResults() {
 //Hides the suggestion box if user clicks outside it
 $("html").click(function (e) {
     if ($("#suggestions").css("display") == "block" && !$(e.target).parents('div#suggestions').length && e.target.getAttribute("id") != 'search') {
-       closeSuggestions();
+       hideCourseSearchSuggestions();//closeSuggestions();
    }
 });
 //hides search results and clears input when user presses the esc key
 $("html").keydown(function (e) {
     if (e.which == 27)
-        closeSuggestions();
+        hideCourseSearchSuggestions();//closeSuggestions();
 });
 
 /**** SHOW COURSE DATA ****/
@@ -234,6 +269,10 @@ function listCoursesForMajor(maj) {
 
     //maj = major code A A-0
     var id = maj.replace(" ","_");
+    
+    //Display major name in search field & enable search button
+    $("#search").val(_completeMajorMap[maj]["major_full_nm"]);
+    $("#goBtn").removeClass("disabled");
 
     // Compile the dynamic table data and pass it as a variable to outer template.
     var courses = _completeMajorMap[maj]["courses"];
