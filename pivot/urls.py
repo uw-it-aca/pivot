@@ -6,7 +6,7 @@ from pivot.views import (
     CourseGPAView,
     MajorGPAView,
     FeedbackView,
-    Resources
+    About
 )
 from pivot.views.data_api import (
     MajorCourse,
@@ -34,8 +34,8 @@ urlpatterns = [
         name='majorgpa'),
     url(r'^feedback$', login_required(FeedbackView.as_view()),\
         name='feedback'),
-    url(r'^resources$', login_required(Resources.as_view()),\
-        name='resources'),
+    url(r'^about$', login_required(About.as_view()),\
+        name='about'),
     url(r'^template$', login_required(PivotTemplateView.as_view()),\
         name='pivottemplate'),
     url(r'^api/v1/major_course$', login_required(MajorCourse.as_view()),\
