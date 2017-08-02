@@ -18,8 +18,8 @@ class MajorGPAView(TemplateView):
     template_name = 'major-gpa.html'
 
 
-class Resources(TemplateView):
-    template_name = 'resources.html'
+class About(TemplateView):
+    template_name = 'about.html'
 
 
 class PivotTemplateView(TemplateView):

@@ -20,7 +20,7 @@
                 <section class="topbanner" >
 	                <a href="#maincontent" id="shortcut" class="skip-to-main">skip to main content</a>
                     <nav class="navbar navbar-default" role="navigation">
-                        <a href="/major-gpa" class="no-hover"><span class="sitename">Pivot<sup>BETA</sup></span></a>
+                        <a href="/major-gpa/" class="no-hover"><span class="sitename">Pivot<sup>BETA</sup></span></a>
                         <span class="tagline">Help your students make the best move</span>
                         <!-- Hide NetID for Beta 		<div class="login"> Hi, netid123 </div> -->
                         <!-- Hamburger for 768px -->
@@ -35,9 +35,9 @@
                         <!-- END OF hamburger view -->
                         <div class="navbar-collapse collapse" id="menu" aria-expanded="true">
                             <ul class="nav navbar-nav underline">
-                                <li role="presentation" {% if request.path == '/major-gpa' %} class="active"{% endif %}><a href="/major-gpa" title="View the Median GPA of major of your interest">View Major GPAs</a></li>
-                                <li role="presentation" {% if request.path == '/course-gpa' %} class="active"{% endif %}><a href="/course-gpa" title="View GPA of commonly taken courses among declared students ">View Course GPAs</a></li>
-                                <li role="presentation" {% if request.path == '/resources' %} class="active"{% endif %}><a href="/resources" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
+                                <li role="presentation" {% if request.path == '/major-gpa/' %} class="active"{% endif %}><a href="/major-gpa/" title="View the Median GPA of major of your interest">View Major GPAs</a></li>
+                                <li role="presentation" {% if request.path == '/course-gpa/' %} class="active"{% endif %}><a href="/course-gpa/" title="View GPA of commonly taken courses among declared students ">View Course GPAs</a></li>
+                                <li role="presentation" {% if request.path == '/about/' %} class="active"{% endif %}><a href="/about/" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
                             </ul>
                         </div><!-- END OF navbar-collapse -->
 
@@ -56,11 +56,11 @@
 		<div class="container center">
 				<div class="footer-links">
 	                <ul>
-		                  <li><a href="/resources" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
-		                  <li><a href="/feedback" title="Send us feedback">Feedback</a></li>
+		                  <li><a href="/about/" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
+		                  <li><a href="/feedback/" title="Send us feedback">Feedback</a></li>
 	                    <li><a href="http://www.washington.edu/online/terms/" target="_blank" title="University of Washington Website Terms and Conditions of Use">Terms </a></li>
 	                    <li><a href="http://www.washington.edu/online/privacy/" target="_blank" title="University of Washington Online Privacy Statement">Privacy</a></li>
-	                    <li><a href="/logout" target="" title="Log out from Pivot">Log out</a></li>
+	                    <li><a href="/logout/" title="Log out from Pivot">Log out</a></li>
 	                </ul>
 	            </div><!-- end of footer links -->
 	            <p class="credit">©2016 University of Washington Information Technology </p>
@@ -99,8 +99,8 @@
 
 </div><!-- footer role -->
 <script src="{% static "pivot/js/main.js" %}"></script>
-{% if request.path == '/major-gpa' %}<script src="{% static "pivot/js/major.js" %}"></script>{% endif %}
-{% if request.path == '/course-gpa' %}<script src="{% static "pivot/js/course.js" %}"></script>{% endif %}
+{% if request.path == '/major-gpa/' %}<script src="{% static "pivot/js/major.js" %}"></script>{% endif %}
+{% if request.path == '/course-gpa/' %}<script src="{% static "pivot/js/course.js" %}"></script>{% endif %}
 {% include "include/handlebars/no-results.html" %}
 {% include "include/handlebars/display-results.html" %}
 {% include "include/handlebars/update-events.html" %}

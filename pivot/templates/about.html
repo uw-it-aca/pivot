@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block web_content %}
-<!-- MAIN CONTENT BELOW THE BANNER -->	
+<!-- MAIN CONTENT BELOW THE BANNER -->
   	<main class="container" role="main">
-		<div class="main-content">  
+		<div class="main-content">
 		    <h1 class="page-title">About Pivot</h1>
 			<section>
 				<ul>
@@ -11,11 +11,11 @@
 					<li><a href="#terms">Term Definitions</a></li>
 					<li><a href="#data-viz">Data Visualization</a></li>
 				</ul>
-			</section>	
+			</section>
 		    <section>
-				<h2 id="faq">Frequently Asked Questions</h2>   
+				<h2 id="faq">Frequently Asked Questions</h2>
 				<p class="faq-chunk"><span class="faq-q">Q: How is the data gathered and processed? </span><br>
-				A: Data on course grades and cumulative GPA comes from UW databases. 
+				A: Data on course grades and cumulative GPA comes from UW databases.
 				</p>
 				<p class="faq-chunk"><span class="faq-q">Q: How far back does the data go?</span><br>
 				A: Pivot uses data from fall quarter 2012 to summer quarter 2016.</p>
@@ -27,11 +27,11 @@
 		    </section><!-- end of 1st H2 chunk, FAQ -->
 
 		    <section>
-				<h2 id="terms">Term Definitions</h2> 
+				<h2 id="terms">Term Definitions</h2>
 				<dl>
 					<dt>College</dt>
 					<dd>College refers to an aggregation of one or more academic departments into a broader academic organization.
-				</dl>	
+				</dl>
 				<dl>
 					<dt>Declared major</dt>
 					<dd>A major is declared once the student is officially accepted into the degree program.  </dl>
@@ -43,29 +43,29 @@
 					<dd>This is the average of the accumulated final grades earned in courses over time, weighted by the number of units per course. </dl>
 				<dl>
 					<dt>Median cumulative grade point average</dt>
-					<dd>This is the midpoint GPA (grade point average), considering the cumulative GPAs of all students who have declared for the selected major within the specified range of time.</dl>			
-									
+					<dd>This is the midpoint GPA (grade point average), considering the cumulative GPAs of all students who have declared for the selected major within the specified range of time.</dl>
+
 			</section><!-- end of 2nd H2 chunk -->
-			
+
 			<section>
-				<h2 id="data-viz">Data visualization</h2> 
+				<h2 id="data-viz">Data visualization</h2>
 				<p>Grade data is visualized using a boxplot. Below is a guide to understanding the boxplot data.</p>
-				
+
 				<section id="boxplot-legend"> <img src="{% static "pivot/img/Boxplot-key_V4.png" %}" alt="an example of Boxplot indicating the range from the lower quartile to the upper quartile that 50% of GPAs fall in. The median GPA is the midpoint of this range.">
 				</section>
 				<p>
 					<dfn>Median</dfn> : The midpoint of the data sample: half the data in the sample falls above the median and the other half falls below it.
-				</p>	
+				</p>
 				<p>
 					<dfn>Upper quartile</dfn> : The middle number between the median and the highest number in the data set.
 				</p>
 				<p>
 					<dfn>Lower quartile</dfn> : The middle number between the median and the lowest number in the data set
 .
-				</p>	
+				</p>
 			</section><!-- end of 3rd H2 chunk -->
 
 		</div>	<!-- end of main -->
-	
+
 	</main>  <!-- end of main container -->
 {% endblock %}
