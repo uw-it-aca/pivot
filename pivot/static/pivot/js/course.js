@@ -54,7 +54,7 @@ function updateEvents() {
             closeSuggestions();
         }
     });
-    
+
     //for the benefit of mobile devices trying to read a long suggestion list
     window.addEventListener("scroll", function() {
         if ($("#suggestions").css("display") == "block") {
