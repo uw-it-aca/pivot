@@ -304,7 +304,7 @@ $("#clear_majors").on("click", function(e) {
     clearCommonSelection();
     // Clear attributes specific to page
     $("#courselist").html("");
-    storeSelections(null, null);
+    storeSelections(null);
 });
 
 //returns the ColorBrewer bucket index for the given GPA
