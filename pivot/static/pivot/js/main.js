@@ -458,6 +458,23 @@ function round(value, decimals) {
     return value.toFixed(decimals);
 }
 
+function clearCommonSelection() {
+    $("#clear_majors").css("display","none");
+    $(".chosen_major").remove();
+    $(".no-results-warning").css("display","none");
+    $("input#search").val("");
+    $(".results-section").css("display","none");
+    $(".sample-data").css("display","block");
+    clearCollegeSelection();
+}
+
+function clearCollegeSelection() {
+    var source = $("#populate-college-dropdown-college-selection").html();
+    var template = Handlebars.compile(source);
+    $("#dropdownMenu:first-child").html(template({college_selection: "All"}));
+    $("#dropdownMenu:first-child").val("All");
+}
+
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero
 /*function trailingZero(value) {
  if (value != null) {
