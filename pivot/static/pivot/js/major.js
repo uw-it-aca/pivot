@@ -121,7 +121,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
     var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
-    
+
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
     var yAxis = d3.svg.axis().scale(y).orient("left");
@@ -145,10 +145,10 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
         }
         $(this).attr("aria-hidden", true);
     });
-    
+
     //Add numbers for screen reader
     $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
-    
+
     addPopover(majorId, y(median));
 }
 
@@ -203,7 +203,7 @@ function addPopover(id, med) {
     });
 
     $("#" + id + " .boxPopover").focusout(function() {
-       $(this).popover("hide"); 
+       $(this).popover("hide");
     });
 }
 
@@ -450,7 +450,7 @@ function updateEvents() {
             clear_results();
         }
     });
-    
+
     //for the benefit of mobile devices trying to read a long suggestion list
     window.addEventListener("scroll", function() {
         if ($("#suggestions").css("display") == "block") {
@@ -461,7 +461,7 @@ function updateEvents() {
     });
 }
 
-//detect if mobile, 
+//detect if mobile,
 //window.addEventListener('scroll', function() { alert("Scrolled"); });
 
 //hides search results and clears input when user clicks outside the results
@@ -608,14 +608,12 @@ function showGPA(gpa) {
 }
 
 function clear_results() {
-    $("#clear_majors").css("display","none");
-    $(".chosen_major").remove();
-    $(".no-results-warning").css("display","none");
+    // Clear all common attributes
+    clearCommonSelection();
+    // Clear attributes specific to page
     $(".no-results-warning").removeClass("alert alert-info");
-    $("input#search").val("");
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
-    $(".results-section").css("display","none");
     storeSelections(null, null);
 }
 

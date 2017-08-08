@@ -304,12 +304,10 @@ function storeSelections(courses) {
 
 //Clears all data
 $("#clear_majors").on("click", function(e) {
-    $("#clear_majors").css("display","none");
-    $(".chosen_major").remove();
-    $(".no-results-warning").css("display","none");
-    $("input#search").val("");
+    // Clear all common attributes
+    clearCommonSelection();
+    // Clear attributes specific to page
     $("#courselist").html("");
-    $(".results-section").css("display", "none");
     storeSelections(null);
 });
 
