@@ -1,0 +1,16 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "show-compare-module" %}
+
+<div class='panel panel-default yourgpa-box'>
+    <div class='col-xs-small panel-body yourgpa' id='compare-module'>
+        <h3 class='yourgpa-heading sr-only'>Compare your GPA against selected majors</h3>
+        <form class='form-inline yourgpa-form'>
+            <label for='compare' class='compare-heading'>Compare GPA </label>
+            <input id='compare' class='form-control' type='text' placeholder='Enter a GPA' value='{{ gpa }}'/>
+            <button id='compareBtn' class='btn btn-default compare-gpa' type='button' label="" aria-label='Add your GPA'>Add</button>
+            <div id='compare-msg' role="alert" aria-atomic=true ></div>
+        </form>
+    </div>
+</div>
+
+{% endtplhandlebars %}

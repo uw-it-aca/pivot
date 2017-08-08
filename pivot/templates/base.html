@@ -8,12 +8,119 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <title>Pivot :  Help your students make the best move</title>
+        <title>Pivot:  Help your students make the best move</title>
         {% include "include/head.html" %}
     </head>
 
 <body>
-{% block web_content %}{% endblock %}
+    <div class="page-wrap"> <!-- another wrap to make a sticky footer -->
+        <header class="topbanner-bg" role="banner">
+            <div class="container" >
+                <!-- NAV -->
+                <section class="topbanner" >
+	                <a href="#maincontent" id="shortcut" class="skip-to-main">skip to main content</a>
+                    <nav class="navbar navbar-default" role="navigation">
+                        <a href="/major-gpa/" class="no-hover"><span class="sitename">Pivot<sup>BETA</sup></span></a>
+                        <span class="tagline">Help your students make the best move</span>
+                        <!-- Hide NetID for Beta 		<div class="login"> Hi, netid123 </div> -->
+                        <!-- Hamburger for 768px -->
+                        <div class="navbar-header" >
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu" aria-expanded="true" aria-label='navigation menu'>
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>	<!-- END OF navbar-header -->
+                        <!-- END OF hamburger view -->
+                        <div class="navbar-collapse collapse" id="menu" aria-expanded="true">
+                            <ul class="nav navbar-nav underline">
+                                <li role="presentation" {% if request.path == '/major-gpa/' %} class="active"{% endif %}><a href="/major-gpa/" title="View the Median GPA of major of your interest">View Major GPAs</a></li>
+                                <li role="presentation" {% if request.path == '/course-gpa/' %} class="active"{% endif %}><a href="/course-gpa/" title="View GPA of commonly taken courses among declared students ">View Course GPAs</a></li>
+                                <li role="presentation" {% if request.path == '/about/' %} class="active"{% endif %}><a href="/about/" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
+                            </ul>
+                        </div><!-- END OF navbar-collapse -->
+
+                    </nav>
+                </section>
+            </div>	<!-- END OF CONTAINER -->
+        </header>
+
+        {% block web_content %}{% endblock %}
+
+    </div> <!-- end of .page-wrap  -->
+    <!-- FOOTER STUFF -->
+
+<div>
+	<footer class="site-footer" role="contentinfo">
+		<div class="container center">
+				<div class="footer-links">
+	                <ul>
+		                  <li><a href="/about/" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
+		                  <li><a href="/feedback/" title="Send us feedback">Feedback</a></li>
+	                    <li><a href="http://www.washington.edu/online/terms/" target="_blank" title="University of Washington Website Terms and Conditions of Use">Terms </a></li>
+	                    <li><a href="http://www.washington.edu/online/privacy/" target="_blank" title="University of Washington Online Privacy Statement">Privacy</a></li>
+	                    <li><a href="/logout/" title="Log out from Pivot">Log out</a></li>
+	                </ul>
+	            </div><!-- end of footer links -->
+	            <p class="credit">©2016 University of Washington Information Technology </p>
+	            <div><img src="{% static "pivot/img/InfoTech_UW_vsml.footer.png" %}"  class="uw-it-logo" alt="UW-IT logo"></div>
+		</div><!-- end of footer content -->
+	</footer>
+
+    <!-- contact advisor tab -->
+    <!--<div id="contact">Contact Adviser</div>
+        <div id="blurb"><h4>Your undergraduate adviser can help you further </h4><p>Sign up for 30-minute advising appointments at the Undergraduate advising office (9am to 4:30pm, Mon - Fri) through our <a href="http://www.washington.edu/uaa/advising/appointments/" target="_blank">online appointment scheduler</a> or call (206) 543-2550. For a walk-in appointment, visit Mary Gates Hall #141.</p>
+    </div>-->
+
+    <!-- loading modal dialog -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog center-modalcontent" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+                <p class="load-message">Loading... please wait</p>
+                <img src="{% static "pivot/img/ajax-loader.gif" %}" alt="loading data" title="loading data"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<!-- loading modal dialog: SAVED FOR ONBOARDING EXPERIENCE ///
+     <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+            <p>Loading... please wait</p>
+            <img src="Assets/images/ajax-loader.gif" alt="loading data" title="loading data"/>
+        </div>
+      </div>
+    </div>
+  </div> -->
+
+</div><!-- footer role -->
+<script src="{% static "pivot/js/main.js" %}"></script>
+{% if request.path == '/major-gpa/' %}<script src="{% static "pivot/js/major.js" %}"></script>{% endif %}
+{% if request.path == '/course-gpa/' %}<script src="{% static "pivot/js/course.js" %}"></script>{% endif %}
+{% include "include/handlebars/no-results.html" %}
+{% include "include/handlebars/display-results.html" %}
+{% include "include/handlebars/update-events.html" %}
+{% include "include/handlebars/multiple-results.html" %}
+{% include "include/handlebars/list-courses-for-major-outer.html" %}
+{% include "include/handlebars/feedback.html" %}
+{% include "include/handlebars/display-major-status-url.html" %}
+{% include "include/handlebars/display-major-status-icon.html" %}
+{% include "include/handlebars/prepare-results.html" %}
+{% include "include/handlebars/finish-results.html" %}
+{% include "include/handlebars/finish-results-divider.html" %}
+{% include "include/handlebars/populate-college-dropdown.html" %}
+{% include "include/handlebars/populate-college-dropdown-college-selection.html" %}
+{% include "include/handlebars/create-major-card.html" %}
+{% include "include/handlebars/create-box-for-major.html" %}
+{% include "include/handlebars/median-help-popover.html" %}
+{% include "include/handlebars/add-popover.html" %}
+{% include "include/handlebars/major-display-results.html" %}
+{% include "include/handlebars/no-results-college.html" %}
+{% include "include/handlebars/show-compare-module.html" %}
+{% include "include/handlebars/validate-gpa.html" %}
 </body>
 </html>
-
