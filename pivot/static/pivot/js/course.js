@@ -152,9 +152,13 @@ function closeSuggestions() {
 //Toggles the Go button if search enabled/disabled
 function toggleGo() {
     var selectedCol = $("#dropdownMenu:first-child").val();
-    if (($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") || ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") || (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1))
+    if (($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") ||
+        ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") ||
+        (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1)) {
         $("#goBtn").removeClass("disabled");
-    else $("#goBtn").addClass("disabled");
+    } else {
+        $("#goBtn").addClass("disabled");
+    }
 }
 
 //Search the major list for text in input field

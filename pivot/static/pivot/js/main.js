@@ -418,6 +418,10 @@ function populateCollegeDropdown() {
         $("#dropdownMenu:first-child").val($(this).text());
         $("#dropdownMenu:first-child").attr("data-campus", $(this).attr("class"));
         toggleGo();
+        if (window.location.href.indexOf("course-gpa") > -1) {
+            // creates a user like click
+            setTimeout(prepareResults, 10);
+        }
     });
 
     //If this is the course page and a code is provided, load the data without searching
