@@ -645,7 +645,7 @@ stroke: #ccc;
 shape-rendering: crispEdges;
 }
 
-/***** EVERYTHING ELSE *****/
+/*****                EVERYTHING ELSE                    *****/
 
 
 /* may not be needed once Bootstrap is in use */
@@ -923,6 +923,12 @@ ul {
     min-height:15px;
     /* float:left;*/
 }
+
+/* Major admission category Terms in About Pivot page */
+.admission-type-list {
+	padding-top: 1em;
+}
+
 
 /* CONTACT ADVISOR TAB */
 
