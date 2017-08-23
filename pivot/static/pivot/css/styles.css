@@ -766,6 +766,7 @@ p.course-table-row {
 
 .course-link {
     padding:12px;
+    border-bottom-width: 4px;
 }
 
 /* Search module style */
