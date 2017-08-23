@@ -215,7 +215,6 @@ label{
 }
 
 /* override the Bootstrap style for nav  */
-body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
 .navbar {
 	margin-bottom: 0px;
@@ -1024,6 +1023,7 @@ ul {
   margin: 10px 15px 10px 0px;  /* Remove the left margin for align left 
   }*/
     
+body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
 /* collge drop-down for narrow width */
 #college-dropdown .dropdown-menu>li>a {
