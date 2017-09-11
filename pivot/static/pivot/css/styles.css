@@ -1078,5 +1078,7 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 	padding: 10px;
 	width: 160px;
 }
-
+.major-height { /* major height*/
+	max-height: 120px !important; 
+}
 } /* end of small screen style */
