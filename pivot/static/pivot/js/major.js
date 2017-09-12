@@ -185,7 +185,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-        /*trigger: "focus",*/
+       /* trigger: "focus", */
         placement: "top",
         html: true,
         content: template({
@@ -204,7 +204,7 @@ function addPopover(id, med) {
 
     $("#" + id + " .boxPopover").focusout(function() {
        $(this).popover("hide");
-    });
+   });
 }
 
 

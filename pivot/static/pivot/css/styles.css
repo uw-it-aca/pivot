@@ -597,8 +597,11 @@ fill: #7C89A4;
     width:10px;
     height:10px;
     float:left;
-    margin-top:5px;
+	margin-top:5px;
     margin-right:5px;
+}
+.popover-content { /*.alignment tweak attempt*/
+	float: left;
 }
 
 .LQ {
