@@ -760,7 +760,7 @@ p.course-table-row {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
-	padding-top:10px;
+	padding-top:30px;
 	margin-left: -15px;
 }
 
@@ -1007,8 +1007,8 @@ ul {
 	padding: 20px;
 	width: 160px;
 }
-.major-height { /* major height*/
-	max-height: 120px !important; 
+.major-height { /* major row height*/
+	max-height: 120px ; 
 }
 }/* end of med screen style */
  /* ==========================================================================
@@ -1082,7 +1082,7 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 	padding: 10px;
 	width: 160px;
 }
-.major-height { /* major height*/
-	max-height: 120px !important; 
+.major-height { /* major name row height*/
+	max-height: 120px ; 
 }
 } /* end of small screen style */
