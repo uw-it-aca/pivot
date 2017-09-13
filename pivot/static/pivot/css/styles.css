@@ -602,6 +602,7 @@ fill: #7C89A4;
 }
 .popover-content { /*.alignment tweak attempt*/
 	float: left;
+	text-align: left;
 }
 
 .LQ {
