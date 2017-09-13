@@ -18,9 +18,9 @@ d3.box = function() {
       //d = d.map(value).sort(d3.ascending);
 	  //var boxIndex = data[0];
 	  //var boxIndex = 1;
-      // console.log(boxIndex); 
-	  //console.log(d); 
-	  
+      // console.log(boxIndex);
+	  //console.log(d);
+
       var g = d3.select(this);
 
       // Compute quartiles. Must return exactly 3 elements.
@@ -62,7 +62,7 @@ d3.box = function() {
             .attr("x2", function(d) { return y0(d[1]); })
             .attr("y2", height / 2)
             .style("opacity", 1e-6);
-        
+
         center.transition()
           .duration(duration)
           .style("opacity", 1)
@@ -96,7 +96,7 @@ d3.box = function() {
           .duration(duration)
           .attr("x", function(d) { return y1(d[0]); })
           .attr("width", function(d) { return y1(d[1]) - y1(d[0]); });
-      
+
         var boxHQ = g.selectAll("rect.box")
           .data([quartileData]);
 
@@ -167,11 +167,11 @@ d3.box = function() {
           .attr("x2", y1)
           .style("opacity", 1e-6)
           .remove();
-        
+
         //Add in customGPA, including extra tick
         if (customGPA != null) {
             var gpa = g.selectAll("line.gpaPlaceholder").data([customGPA]);
-            
+
             gpa.enter().insert("line")
                 .attr("class","gpaPlaceholder")
                 .attr("x1", y0)
@@ -213,7 +213,7 @@ d3.box = function() {
           .duration(duration)
           .attr("x", y1);
 	}
-		 
+
       boxTick.transition()
           .duration(duration)
           .attr("x", y1);
@@ -261,7 +261,7 @@ d3.box = function() {
     height = x;
     return box;
   };
-    
+
   box.duration = function(x) {
     if (!arguments.length) return duration;
     duration = x;
@@ -285,19 +285,19 @@ d3.box = function() {
     whiskers = x;
     return box;
   };
-  
+
   box.showLabels = function(x) {
     if (!arguments.length) return showLabels;
     showLabels = x;
     return box;
   };
-    
+
   box.quartiles = function(x) {
     if (!arguments.length) return quartiles;
     quartiles = x;
     return box;
   };
-    
+
 box.customGPA = function(x) {
     if (!arguments.length) return customGPA;
     customGPA = x;
