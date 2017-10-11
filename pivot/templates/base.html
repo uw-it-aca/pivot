@@ -56,8 +56,10 @@
 		<div class="container center">
 				<div class="footer-links">
 	                <ul>
-		                  <li><a href="/about/" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
-		                  <li><a href="/feedback/" title="Send us feedback">Feedback</a></li>
+                        <!-- Advisor Onboarding Trigger: STYLIZE THIS -->
+                        <li><a style="color: red !important;" data-toggle="modal" data-target="#onboard-modal" title="Onboarding">Onboarding</a></li>
+                        <li><a href="/about/" title="Frequently Asked Questions, about Pivot data, terms, and more">About Pivot</a></li>
+                        <li><a href="/feedback/" title="Send us feedback">Feedback</a></li>
 	                    <li><a href="http://www.washington.edu/online/terms/" target="_blank" title="University of Washington Website Terms and Conditions of Use">Terms </a></li>
 	                    <li><a href="http://www.washington.edu/online/privacy/" target="_blank" title="University of Washington Online Privacy Statement">Privacy</a></li>
 	                    <li><a href="/logout/" title="Log out from Pivot">Log out</a></li>
@@ -73,41 +75,39 @@
         <div id="blurb"><h4>Your undergraduate adviser can help you further </h4><p>Sign up for 30-minute advising appointments at the Undergraduate advising office (9am to 4:30pm, Mon - Fri) through our <a href="http://www.washington.edu/uaa/advising/appointments/" target="_blank">online appointment scheduler</a> or call (206) 543-2550. For a walk-in appointment, visit Mary Gates Hall #141.</p>
     </div>-->
 
-<!-- ADVISER ONBOARDING -->
-<!-- Trigger -->
-<div>  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#onboard-modal">Open Modal</button>
-</div>
- <!-- Modal -->
-  <div class="modal fade" id="onboard-modal" role="dialog">
-    <div class="modal-dialog">
-    
-      <!-- Modal content-->
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h2 class="modal-title">Welcome to Pivot</h2>
+    <!-- ADVISOR ONBOARDING -->
+    <!-- Modal -->
+    <div class="modal fade" id="onboard-modal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Welcome to Pivot</h2>
+                </div>
+                <div class="modal-body">
+                    <h3>Pivot displays:</h3>
+                    <p>The average GPA and grade distribution of declared students and the 10 most commonly taken courses by students</p>
+                    <h3>How will it support my work? </h3>
+                    <p>Pivot supports a wide range of UW roles, such as advisers who are helping students applying to a capacity-constrained major and departmental admins who make curriculum decisions.</p>
+                    <h3>Before you get started </h3>
+                    <ul class="bullet-list">
+                        <li>Pivot uses box plots to visualize the GPA data. New to box plots? Visit <a href="about.html">About Pivot.</a> </li>
+                        <li>Recent changes in the data may not be reflected because Pivot provides aggregated, historical data. </li>
+                        <li>Remember GPA is just one of many factors that goes into admission decisions. </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <input type="checkbox" id="forget-onboarding" name="forget onboarding dialog">
+                    <label for="forget-onboarding">Don't show the onboarding dialog at launch</label> <br>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <h3>Pivot displays:</h3>
-          <p>The average GPA and grade distribution of declared students and the 10 most commonly taken courses by students</p>
-          <h3>How will it support my work? </h3>
-          <p>Pivot supports a wide range of UW roles, such as advisers who are helping students applying to a capacity-constrained major and departmental admins who make curriculum decisions.</p>
-		  <h3>Before you get started </h3>
-          <ul class="bullet-list">
-	          <li>Pivot uses box plots to visualize the GPA data. New to box plots? Visit <a href="about.html">About Pivot.</a> </li>
-	          <li>Recent changes in the data may not be reflected because Pivot provides aggregated, historical data. </li>
-	          <li>Remember GPA is just one of many factors that goes into admission decisions. </li>
-	      </ul>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
-    </div>
-  </div> <!-- end Modal -->
-  
-<!-- CLOSE:  ADVISER ONBOARDING -->          
+    </div> <!-- end Modal -->
+
+<!-- CLOSE:  ADVISER ONBOARDING -->
 <!-- loading modal dialog -->
  <!-- loading modal dialog: SAVED FOR ONBOARDING EXPERIENCE ///   <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog center-modalcontent" role="document">
