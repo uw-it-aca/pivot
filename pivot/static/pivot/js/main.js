@@ -21,12 +21,70 @@ if (window.location.search == "?slow") {
     getDataNameMap();
 }
 
-//initializes Bootstrap popover plugin
+// initializes app
 $(function () {
+    // initializes bootstrap popover plugin
     $('[data-toggle="popover"]').popover();
+    // initializes onboarding dialog
+    initOnboardingDialog();
 });
 
+// checks local storage and initializes onboarding dialog
+function initOnboardingDialog() {
+    var isForgotten = readCookie("isOnBoardingForgotten");
+    isForgotten = isForgotten == null ? false : isForgotten;
+    if (isForgotten == true || isForgotten == "true") {
+        $("#forget-onboarding").attr("checked", "checked");
+    } else {
+        $("#forget-onboarding").removeAttr("checked");
+        $("#onboard-modal").modal("show");
+    }
 
+    // add event listener when modal is dismissed
+    // set a cookie expiry 10 yrs from today since never is not possible
+    $("#onboard-modal").on('hidden.bs.modal', function() {
+        var isChecked = $("#forget-onboarding:checked").length;
+        if (isChecked) {
+            createCookie("isOnBoardingForgotten", true, 10 * 365);
+        } else {
+            createCookie("isOnBoardingForgotten", false, 10 * 365);
+        }
+    });
+}
+
+/**** COOKIE MANIPULATION UTIL
+CODE DIRECTLY USED FROM
+https://www.quirksmode.org/js/cookies.html ****/
+
+function createCookie(name, value, days) {
+    var expires;
+
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    } else {
+        expires = "";
+    }
+    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = encodeURIComponent(name) + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name, "", -1);
+}
+
+/**** END UTIL ****/
 
 /**** READ DATA FROM CSV ****/
 
