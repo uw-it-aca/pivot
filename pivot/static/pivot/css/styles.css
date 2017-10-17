@@ -438,7 +438,10 @@ sup {
 	color: #4b2e83;
 	font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
 }
-
+.modal-checkbox {
+	text-align: left;
+	margin-bottom: 1em;
+}
 /*placeholder image on major & course pages*/
 .sample-data {
     display:none;
