@@ -597,8 +597,12 @@ fill: #7C89A4;
     width:10px;
     height:10px;
     float:left;
-    margin-top:5px;
+	margin-top:5px;
     margin-right:5px;
+}
+.popover-content { /*.alignment tweak attempt*/
+	float: left;
+	text-align: left;
 }
 
 .LQ {
@@ -700,6 +704,7 @@ p.college-heading{
 .major-heading {
     font-weight: bold;
     margin-bottom: 12px;
+    line-height: 1.3;
 }
 /* Compensate the row left margin */
 .course-table {
@@ -759,7 +764,7 @@ p.course-table-row {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
-	padding-top:10px;
+	padding-top:30px;
 	margin-left: -15px;
 }
 
@@ -1007,7 +1012,10 @@ ul {
 	padding: 20px;
 	width: 160px;
 }
+.major-height { /* major row height*/
+	max-height: 120px ; 
 }
+}/* end of med screen style */
  /* ==========================================================================
    SMALL SCREEN
    ========================================================================== */
@@ -1079,5 +1087,7 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 	padding: 10px;
 	width: 160px;
 }
-
+.major-height { /* major name row height*/
+	max-height: 120px ; 
+}
 } /* end of small screen style */
