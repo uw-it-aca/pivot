@@ -442,6 +442,12 @@ sup {
 	text-align: left;
 	margin-bottom: 1em;
 }
+.btn-align-left {
+	text-align: left;
+}
+.modal-close-btn { 
+	margin-top: -22px !important;
+}
 /*placeholder image on major & course pages*/
 .sample-data {
     display:none;
