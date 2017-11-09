@@ -60,7 +60,7 @@ function updateEvents() {
         if ($("#suggestions").css("display") == "block") {
             //start timer to make suggestions box disappear after 3sec
             clearTimeout(_timer);
-            _timer = setTimeout(hideSearchSuggestions, 3000);
+            // _timer = setTimeout(hideSearchSuggestions, 3000);
         }
     });
 }
@@ -117,7 +117,7 @@ function displayResults() {
     } else {
         //start timer to make suggestions box disappear after 3sec
         clearTimeout(_timer);
-        _timer = setTimeout(hideSearchSuggestions, 3000);
+        // _timer = setTimeout(hideSearchSuggestions, 3000);
     }
 }
 

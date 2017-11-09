@@ -202,7 +202,7 @@ function addPopover(id, med) {
     });
 
     $("#" + id + " .boxPopover").focusout(function() {
-      $(this).popover("hide"); 
+      $(this).popover("hide");
    });
 }
 
@@ -313,7 +313,7 @@ function displayResults() {
     }
     //start timer to make suggestions box disappear after 1sec
     clearTimeout(_timer);
-    _timer = setTimeout(hideSearchSuggestions, 3000);
+    // _timer = setTimeout(hideSearchSuggestions, 3000);
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -348,7 +348,7 @@ function showCurrentSelections() {
     });
     //start timer to make suggestions box disappear after 3sec
     clearTimeout(_timer);
-    _timer = setTimeout(hideSearchSuggestions, 3000);
+    // _timer = setTimeout(hideSearchSuggestions, 3000);
 }
 
 //Checks if multiple majors have been selected
@@ -439,7 +439,7 @@ function updateEvents() {
 
         //start timer to make suggestions box disappear after 3sec
         clearTimeout(_timer);
-        _timer = setTimeout(hideSearchSuggestions, 3000);
+        // _timer = setTimeout(hideSearchSuggestions, 3000);
 
         // Draw data table(s) if list is not empty otherwise clear
         // the table
@@ -455,7 +455,7 @@ function updateEvents() {
         if ($("#suggestions").css("display") == "block") {
             //start timer to make suggestions box disappear after 3sec
             clearTimeout(_timer);
-            _timer = setTimeout(hideSearchSuggestions, 3000);
+            // _timer = setTimeout(hideSearchSuggestions, 3000);
         }
     });
 }
