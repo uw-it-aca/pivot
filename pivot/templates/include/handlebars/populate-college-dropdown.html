@@ -1,20 +1,20 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "populate-college-dropdown" %}
 
-<li><a href="#">All</a></li>
-<li role="separator" class="divider"></li>
+<li role="option" id="college-opt1" aria-selected="true"><a href="#">All <span class="sr-only">Colleges</span></a></li>
+<li class="divider"><hr class="sr-only" /></li>
 <!--Campus name followed by colleges-->
 {{ #each campus_college }}
     <!--Dont display before first campus-->
     {{ #if @index }}
-        <li role="separator" class="divider"></li>
+        <li class="divider"><hr class="sr-only" /></li>
     {{ /if }}
 
     <li class="dropdown-header college-list">Colleges in {{ this.campus }} campus:</li>
 
     {{ #each this.colleges }}
         <!--Add colleges here-->
-        <li><a href="#" class="{{ ../this.campus }}">{{ this }}</a></li>
+        <li role="option"><a href="#" class="{{ ../this.campus }}">{{ this }}</a></li>
     {{ /each }}
 {{ /each }}
 

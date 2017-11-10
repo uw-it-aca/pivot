@@ -5,7 +5,7 @@
 <!-- MAIN CONTENT BELOW THE BANNER -->
   	<main class="container" role="main">
 
-		<div class="main-content" id="maincontent"> 
+		<div class="main-content" id="maincontent">
 
 		    <h1 class="page-title">View Course GPAs</h1>
 		    <section>
@@ -19,18 +19,20 @@
 						    <!-- NEW SEARCH FORM BEGINS -->
 						    <div class="input-group">
 						      <div id="college-dropdown" class="input-group-btn">
-						        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="dropdownMenu" style="width:100px;text-align:left;" label="College" aria-label='college'>All<span class="caret"></span></button>
+                                <label id="college-dropdown-label" class="sr-only">Optional: Filter majors by first selecting a college.</label>
+						        <button id="dropdownMenu" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-controls="college-dropdown-list"  aria-haspopup="true" aria-expanded="false" aria-labelledby="college-dropdown-label" style="width:100px;text-align:left;">All <span class="sr-only">Colleges</span><span class="caret"></span></button>
+
 						        <!-- JS generated college list goes in ul -->
-						        <ul class="dropdown-menu" aria-labelledby="dropdownMenu">  
+						        <ul id="college-dropdown-list" class="dropdown-menu" aria-labelledby="college-dropdown-label" role="listbox" aria-activedescendant="college-opt1">
 						        </ul>
 						      </div><!-- .input-group-btn -->
 							  <!-- major search -->
-						      
+
 						     <div class="form-group">
 							      <label for="search" class="sr-only" >Enter a major name to look up</label>
 								  <input id="search" type="text" class="form-control" name="searchQuery" value="" size="" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Biology, etc." autocomplete="off">
 								  <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
-						      
+
 						      <!-- search results go in #suggestions -->
 					            <div id="suggestions"></div>
 					            <!-- hidden div to track selected majors -->
@@ -39,11 +41,11 @@
 						      <div class="input-group-btn" id="selected-course-page">
 							      	<button class="btn btn-default btn-search" type="submit" id="goBtn"><i class="glyphicon glyphicon-search" aria-hidden="true"></i><span class="sr-only">search</span></button>
 							  </div><!--Go button .input-group-btn -->
-  
-                          	</div><!--  .input-group -->  
-                          	<div class="clear-btn"><button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button>  
-                          	</div>            
-                          </div><!--  .col-xs-12 col-sm-10??? --> 
+
+                          	</div><!--  .input-group -->
+                          	<div class="clear-btn"><button type="button" class="btn btn-link" id="clear_majors" label="clear selected majors" aria-label='clear selected majors'>Clear selections</button>
+                          	</div>
+                          </div><!--  .col-xs-12 col-sm-10??? -->
                           </div><!-- end of .row THIS IS THE CLOSURE OF THE ROW DIV -->
                     </div><!-- of .container -->
 				  </div><!-- end of .panel-body -->
@@ -59,7 +61,7 @@
 	<!-- DISPLAY DATA -->
 		    <section class="results-section">
 				<div class="panel-body major-data-look">
-				<div class="row course-h2"><h2>Most commonly taken courses among students who declared...</h2>   
+				<div class="row course-h2"><h2>Most commonly taken courses among students who declared...</h2>
 				</div><!-- end of row -->
 
 				<div>
@@ -69,7 +71,7 @@
 			        <div id="courselist"></div>
 
 
-				  </div> 
+				  </div>
 				</div> <!-- end of .panel panel-default -->
 				</div> <!-- end of .panel-body major-data-look -->
 		    </section>
