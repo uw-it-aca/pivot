@@ -1,7 +1,7 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "populate-college-dropdown" %}
 
-<li role="option" id="college-opt1" aria-selected="true"><a href="#">All Colleges</li>
+<li role="option" id="college-opt1" aria-selected="true" class="active"><a href="#">All Colleges</a></li>
 <li class="divider"><hr class="sr-only" /></li>
 <!--Campus name followed by colleges-->
 {{ #each campus_college }}

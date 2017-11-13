@@ -68,7 +68,7 @@ p {
 }
 article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section {
   display: block;
-} 
+}
 img {
    border: 0;
    max-width: 100%;
@@ -130,7 +130,7 @@ a.no-hover:hover, a.no-hover:focus {
 a.skip-to-main {
 	position: absolute;
 	left:.5em;
-	top:-99px;	
+	top:-99px;
 }
 a.skip-to-main:focus {
 	z-index: 999;
@@ -1013,7 +1013,7 @@ ul {
 	width: 160px;
 }
 .major-height { /* major row height*/
-	max-height: 120px ; 
+	max-height: 120px ;
 }
 }/* end of med screen style */
  /* ==========================================================================
@@ -1022,7 +1022,7 @@ ul {
 
  /* Small devices (tablets, mobile) */
 @media (max-width: 768px) {
-	
+
 	.login {
 	float: right;
     margin: auto;
@@ -1035,9 +1035,9 @@ ul {
 	}
 
 /* .btn-GPS-primary {
-  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left 
+  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left
   }*/
-    
+
 body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
 /* collge drop-down for narrow width */
@@ -1065,7 +1065,7 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 	border-left:5px solid #b46100;
 	color:white;
 	}
- /* Move the  your GPA form to left */	
+ /* Move the  your GPA form to left */
 .yourgpa-form {
 	float: left;
 }
@@ -1076,7 +1076,7 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
     font-size:16px;
 }
 /* Setting left for mobile */
-.yourgpa { 
+.yourgpa {
 	padding-left: 15px;
 }
 /* Setting left for mobile */
@@ -1088,6 +1088,6 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 	width: 160px;
 }
 .major-height { /* major name row height*/
-	max-height: 120px ; 
+	max-height: 120px ;
 }
 } /* end of small screen style */

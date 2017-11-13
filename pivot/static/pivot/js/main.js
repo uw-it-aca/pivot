@@ -422,6 +422,7 @@ function populateCollegeDropdown() {
             // creates a user like click
             setTimeout(prepareResults, 10);
         }
+        $( "#dropdownMenu" ).focus();
     });
 
     //If this is the course page and a code is provided, load the data without searching
