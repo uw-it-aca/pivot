@@ -198,6 +198,7 @@ function iqr(k) {
 //Displays majors matching search term
 function displayResults() {
     $("#suggestions").css("display","block");
+    $("#search").attr("aria-expanded", "true");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     for(var maj in _completeMajorMap) {
@@ -388,6 +389,7 @@ function hideSearchSuggestions() {
     $("#suggestions").css("display","none");
        $("#search").val("");
        $("#search").blur();
+       $("#search").attr("aria-expanded", "false");
 }
 
 //Search major list for text in input field
@@ -513,5 +515,3 @@ $("#clear_majors").click(function(e) {
     $(".yourgpa-box").remove();
     storeSelections(null);
 });
-
-
