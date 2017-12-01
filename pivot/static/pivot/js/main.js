@@ -267,6 +267,12 @@ function init_search_events() {
     //When user clicks on college dropdown menu, hide search suggestions
     $("#dropdownMenu").on("click", function(e) {
         $("#suggestions").css("display","none");
+
+        // Set focus on the selected item
+        window.setTimeout(function() {
+            $("#college-dropdown>ul>li[aria-selected]>a").focus();
+        }, 100);
+
     });
 
     //Keyboard navigation for search input field
@@ -454,6 +460,7 @@ function populateCollegeDropdown() {
             // creates a user like click
             setTimeout(prepareResults, 10);
         }
+        $( "#dropdownMenu" ).focus();
     });
 
     //If this is the course page and a code is provided, load the data without searching
