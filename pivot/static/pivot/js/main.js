@@ -21,12 +21,44 @@ if (window.location.search == "?slow") {
     getDataNameMap();
 }
 
-//initializes Bootstrap popover plugin
+// initializes app
 $(function () {
+    // initializes bootstrap popover plugin
     $('[data-toggle="popover"]').popover();
+    // initializes onboarding dialog
+    initOnboardingDialog();
 });
 
+// checks local storage and initializes onboarding dialog
+function initOnboardingDialog() {
+    // check the session if modal has been temporarily dismissed
+    var isTempForgotten = sessionStorage.getItem("isTempForgotten");
+    // if isTempForgotten is anything other than null, then
+    // then don't show the modal
+    if (isTempForgotten == null) {
+        // check if the modal has been permanently forgotten or not
+        var isPermForgotten = localStorage.getItem("isPermForgotten");
+        isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
+        // if the modal has not been permanently forgotten, show it
+        if (isPermForgotten == false || isPermForgotten == "false") {
+            $("#onboard-modal").modal("show");
+        } else {
+            // set temp forgotten to represent forgotten state to
+            // prevent execution of multiple if conditions
+            sessionStorage.setItem("isTempForgotten", true);
+        }
+    }
 
+    // add event listener when modal is dismissed
+    // set isTempForgotten to prevent further modals during the session
+    $("#onboard-modal").on("hidden.bs.modal", function() {
+        sessionStorage.setItem("isTempForgotten", true);
+    });
+
+    $("#perm-forget-modal").on("click", function(){
+        localStorage.setItem("isPermForgotten", true);
+    });
+}
 
 /**** READ DATA FROM CSV ****/
 

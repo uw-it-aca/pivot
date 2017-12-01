@@ -422,6 +422,15 @@ sup {
 	width: 50%;
 	text-align: center;
 }
+.modal-body h3 {
+	font-size: 1.25em;
+	color: #333;
+}
+/*Adviser Onboarding modal */
+.bullet-list {
+	list-style-type: disc;
+	margin-left: 1em;
+}
 
 .load-message {
 	font-size: 1.5em;
@@ -429,7 +438,16 @@ sup {
 	color: #4b2e83;
 	font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
 }
-
+.modal-checkbox {
+	text-align: left;
+	margin-bottom: 1em;
+}
+.btn-align-left {
+	text-align: left;
+}
+.modal-close-btn { 
+	margin-top: -22px !important;
+}
 /*placeholder image on major & course pages*/
 .sample-data {
     display:none;
