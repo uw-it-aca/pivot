@@ -202,7 +202,7 @@ function addPopover(id, med) {
     });
 
     $("#" + id + " .boxPopover").focusout(function() {
-      $(this).popover("hide"); 
+      $(this).popover("hide");
    });
 }
 
@@ -253,6 +253,7 @@ function displayResults() {
     var template = Handlebars.compile(source);
 
     $("#suggestions").css("display","block");
+    $("#search").attr("aria-expanded", "true");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     //need to bring chosen_major text out here
@@ -479,8 +480,9 @@ $("html").keydown(function (e) {
 function hideSearchSuggestions() {
     console.log("hide me!");
     $("#suggestions").css("display","none");
-    $("#search").val("");
-    $("#search").blur();
+       $("#search").val("");
+       $("#search").blur();
+       $("#search").attr("aria-expanded", "false");
 }
 
 //Search major list for text in input field
