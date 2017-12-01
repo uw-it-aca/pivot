@@ -129,7 +129,6 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
-
     svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
@@ -185,7 +184,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-        /*trigger: "focus",*/
+       /* trigger: "focus", */
         placement: "top",
         html: true,
         content: template({
@@ -196,15 +195,15 @@ function addPopover(id, med) {
         container: "#" + id
     });
 
-    $("#" + id + " .boxPopover").focusin(function() {
+   $("#" + id + " .boxPopover").focusin(function() {
         $(this).popover("show");
         $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
         //console.log();
     });
 
     $("#" + id + " .boxPopover").focusout(function() {
-       $(this).popover("hide");
-    });
+      $(this).popover("hide");
+   });
 }
 
 
@@ -254,6 +253,7 @@ function displayResults() {
     var template = Handlebars.compile(source);
 
     $("#suggestions").css("display","block");
+    $("#search").attr("aria-expanded", "true");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     //need to bring chosen_major text out here
@@ -480,8 +480,9 @@ $("html").keydown(function (e) {
 function hideSearchSuggestions() {
     console.log("hide me!");
     $("#suggestions").css("display","none");
-    $("#search").val("");
-    $("#search").blur();
+       $("#search").val("");
+       $("#search").blur();
+       $("#search").attr("aria-expanded", "false");
 }
 
 //Search major list for text in input field
