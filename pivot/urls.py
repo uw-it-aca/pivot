@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.conf.urls import include, url
 from django.views.generic.base import RedirectView
 from pivot.views import (
@@ -15,13 +14,17 @@ from pivot.views.data_api import (
     StatusLookup,
     StudentData
 )
-from pivot.views.user_login import user_login
 # Auth view
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = [
+    # Authentication pages
+    url(r'^login/$', auth_views.login, {'template_name': 'login.html'},\
+        name='login'),
+    url(r'^logout/$', auth_views.logout, {'next_page': '/'},\
+        name='logout'),
     # Home
     url(r'^$', RedirectView.as_view(url='/major-gpa/')),
     # All links are login protected
@@ -45,16 +48,3 @@ urlpatterns = [
         name='studentdata'),
 
 ]
-
-if 'django.contrib.auth.middleware.RemoteUserMiddleware' in settings.MIDDLEWARE_CLASSES:
-    urlpatterns += [
-        url(r'^login/?$', user_login),
-    ]
-else:
-    urlpatterns += [
-        # Authentication pages
-        url(r'^login/$', auth_views.login, {'template_name': 'login.html'},\
-            name='login'),
-        url(r'^logout/$', auth_views.logout, {'next_page': '/'},\
-            name='logout'),
-    ]
