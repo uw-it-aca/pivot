@@ -857,7 +857,7 @@ p.course-table-row {
     border-right:2px dashed red;
     position: absolute;
     top:0px;
-    z-index:1000;
+    z-index: 999;
 }
 
 .gpaLabel {
@@ -866,7 +866,7 @@ p.course-table-row {
     color:red;
     font-size: 0.85em;
     font-weight: bold;
-    z-index: 1000;
+    z-index: 999;
 }
 
 /* Search: options */
