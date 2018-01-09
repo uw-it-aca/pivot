@@ -92,24 +92,33 @@ function createBoxForMajor(i, median, majorId) {
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        boxplot_image: images_paths["boxplot"],
         major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
     }));
 
     //Create the inline help popovers, only needed for major in first row
     if (i == 0) {
         // Compile the popover template if condition to display satisfies.
-        var source = $("#median-help-popover").html();
-        var template = Handlebars.compile(source);
+        var median_source = $("#median-help-popover").html();
+        var median_template = Handlebars.compile(median_source);
+
+        var dist_source = $("#distribution-help-popover").html();
+        var dist_template = Handlebars.compile(dist_source);
 
         $("#medianHelp").popover({
             placement: "top",
             html: true,
             container: "body",
-            content: template({})
+            content: median_template({})
         });
+
         $("#distributionHelp").popover({
-            // Add some action here
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+            content: dist_template({
+                boxplot_image: images_paths["boxplot"]
+            })
         });
     }
 }
