@@ -1,12 +1,19 @@
 # This converts raw student data into one line per major, with the
 # quartiles and iqr ranges defined.
 
+# Given the location of the original Student Data - All Majors csv file
+# spits out...
+# Student_Data_All_Majors.csv: modified version of the original
+
 import sys
 import csv
 
 data = {}
 
-with open('gps/Assets/v6 - Student Data - All Majors.csv') as f:
+if (len(sys.argv) < 2):
+    sys.exit('Please pass in the major file to parse as an argument!')
+
+with open(sys.argv[1]) as f:
     as_csv = csv.reader(f)
     header = as_csv.next()
     for row in as_csv:
@@ -26,7 +33,7 @@ with open('gps/Assets/v6 - Student Data - All Majors.csv') as f:
 
         data[key]["gpas"].append(float(gpa))
 
-with open('demo.csv', 'wb') as outf:
+with open('Student_Data_All_Majors.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
     csv_out.writerow(["major_abbr", "pathway", "College", "iqr_min",
                       "q1", "median", "q3", "iqr_max"])

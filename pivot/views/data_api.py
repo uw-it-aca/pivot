@@ -19,16 +19,16 @@ class DataFileView(View):
 
 
 class MajorCourse(DataFileView):
-    file_name = "v7 - Majors and Courses.csv"
+    file_name = "Majors_and_Courses.csv"
 
 
 class DataMap(DataFileView):
-    file_name = "v7 - Data Map.csv"
+    file_name = "Data_Map.csv"
 
 
 class StudentData(DataFileView):
-    file_name = "v7 - Student Data - All Majors.csv"
+    file_name = "Student_Data_All_Majors.csv"
 
 
 class StatusLookup(DataFileView):
-    file_name = "status-lookup-2017-04.csv"
+    file_name = "Status_Lookup.csv"

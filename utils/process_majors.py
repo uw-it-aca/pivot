@@ -1,6 +1,11 @@
 # This converts raw Majors and Courses data into the more compact version
 # with one line per major, and the percentiles broken out.
 
+# Given the location of the original Majors and Courses csv file
+# spits out...
+# Majors_and_Courses.csv: modified version of the original
+# Data_Map.csv: file that contains the abbreviated names
+
 import sys
 import csv
 
@@ -11,10 +16,12 @@ campus_name_map = {}
 
 
 def sort_by_course_and_popularity(a, b):
-    print
     return -1
 
-with open('gps/Assets/v6 - Majors and Courses.csv') as f:
+if (len(sys.argv) < 2):
+    sys.exit('Please pass in the major file to parse as an argument!')
+
+with open(sys.argv[1]) as f:
     as_csv = csv.reader(f)
     header = as_csv.next()
     for row in as_csv:
@@ -54,7 +61,7 @@ with open('gps/Assets/v6 - Majors and Courses.csv') as f:
 
             data[combo_key][percentile] = course_gpa
 
-with open('data_map.csv', 'wb') as outf:
+with open('Data_Map.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
     csv_out.writerow(["is_course", "is_major", "is_campus", "name", "id"])
 
@@ -68,7 +75,7 @@ with open('data_map.csv', 'wb') as outf:
         csv_out.writerow([0, 0, 1, key, campus_name_map[key]])
 
 
-with open('demo.csv', 'wb') as outf:
+with open('Majors_and_Courses.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
     csv_out.writerow(["major_abbr", "pathway", "dept_abbrev",
                       "course_number", "student_count",
