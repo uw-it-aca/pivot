@@ -323,12 +323,12 @@ function prepareResults(e) {
     var source = $("#prepare-results").html();
     var template = Handlebars.compile(source);
     $("#suggestions").html(template({
-        selected_campus: $("#dropdownMenu:first-child").val(),
+        selected_campus: $("#dropdownMenu").val(),
         current_campus: _currentCampus
     }));
     //If a college is selected from the dropdown menu or text has been entered in the input field
     //if college selected, should show everything in college AND current selections
-    if ($("#dropdownMenu:first-child").val() != "All" || $("#search").val().length > 0) {
+    if ($("#dropdownMenu").val() != "All" || $("#search").val().length > 0) {
         displayResults();
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
         showCurrentSelections();
@@ -348,14 +348,14 @@ function finishResults() {
     var source_divider = $("#finish-results-divider").html();
     var template_divider = Handlebars.compile(source_divider);
 
-    if ($("#dropdownMenu:first-child").val() == "All")
+    if ($("#dropdownMenu").val() == "All")
         $("#selectedCollege").remove();
     else {
-        if (all_data_loaded && $("#selectedCollege li").length == 1 && $("#dropdownMenu:first-child").val() != "All") {
+        if (all_data_loaded && $("#selectedCollege li").length == 1 && $("#dropdownMenu").val() != "All") {
             $("#selectedCollege").append(template({
                 message: "No matching major in this college"
             }));
-        } else if ($("#selectedCollege li").length == 1 && $("#dropdownMenu:first-child").val() != "All") {
+        } else if ($("#selectedCollege li").length == 1 && $("#dropdownMenu").val() != "All") {
             $("#selectedCollege").append(template({
                 message: "Loading..."
             }));
@@ -423,7 +423,7 @@ function populateCollegeDropdown() {
         campuses.push("Tacoma");
     }
 
-    $("#dropdownMenu:first-child").val("All");
+    $("#dropdownMenu").val("All");
 
     // Compile the handlebar template
     var source = $("#populate-college-dropdown").html();
@@ -452,9 +452,10 @@ function populateCollegeDropdown() {
     $("#college-dropdown .dropdown-menu li a").click(function(){
         var selection_source = $("#populate-college-dropdown-college-selection").html();
         var selection_template = Handlebars.compile(selection_source);
-        $("#dropdownMenu:first-child").html(selection_template({college_selection: $(this).text()}));
-        $("#dropdownMenu:first-child").val($(this).text());
-        $("#dropdownMenu:first-child").attr("data-campus", $(this).attr("class"));
+
+        $("#dropdownMenu").html(selection_template({college_selection: $(this).text()}));
+        $("#dropdownMenu").val($(this).text());
+        $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
         if (window.location.href.indexOf("course-gpa") > -1) {
             // creates a user like click
@@ -514,8 +515,8 @@ function clearCommonSelection() {
 function clearCollegeSelection() {
     var source = $("#populate-college-dropdown-college-selection").html();
     var template = Handlebars.compile(source);
-    $("#dropdownMenu:first-child").html(template({college_selection: "All"}));
-    $("#dropdownMenu:first-child").val("All");
+    $("#dropdownMenu").html(template({college_selection: "All"}));
+    $("#dropdownMenu").val("All");
 }
 
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero

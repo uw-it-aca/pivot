@@ -80,7 +80,7 @@ function displayResults() {
             //Find substring matching search term to make bold
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus"))
                 appendTo = "#selectedCollege";
             else if (_completeMajorMap[maj]["campus"] == _currentCampus)
                 appendTo = "#currentCampus";
@@ -98,7 +98,7 @@ function displayResults() {
             count++;
         }
         //else if nothing has been entered but a college is selected, load all majors in college
-        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus")) {
             var appendTo = "#selectedCollege";
             var majText = _completeMajorMap[maj]["major_full_nm"];
             $("#selectedCollege").append(template({major: majText}));
@@ -129,7 +129,7 @@ function showCurrentSelections() {
 
     $(".chosen_major").each(function() {
         var appendTo = "";
-        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val()) {
+        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu").val()) {
             appendTo = "#selectedCollege";
         } else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus) {
             appendTo = "#currentCampus";
@@ -151,7 +151,7 @@ function closeSuggestions() {
 
 //Toggles the Go button if search enabled/disabled
 function toggleGo() {
-    var selectedCol = $("#dropdownMenu:first-child").val();
+    var selectedCol = $("#dropdownMenu").val();
     if (($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") ||
         ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") ||
         (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1)) {
@@ -166,7 +166,7 @@ function goSearch() {
     //This should only work if a single major matches, otherwise error message
     $("#courseList").html("");
     var search = $("#search").val();
-    var selectedCol = $("#dropdownMenu:first-child").val();
+    var selectedCol = $("#dropdownMenu").val();
     var maj = "";
     //if there is one exact match or multiple matches but 1 in the current campus, show the courses for that major
     if ($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") {
