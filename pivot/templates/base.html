@@ -9,7 +9,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <title>Pivot:  {% block title %}{% endblock %}</title>
-        {% include "include/head.html" %}
+        {% include "head.html" %}
     </head>
 
 <body>
@@ -138,26 +138,26 @@
 <script src="{% static "pivot/js/main.js" %}"></script>
 {% if request.path == '/major-gpa/' %}<script src="{% static "pivot/js/major.js" %}"></script>{% endif %}
 {% if request.path == '/course-gpa/' %}<script src="{% static "pivot/js/course.js" %}"></script>{% endif %}
-{% include "include/handlebars/no-results.html" %}
-{% include "include/handlebars/display-results.html" %}
-{% include "include/handlebars/update-events.html" %}
-{% include "include/handlebars/multiple-results.html" %}
-{% include "include/handlebars/list-courses-for-major-outer.html" %}
-{% include "include/handlebars/feedback.html" %}
-{% include "include/handlebars/display-major-status-url.html" %}
-{% include "include/handlebars/display-major-status-icon.html" %}
-{% include "include/handlebars/prepare-results.html" %}
-{% include "include/handlebars/finish-results.html" %}
-{% include "include/handlebars/finish-results-divider.html" %}
-{% include "include/handlebars/populate-college-dropdown.html" %}
-{% include "include/handlebars/populate-college-dropdown-college-selection.html" %}
-{% include "include/handlebars/create-major-card.html" %}
-{% include "include/handlebars/create-box-for-major.html" %}
-{% include "include/handlebars/median-help-popover.html" %}
-{% include "include/handlebars/add-popover.html" %}
-{% include "include/handlebars/major-display-results.html" %}
-{% include "include/handlebars/no-results-college.html" %}
-{% include "include/handlebars/show-compare-module.html" %}
-{% include "include/handlebars/validate-gpa.html" %}
+{% include "handlebars/no-results.html" %}
+{% include "handlebars/display-results.html" %}
+{% include "handlebars/update-events.html" %}
+{% include "handlebars/multiple-results.html" %}
+{% include "handlebars/list-courses-for-major-outer.html" %}
+{% include "handlebars/feedback.html" %}
+{% include "handlebars/display-major-status-url.html" %}
+{% include "handlebars/display-major-status-icon.html" %}
+{% include "handlebars/prepare-results.html" %}
+{% include "handlebars/finish-results.html" %}
+{% include "handlebars/finish-results-divider.html" %}
+{% include "handlebars/populate-college-dropdown.html" %}
+{% include "handlebars/populate-college-dropdown-college-selection.html" %}
+{% include "handlebars/create-major-card.html" %}
+{% include "handlebars/create-box-for-major.html" %}
+{% include "handlebars/median-help-popover.html" %}
+{% include "handlebars/add-popover.html" %}
+{% include "handlebars/major-display-results.html" %}
+{% include "handlebars/no-results-college.html" %}
+{% include "handlebars/show-compare-module.html" %}
+{% include "handlebars/validate-gpa.html" %}
 </body>
 </html>
