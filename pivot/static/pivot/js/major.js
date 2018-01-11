@@ -105,6 +105,7 @@ function createBoxForMajor(i, median, majorId) {
         var dist_template = Handlebars.compile(dist_source);
 
         $("#medianHelp").popover({
+            trigger: "focus",
             placement: "top",
             html: true,
             container: "body",
@@ -138,7 +139,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
@@ -193,7 +194,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-       /* trigger: "focus", */
+        trigger: "focus",
         placement: "top",
         html: true,
         content: template({
@@ -204,15 +205,14 @@ function addPopover(id, med) {
         container: "#" + id
     });
 
-   $("#" + id + " .boxPopover").focusin(function() {
+    document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
         $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
-        //console.log();
     });
 
-    $("#" + id + " .boxPopover").focusout(function() {
+    document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
-   });
+    });
 }
 
 
