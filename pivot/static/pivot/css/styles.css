@@ -115,11 +115,12 @@ h2 {
 /* Hyperlink style:*/
 a, a:hover {
 	color:#0077c2;
+	border: solid 1px transparent;
 }
 
 a:focus { /* Hyperlink style:*/
-	  color: #b5754d;
-	  border: 1px dotted ;
+	color: #b5754d;
+	border: 1px dotted;
 }
 
 a.no-hover:hover, a.no-hover:focus {
