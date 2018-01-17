@@ -92,24 +92,34 @@ function createBoxForMajor(i, median, majorId) {
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        boxplot_image: images_paths["boxplot"],
         major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
     }));
 
     //Create the inline help popovers, only needed for major in first row
     if (i == 0) {
         // Compile the popover template if condition to display satisfies.
-        var source = $("#median-help-popover").html();
-        var template = Handlebars.compile(source);
+        var median_source = $("#median-help-popover").html();
+        var median_template = Handlebars.compile(median_source);
+
+        var dist_source = $("#distribution-help-popover").html();
+        var dist_template = Handlebars.compile(dist_source);
 
         $("#medianHelp").popover({
+            trigger: "focus",
             placement: "top",
             html: true,
             container: "body",
-            content: template({})
+            content: median_template({})
         });
+
         $("#distributionHelp").popover({
-            // Add some action here
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+            content: dist_template({
+                boxplot_image: images_paths["boxplot"]
+            })
         });
     }
 }
@@ -129,7 +139,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
@@ -184,7 +194,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-       /* trigger: "focus", */
+        trigger: "focus",
         placement: "top",
         html: true,
         content: template({
@@ -195,15 +205,14 @@ function addPopover(id, med) {
         container: "#" + id
     });
 
-   $("#" + id + " .boxPopover").focusin(function() {
+    document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
         $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
-        //console.log();
     });
 
-    $("#" + id + " .boxPopover").focusout(function() {
+    document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
-   });
+    });
 }
 
 
