@@ -15,11 +15,12 @@ major_name_map = {}
 campus_name_map = {}
 
 # Exceptions to make.
-# Example: "NURSX": "Nursing (Accelerated)" means that we should replace the major name
-# of NURSX with Nursing (Accelerated) instead of what is in the given csv
-major_name_exceptions = {
+# Example: "NURSX": "Nursing (Accelerated)" means that we should replace the
+# major name of NURSX with Nursing (Accelerated) instead of the csv value
+major_name_exc = {
     "NURSX": "Nursing (Accelerated)"
 }
+
 
 def sort_by_course_and_popularity(a, b):
     return -1
@@ -48,10 +49,10 @@ with open(sys.argv[1]) as f:
         # major_abbr stripped
         abbr = major_abbr.strip()
         # Check if the abbr is in the major exceptions dict
-        if (abbr in major_name_exceptions and
-            major_name_exceptions[abbr] not in major_name_map):
+        if (abbr in major_name_exc and
+                major_name_exc[abbr] not in major_name_map):
             # Put in the appropriate major name
-            major_name_map[major_name_exceptions[abbr]] = len(major_name_map.keys())
+            major_name_map[major_name_exc[abbr]] = len(major_name_map.keys())
 
         if CourseLongName not in course_name_map:
             course_name_map[CourseLongName] = len(course_name_map.keys())
@@ -100,11 +101,11 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
     for key in sorted(data.keys()):
         original_row = data[key]["base"]
 
-        major_name_id = major_name_map[original_row[9]];
-        abbr = original_row[0].strip();
+        major_name_id = major_name_map[original_row[9]]
+        abbr = original_row[0].strip()
         # Check to see there is an exception to the major id we need to include
-        if (abbr in major_name_exceptions):
-            major_name_id = major_name_map[major_name_exceptions[abbr]]
+        if (abbr in major_name_exc):
+            major_name_id = major_name_map[major_name_exc[abbr]]
 
         csv_out.writerow([
             original_row[0],
