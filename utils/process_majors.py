@@ -20,13 +20,18 @@ campus_name_map = {}
 major_name_exc = {
     "NURSX": "Nursing (Accelerated)"
 }
+# Ignore majors with less than st_num students
+st_num = 5
+# Majors who disqualify (< 5 students)
+little_majors = set([])
 
 
 def sort_by_course_and_popularity(a, b):
     return -1
 
-if (len(sys.argv) < 2):
-    sys.exit('Please pass in the major file to parse as an argument!')
+if (len(sys.argv) < 3):
+    sys.exit('Please pass in the Majors and Courses file AND ' +
+             'the Student Data - All Majors file to parse as arguments!')
 
 with open(sys.argv[1]) as f:
     as_csv = csv.reader(f)
@@ -45,6 +50,10 @@ with open(sys.argv[1]) as f:
         MajorID = row[10]
         CoursePopularityRank = int(row[11])
         Campus = row[12]
+
+        if (int(students_in_major) < st_num):
+            little_majors.add(major_abbr.strip() + "_" + pathway)
+            continue
 
         # major_abbr stripped
         abbr = major_abbr.strip()
@@ -121,3 +130,76 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
             original_row[11],
             campus_name_map[original_row[12]],
         ])
+
+# --------------------------------------------------------------------
+# This converts raw student data into one line per major, with the
+# quartiles and iqr ranges defined.
+
+# Given the location of the original Student Data - All Majors csv file
+# spits out...
+# Student_Data_All_Majors.csv: modified version of the original
+
+sdata = {}
+
+with open(sys.argv[2]) as f:
+    as_csv = csv.reader(f)
+    header = as_csv.next()
+    for row in as_csv:
+        major_id = row[0]
+        fake_id = row[1]
+        major_abbr = row[2]
+        pathway = row[3]
+        campus = row[4]
+        college = row[5]
+        major_name = row[6]
+        gpa = row[7]
+
+        key = "%s - %s" % (major_abbr, pathway)
+
+        if major_abbr.strip() + "_" + pathway in little_majors:
+            # This major had less than st_num students, ignore
+            continue
+
+        if key not in sdata:
+            sdata[key] = {"raw": row, "gpas": []}
+
+        sdata[key]["gpas"].append(float(gpa))
+
+with open('Student_Data_All_Majors.csv', 'wb') as outf:
+    csv_out = csv.writer(outf, delimiter=',')
+    csv_out.writerow(["major_abbr", "pathway", "College", "iqr_min",
+                      "q1", "median", "q3", "iqr_max"])
+
+    for key in sdata:
+        gpas = sorted(sdata[key]["gpas"])
+        q1 = int(len(gpas) * .25)
+        q2 = int(len(gpas) * .5)
+        q3 = int(len(gpas) * .75)
+
+        qv1 = gpas[q1]
+        if len(gpas) % 2:
+            median = gpas[q2]
+        else:
+            median = (gpas[q2] + gpas[q2-1]) / 2
+        qv3 = gpas[q3]
+
+        iqr = (qv3-qv1) * 1.5
+
+        iqr_index_min = 0
+        iqr_index_max = len(gpas) - 1
+
+        while iqr_index_min < len(gpas) and gpas[iqr_index_min] < qv1 - iqr:
+            iqr_index_min += 1
+
+        while iqr_index_max > 0 and gpas[iqr_index_max] > qv3 + iqr:
+            iqr_index_max -= 1
+
+        # print "IQR Min, Max: ", gpas[iqr_index_min], gpas[iqr_index_max]
+        csv_out.writerow([sdata[key]["raw"][2],
+                          sdata[key]["raw"][3],
+                          sdata[key]["raw"][5],
+                          gpas[iqr_index_min],
+                          qv1,
+                          median,
+                          qv3,
+                          gpas[iqr_index_max]])
