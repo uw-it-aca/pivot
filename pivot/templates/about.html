@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}About Pivot data and FAQ{% endblock %}
+{% load staticfiles %}
+{% block web_content %}
+<!-- MAIN CONTENT BELOW THE BANNER -->
+  	<main class="container" role="main">
+		<div class="main-content">
+		    <h1 class="page-title">About Pivot</h1>
+			<section>
+				<ul>
+					<li><a href="#faq">Frequently Asked Questions</a></li>
+					<li><a href="#data-viz">Data Visualization</a></li>
+					<li><a href="#terms">Term Definitions</a></li>
+
+				</ul>
+			</section>
+		    <section>
+				<h2 id="faq">Frequently Asked Questions</h2>
+					<p class="faq-chunk"><span class="faq-q">Q: What is Pivot?</span><br>
+					A: Pivot is an academic planning tool that shows the median cumulative GPA for declared majors. You can also view the most commonly taken courses for each UW degree program and the median grade received for declared majors in these courses.
+					</p>
+					<p class="faq-chunk"><span class="faq-q">Q: How is the data gathered and processed?</span><br>
+					A: Data on course grades and cumulative GPA comes from UW databases.
+					</p>
+					<p class="faq-chunk"><span class="faq-q">Q: How far back does the data go?</span><br>
+					A: Pivot uses data from autumn quarter 2012 to autumn quarter 2017.
+					</p>
+					<p class="faq-chunk"><span class="faq-q">Q: Why isn’t there data for all majors / courses?</span><br>
+					A: Majors that include fewer than 10 students produce samples that are too small to generate reliable statistics.
+					</p>
+					<p class="faq-chunk"><span class="faq-q">Q: Does Pivot include data on declared minors?</span><br>
+					A: No.
+					</p>
+					<p class="faq-chunk"><span class="faq-q">Q: How are double majors accounted for in data? What about when a student switches majors?</span><br>
+					A: In both cases a single student will produce two data points, one for each of the two majors.
+					</p>
+					<p class="faq-chunk"><span class="faq-q">Q: Are grades student obtain at other universities considered in Pivot (i.e., Transfer GPA)?</span><br>
+					A: No.
+					</p>
+		    </section><!-- end of 1st H2 chunk, FAQ -->
+
+			<section>
+				<h2 id="data-viz">Data visualization</h2>
+				<p>Grade data is visualized using a boxplot. Below is a guide to understanding boxplots.</p>
+
+				<section id="boxplot-legend"> <img src="{% static "pivot/img/boxplot-legend-wide@2x.png" %}" width="50%" alt="an example of Boxplot indicating the range from the lower quartile to the upper quartile that 50% of GPAs fall in. The median GPA is the midpoint of this range.">
+				</section>
+				<p>
+					<dfn>Boxplot</dfn> : A boxplot is a visualization that divides a dataset into four equal parts, minus the outliers*. Half of the data is included in the two boxes in the center of the diagram and the remaining half of the data fall in the two whiskers.
+				</p>
+				<p>
+					<dfn>Median</dfn> : The midpoint of the data sample: half the data in the boxplot fall to the left of the median and the other half fall to the right of the median.
+				</p>
+				<p>
+					<dfn>Upper quartile</dfn> : The middle number between the median and the highest number in the data set.
+				</p>
+				<p>
+					<dfn>Lower quartile</dfn> : The middle number between the median and the lowest number in the data set.
+				</p>
+				<p>
+					<dfn>Interquartile range</dfn> : Represents the values between the lower and and upper quartiles; the middle 50% of the data.
+.
+				</p>
+				<p>
+					<dfn>Whiskers</dfn> : The narrow lines extending outward from the lower and upper quartile.
+				</p>
+				<p style="font-size: 85%;">*Outliers differ substantially from the rest of the data and are thus hidden from view. Outliers in these boxplots are data points that are beyond the quartiles by 1.5 times the interquartile range. 
+				</p>
+			</section><!-- end of 2nd H2 chunk -->
+			
+		    <section>
+				<h2 id="terms">Term Definitions</h2>
+				
+				<dl>
+					<dt>College</dt>
+					<dd>College refers to an aggregation of one or more academic departments into a broader academic organization.</dd>
+				</dl>
+				<dl>
+					<dt>Declared major</dt>
+					<dd>A major is declared once the student is officially accepted into the degree program.</dd>  </dl>
+				<dl>
+					<dt>Major admission category: Capacity-Constrained (formerly Competitive) Admission</dt>
+					<dd> Capacity-Constrained majors often have application forms and application deadlines; some of them require standardized tests, recommendations, and/or interviews. Admission requires students complete all of the minimum requirements to apply. Admission is not guaranteed because space is limited. </dd>
+				</dl>
+				
+				<dl>
+					<dt>Major admission category:</dt>
+					<ul>
+						<li class="admission-type-list"><dt>Capacity-Constrained (formerly Competitive) Admission</dt>
+							<dd> Capacity-Constrained majors often have application forms and application deadlines; some of them require standardized tests, recommendations, and/or interviews. Admission requires students complete all of the minimum requirements to apply. Admission is not guaranteed because space is limited. </dd>
+						</li> 
+						<li class="admission-type-list"><dt>Open Admission</dt>
+							<dd>Students in good academic standing are admitted at any time.</dd>
+						</li>
+						<li class="admission-type-list"><dt>Minimum Requirements/Selective Admission</dt>
+							<dd>Requires students to complete satisfactorily a set of prerequisite courses with a minimum GPA. All students who meet the minimum requirements are admitted.</dd>
+						</li>
+				
+				</dl>
+				
+				<dl>	
+					<dt>Median grade </dt>
+					<dd>This is the midpoint of the frequency distribution of final grades earned in a course over time.</dd></dl>
+				<dl>
+					<dt>Cumulative grade point average</dt>
+					<dd>This is the average of the accumulated final grades earned in courses over time, weighted by the number of units per course. </dd></dl>
+				<dl>
+					<dt>Median cumulative grade point average</dt>
+					<dd>This is the midpoint GPA (grade point average), considering the cumulative GPAs of all students who have declared for the selected major within the specified range of time.</dd></dl>
+
+			</section><!-- end of 3drd H2 chunk -->
+
+
+
+		</div>	<!-- end of main -->
+
+	</main>  <!-- end of main container -->
+{% endblock %}

@@ -50,8 +50,30 @@
 /* ++++++++++++++++++++++++++ GLOBAL ELEMENTS ++++++++++++++++++++++++++ */
 /* color: #cc721e; orange */
 /* color: #f7b670;  lite orange */
-/* color:#4b2e83;  UW Purple * /
+/* color:#4b2e83;  UW Purple */
 
+/*********** Global Reset ***********/
+
+html, body {
+    font-family: 'Open Sans', Helvetica, arial, san-serif;
+    padding:0;
+    margin:0;
+    height: 100%;
+   /* font-size: 100%;*/
+}
+p {
+   margin: 0;
+   padding: 0;
+   line-height: 1.45em;
+}
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section {
+  display: block;
+}
+img {
+   border: 0;
+   max-width: 100%;
+   height: auto;
+}
 /*********** Spacing ***********/
 
 /* align center */
@@ -61,8 +83,12 @@
 	text-align: center;
 }
 
-.search-text {
+/*.search-text {
 	margin-top: 10px;
+}*/
+.search-module { /* remove extra padding  */
+	padding-left: 0px;
+	padding-right: 0px;
 }
 
 .no-btm-margin {
@@ -85,20 +111,42 @@ h2 {
   margin-bottom: 10px;
 }
 
+
 /* Hyperlink style:*/
 a, a:hover {
 	color:#0077c2;
+	border: solid 1px transparent;
 }
 
 a:focus { /* Hyperlink style:*/
-	  color: #b5754d;
-	  border: 1px dotted ;
+	color: #b5754d;
+	border: 1px dotted;
 }
 
 a.no-hover:hover, a.no-hover:focus {
     text-decoration: none;
     border:none;
 }
+/* Skip to #main-content button at top */
+a.skip-to-main {
+	position: absolute;
+	left:.5em;
+	top:-99px;
+}
+a.skip-to-main:focus {
+	z-index: 999;
+	font-size: 1em;
+	font-weight: 800;
+	text-decoration: none;
+	top: 6px;
+    padding: 15px 23px 14px;
+    background-color: #f1f1f1;
+    color: #4b2e83;
+    box-shadow: 0 0 2px 2px rgba(0,0,0,.6);
+}
+
+
+}/* CLEAN UP: WHERE'S THE OPENING?*/
 
 /* Remove bold from the form */
 label{
@@ -236,6 +284,12 @@ label{
  }
 
 /* Button styles : Yellow Look */
+.btn-search {
+  color: #000;
+  padding: 6px 20px;
+}
+
+
 .btn-GPS-primary {
   color: #000;
   background-color: #fedf82;
@@ -278,11 +332,16 @@ fieldset[disabled] .btn-GPS-primary.active {
   background-image: none;
   color: #777;
 }
-
+/*   Override bootstrap color   */
+.btn-link{
+	color:#2e78b6;
+}
 /*   Buttons   */
 .compare-gpa {
 	margin-left: 10px;
 	font-weight: bold;
+	padding-left: 20px;
+	padding-right: 20px;
 	/* margin-bottom: 10px;
     color: black; */
 }
@@ -300,7 +359,8 @@ fieldset[disabled] .btn-GPS-primary.active {
 #clear_majors{
 	display:none; /*default hidden unless major selected*/
     font-size: .9em;
-    margin: 10px 0px 0px 10px;
+	padding-left: 0px;
+	padding-bottom: 0px;
 }
 
 #search {
@@ -331,15 +391,30 @@ fieldset[disabled] .btn-GPS-primary.active {
 
 
 
-
 /**************** Main stuff *************/
 
 .main-content {
 	margin: 40px 0px;
+	min-height: 100%;
 }
 
 .page-title {
 	padding-bottom:20px;
+}
+
+/* for BETA tag  */
+.betatag{
+	font-size: .7em;
+	color: #fff;
+}
+
+sup {
+  vertical-align: baseline;
+  position: relative;
+  top: -1.7em;
+  font-size: .3em;
+  padding-left: 5px;
+  color:#f7b670;
 }
 
 
@@ -348,6 +423,15 @@ fieldset[disabled] .btn-GPS-primary.active {
 	width: 50%;
 	text-align: center;
 }
+.modal-body h3 {
+	font-size: 1.25em;
+	color: #333;
+}
+/*Adviser Onboarding modal */
+.bullet-list {
+	list-style-type: disc;
+	margin-left: 1em;
+}
 
 .load-message {
 	font-size: 1.5em;
@@ -355,7 +439,16 @@ fieldset[disabled] .btn-GPS-primary.active {
 	color: #4b2e83;
 	font-family: 'Encode Sans Compressed', 'Open Sans Condensed', Helvetica, arial, san-serif;
 }
-
+.modal-checkbox {
+	text-align: left;
+	margin-bottom: 1em;
+}
+.btn-align-left {
+	text-align: left;
+}
+.modal-close-btn { 
+	margin-top: -22px !important;
+}
 /*placeholder image on major & course pages*/
 .sample-data {
     display:none;
@@ -380,14 +473,22 @@ fieldset[disabled] .btn-GPS-primary.active {
 }
 
 #status-legend {
+    display: block;
     float:right;
-    margin-top:1.8em;
+    clear: both;
+    margin-top:1em;
+    font-size: .9em;
 }
 
 .major-status-icon {
     margin-left:1em;
+    line-height: 4em;
 }
-
+.major-status {
+	font-size: .777em; /* .777 x 18px = 14px(body) */
+    margin: 10px 0px;
+    font-weight: normal;
+}
 .faq-q {
 	font-weight: bold;
 	font-size: 100%;
@@ -411,12 +512,18 @@ dfn {
 	margin-bottom: 10px;
 	padding: 10px;
 	width: 110px;
+	margin-left: 50px;
 }
-
+.bar-legend-header {
+	font-weight: bold;
+	padding-bottom: 10px;
+}
 .bar-legend-0 {
 	float: right;
 	margin-top: -15px;
 	color: #777;
+	line-height: 1.5em;
+	padding-bottom: .5em;
 }
 
 /* footer  Stuff*/
@@ -509,9 +616,12 @@ fill: #7C89A4;
     width:10px;
     height:10px;
     float:left;
-    margin-top:5px;
+	margin-top:5px;
     margin-right:5px;
-    margin-bottom: 10px;
+}
+.popover-content { /*.alignment tweak attempt*/
+	float: left;
+	text-align: left;
 }
 
 .LQ {
@@ -557,14 +667,8 @@ stroke: #ccc;
 shape-rendering: crispEdges;
 }
 
-/***** EVERYTHING ELSE *****/
+/*****                EVERYTHING ELSE                    *****/
 
-html, body {
-    font-family: 'Open Sans', Helvetica, arial, san-serif;
-    padding:0;
-    margin:0;
-    height: 100%;
-}
 
 /* may not be needed once Bootstrap is in use */
 #boxplots {
@@ -606,17 +710,30 @@ html, body {
     margin:12px 12px 0px 12px;
 }
 
+p.college-heading{
+	font-size: .8em;
+	margin-left: 0px;
+	text-transform: uppercase;
+	color: #777;
+}
+
+.link-arrow{
+	font-size: .8em;
+}
 .major-heading {
     font-weight: bold;
     margin-bottom: 12px;
-    margin-left: 12px;
-    font-size: 1.5em;
+    line-height: 1.3;
 }
-
+/* Compensate the row left margin */
+.course-table {
+	padding-left: 0px;
+	padding-right: 0px;
+}
 .major-gpa-line {
 	font-size: 0.9em;
 	color: #666;
-	margin-left: -5px;
+	margin-left:0px;
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
@@ -625,8 +742,8 @@ html, body {
 }
 /* Slight tweak of major name on course page */
 .major-heading-course {
-margin-left: -5px;
 margin-bottom: 2px;
+font-size: 1.75em;
 }
 
 /* course code  */
@@ -637,7 +754,7 @@ margin-bottom: 2px;
 /* Tweaking the padding for the bar graph on course page */
 
 .course-median {
-	padding-left: 5px;
+	padding-top: 7px;
 	text-align: center;
 	font-weight: bold;
 	font-size: medium;
@@ -649,18 +766,30 @@ p.course-table-row {
 	padding: 5px 5px;
 }
 
+/* Major GPA table style  */
 .data-heading {
-	color: #777;
+	color: #333;
 	font-size: .9em;
+}
+
+.data-heading p {
+    margin-left: 0px;
+}
+
+.inline-help {
+	color:#333;
 }
 .median-value {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
+	padding-top:30px;
+	margin-left: -15px;
 }
 
 .course-link {
     padding:12px;
+    border-bottom-width: 4px;
 }
 
 /* Search module style */
@@ -688,7 +817,7 @@ p.course-table-row {
     float: left;
     min-width: 160px;
     padding: 5px 0;
-    margin: 0px;
+    margin: 45px 0px 0px 0px;
     font-size: 14px;
     text-align: left;
     list-style: none;
@@ -708,7 +837,9 @@ p.course-table-row {
     overflow: hidden;
     background-color: #e5e5e5;
 }
-
+.clear-btn {
+	margin-left: 0px;
+}
 /* Compare GPA */
 #header-row h2 {
     display: inline-block;
@@ -717,6 +848,7 @@ p.course-table-row {
 	/*margin-left: -15px;
 	margin-top: 0px;
 	margin-right: -15px;*/
+    clear: both;
     margin:0px 0px 0px 0px;
 	border-radius: 4px 4px 0 0 ;
 	background: #f7f7f7;
@@ -744,14 +876,16 @@ p.course-table-row {
     border-right:2px dashed red;
     position: absolute;
     top:0px;
-    z-index:1000;
+    z-index: 999;
 }
 
 .gpaLabel {
     text-align: center;
     position:absolute;
     color:red;
-    z-index: 1000;
+    font-size: 0.85em;
+    font-weight: bold;
+    z-index: 999;
 }
 
 /* Search: options */
@@ -763,10 +897,17 @@ ul {
 
 /*  course GPA table */
 
-.table {
-	width: 94%;
-	margin-left:-20px;
+/*  Remove extra padding for th  */
+.table>th {
+	padding: 1px;
+	background-color: aqua;
 }
+
+.table {
+	/* width: 94%;
+	/* margin-left:-15px; */
+}
+
 
 /*  override the Table.less' s vertical  */
 .table>tbody>tr>td, .table>tbody>tr>th {
@@ -785,6 +926,17 @@ ul {
 .table-striped>tbody>tr:nth-child(odd)>th {
    background-color: #fff;
  }
+.col0 {
+	padding: 1px;
+	background-color: red;
+}
+
+/* Removing extra spacing on left */
+.table>tbody>tr>th {
+	padding-left:0px;
+	padding-right:0px;
+}
+
 
 /* ColorBrewer YlGn styles for course GPA table */
 .q0-9{background-color:rgb(255,255,229); border: #aaa solid 1px;} .q1-9{background-color:rgb(217,240,163); border: #aaa solid 1px;} .q2-9{background-color:rgb(120,198,121); border: #73a184 solid 1px;} .q3-9{background-color:rgb(35,132,67); border: #567661 solid 1px; color:#ffffff;} .q4-9{background-color:rgb(0,69,41); border: #004529 solid 1px; color:#ffffff;}
@@ -796,8 +948,14 @@ ul {
     /* float:left;*/
 }
 
+/* Major admission category Terms in About Pivot page */
+.admission-type-list {
+	padding-top: 1em;
+}
+
+
 /* CONTACT ADVISOR TAB */
-            
+
 #contact {
    position: fixed;
     width:210px;
@@ -842,12 +1000,17 @@ ul {
     color:#333;
 }
 
+/* Override Bootstrap positioning */
+#college-dropdown .dropdown-menu {
+    top:42px;
+}
+
 
 /* Search suggestion list header spacing */
 .dropdown-header {
 	padding:5px 20px 10px 0px;
 
-}	
+}
 
 
 /* Collge list header -- TO-DO: add to college dropdown js */
@@ -856,13 +1019,29 @@ ul {
 	font-weight: 600;
 
 }
- 
+
+  /* ==========================================================================
+   Med SCREEN
+   ========================================================================== */
+ @media (max-width: 992px) {
+	 .bar-legend {
+	font-size: 1em;
+	margin-bottom: 10px;
+	margin-left: -15px;
+	padding: 20px;
+	width: 160px;
+}
+.major-height { /* major row height*/
+	max-height: 120px ;
+}
+}/* end of med screen style */
  /* ==========================================================================
    SMALL SCREEN
    ========================================================================== */
-   
- /* Small devices (tablets, 768px and up) */
+
+ /* Small devices (tablets, mobile) */
 @media (max-width: 768px) {
+
 	.login {
 	float: right;
     margin: auto;
@@ -874,9 +1053,18 @@ ul {
     font-size: .9em;
 	}
 
-.btn-GPS-primary {
-  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left */
-  }
+/* .btn-GPS-primary {
+  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left
+  }*/
+
+body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
+
+/* collge drop-down for narrow width */
+#college-dropdown .dropdown-menu>li>a {
+	white-space: normal;
+	min-width: 260px;
+}
+
   /* Selelected: Active & hover  */
 .underline > li.active > a, .underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
 	background-color: #b46100;	 /* orange */
@@ -886,15 +1074,43 @@ ul {
 	}
 /*.underline > li.active > a {
 	background-color: #4b2e83;
-	border-left:5px solid #cc721e;  
+	border-left:5px solid #cc721e;
 	color: white;
 	}*/
-	
+
 /* Active+hover & focus: Change the background to orange */
  .underline > li.active > a:focus,  .underline > li > a:focus, .navbar-default .navbar-nav>li>a:focus {
 	/* background-color: #b46100; */
 	border-left:5px solid #b46100;
-	color:white;	 
+	color:white;
 	}
-	
+ /* Move the  your GPA form to left */
+.yourgpa-form {
+	float: left;
 }
+
+.form-control {
+	display: inline;
+	width: 110px;
+    font-size:16px;
+}
+/* Setting left for mobile */
+.yourgpa {
+	padding-left: 15px;
+}
+/* Setting left for mobile */
+.bar-legend {
+	font-size: 1em;
+	margin-bottom: 10px;
+	margin-left: -15px;
+	padding: 10px;
+	width: 160px;
+}
+.major-height { /* major name row height*/
+	max-height: 120px ;
+}
+.popover, .fade{
+        width: 175px;
+        height: 85px;
+}
+} /* end of small screen style */
