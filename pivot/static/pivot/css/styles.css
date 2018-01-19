@@ -1109,4 +1109,8 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 .major-height { /* major name row height*/
 	max-height: 120px ;
 }
+.popover, .fade{
+        width: 175px;
+        height: 85px;
+}
 } /* end of small screen style */
