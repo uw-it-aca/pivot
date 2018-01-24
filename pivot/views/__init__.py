@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import TemplateView
 
@@ -24,3 +25,7 @@ class About(TemplateView):
 
 class PivotTemplateView(TemplateView):
     template_name = 'template.html'
+
+
+def user_login(request):
+    return HttpResponseRedirect(request.GET.get('next', '/major-gpa/'))
