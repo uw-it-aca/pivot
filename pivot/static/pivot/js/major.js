@@ -275,7 +275,7 @@ function displayResults() {
         var alias_index = false;
         if (alias[maj]) {
             for (var i = 0; i < alias[maj].length; i++) {
-                if (alias[maj][i].toLowerCase().indexOf(search_val) > -1) {
+                if (alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
                     alias_index = true;
                     break;
                 }
