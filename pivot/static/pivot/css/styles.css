@@ -624,7 +624,7 @@ fill: #7C89A4;
 	text-align: left;
 }
 
-// prevents text wrap in boxplot popover 
+/* prevents text wrap in boxplot popover*/ 
 .distributionPopover {
         white-space: nowrap !important ;
 }
