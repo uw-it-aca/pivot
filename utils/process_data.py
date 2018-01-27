@@ -53,7 +53,6 @@ with open(sys.argv[1]) as f:
 
         if (int(students_in_major) < st_num):
             little_majors.add(major_abbr.strip() + "_" + pathway)
-            continue
 
         # major_abbr stripped
         abbr = major_abbr.strip()
@@ -116,6 +115,17 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
         if (abbr in major_name_exc):
             major_name_id = major_name_map[major_name_exc[abbr]]
 
+        median_gpa = data[key]['50']
+        course_name = course_name_map[original_row[8]]
+        if (original_row[0].strip() + "_" + original_row[1].strip() in little_majors):
+            # Sensitive information turned into -1's!
+            original_row[2] = -1
+            original_row[3] = -1
+            original_row[4] = -1
+            original_row[5] = -1
+            course_name = -1
+            median_gpa = -1
+
         csv_out.writerow([
             original_row[0],
             original_row[1],
@@ -123,8 +133,8 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
             original_row[3],
             original_row[4],
             original_row[5],
-            data[key]['50'],
-            course_name_map[original_row[8]],
+            median_gpa,
+            course_name,
             major_name_id,
             original_row[10],
             original_row[11],
@@ -156,10 +166,6 @@ with open(sys.argv[2]) as f:
 
         key = "%s - %s" % (major_abbr, pathway)
 
-        if major_abbr.strip() + "_" + pathway in little_majors:
-            # This major had less than st_num students, ignore
-            continue
-
         if key not in sdata:
             sdata[key] = {"raw": row, "gpas": []}
 
@@ -171,35 +177,53 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
                       "q1", "median", "q3", "iqr_max"])
 
     for key in sdata:
-        gpas = sorted(sdata[key]["gpas"])
-        q1 = int(len(gpas) * .25)
-        q2 = int(len(gpas) * .5)
-        q3 = int(len(gpas) * .75)
+        major_abbr = sdata[key]["raw"][2].strip() + "_" + sdata[key]["raw"][3].strip()
+        if major_abbr in little_majors:
+            # This major has less than st_num students! Hide the data
+            csv_out.writerow([sdata[key]["raw"][2],
+                              sdata[key]["raw"][3],
+                              sdata[key]["raw"][5],
+                              -1,
+                              -1,
+                              -1,
+                              -1,
+                              -1])
 
-        qv1 = gpas[q1]
-        if len(gpas) % 2:
-            median = gpas[q2]
         else:
-            median = (gpas[q2] + gpas[q2-1]) / 2
-        qv3 = gpas[q3]
+            gpas = sorted(sdata[key]["gpas"])
+            q1 = int(len(gpas) * .25)
+            q2 = int(len(gpas) * .5)
+            q3 = int(len(gpas) * .75)
 
-        iqr = (qv3-qv1) * 1.5
+            qv1 = gpas[q1]
+            if len(gpas) % 2:
+                median = gpas[q2]
+            else:
+                median = (gpas[q2] + gpas[q2-1]) / 2
+            qv3 = gpas[q3]
 
-        iqr_index_min = 0
-        iqr_index_max = len(gpas) - 1
+            iqr = (qv3-qv1) * 1.5
 
-        while iqr_index_min < len(gpas) and gpas[iqr_index_min] < qv1 - iqr:
-            iqr_index_min += 1
+            iqr_index_min = 0
+            iqr_index_max = len(gpas) - 1
 
-        while iqr_index_max > 0 and gpas[iqr_index_max] > qv3 + iqr:
-            iqr_index_max -= 1
+            while iqr_index_min < len(gpas) and gpas[iqr_index_min] < qv1 - iqr:
+                iqr_index_min += 1
 
-        # print "IQR Min, Max: ", gpas[iqr_index_min], gpas[iqr_index_max]
-        csv_out.writerow([sdata[key]["raw"][2],
-                          sdata[key]["raw"][3],
-                          sdata[key]["raw"][5],
-                          gpas[iqr_index_min],
-                          qv1,
-                          median,
-                          qv3,
-                          gpas[iqr_index_max]])
+            while iqr_index_max > 0 and gpas[iqr_index_max] > qv3 + iqr:
+                iqr_index_max -= 1
+
+            # print "IQR Min, Max: ", gpas[iqr_index_min], gpas[iqr_index_max]
+            csv_out.writerow([sdata[key]["raw"][2],
+                              sdata[key]["raw"][3],
+                              sdata[key]["raw"][5],
+                              gpas[iqr_index_min],
+                              qv1,
+                              median,
+                              qv3,
+                              gpas[iqr_index_max]])
+
+# Displaying a message to the console
+print "Majors who have less than 5 students:"
+for major in little_majors:
+    print major
