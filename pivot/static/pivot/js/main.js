@@ -506,6 +506,7 @@ function clearCommonSelection() {
     $("#clear_majors").css("display","none");
     $(".chosen_major").remove();
     $(".no-results-warning").css("display","none");
+    $(".protected-result-warning").css("display","none");
     $("input#search").val("");
     $(".results-section").css("display","none");
     $(".sample-data").css("display","block");

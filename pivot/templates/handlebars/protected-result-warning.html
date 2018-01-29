@@ -1,0 +1,10 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "protected-result-warning" %}
+<div class="protected-result-warning alert alert-info" role="alert" aria-atomic="true">
+	<p> <b> Protected Major: {{ search }} </b> </p>
+<p>
+    To protect students' privacy, we only show data for majors with 5 or more declared students.
+</p>
+
+</div>
+{% endtplhandlebars %}
