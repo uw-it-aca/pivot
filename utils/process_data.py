@@ -117,7 +117,8 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
 
         median_gpa = data[key]['50']
         course_name = course_name_map[original_row[8]]
-        if (original_row[0].strip() + "_" + original_row[1].strip() in little_majors):
+        maj = original_row[0].strip() + "_" + original_row[1].strip()
+        if (maj in little_majors):
             # Sensitive information turned into -1's!
             original_row[2] = -1
             original_row[3] = -1
@@ -177,7 +178,8 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
                       "q1", "median", "q3", "iqr_max"])
 
     for key in sdata:
-        major_abbr = sdata[key]["raw"][2].strip() + "_" + sdata[key]["raw"][3].strip()
+        major_abbr = sdata[key]["raw"][2].strip() + "_" +\
+                     sdata[key]["raw"][3].strip()
         if major_abbr in little_majors:
             # This major has less than st_num students! Hide the data
             csv_out.writerow([sdata[key]["raw"][2],
@@ -207,7 +209,7 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
             iqr_index_min = 0
             iqr_index_max = len(gpas) - 1
 
-            while iqr_index_min < len(gpas) and gpas[iqr_index_min] < qv1 - iqr:
+            while iqr_index_min < len(gpas) and gpas[iqr_index_min] < qv1-iqr:
                 iqr_index_min += 1
 
             while iqr_index_max > 0 and gpas[iqr_index_max] > qv3 + iqr:
