@@ -75,8 +75,22 @@ function displayResults() {
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     for(var maj in _completeMajorMap) {
+        // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
-        if (search_val.length > 0 && index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
+        // If the search term matches the major abbreviation
+        var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
+        // If the search term matches an alias (listed in alias.js)
+        var alias_index = false;
+        if (alias[maj]) {
+            for (var i = 0; i < alias[maj].length; i++) {
+                if (alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
+                    alias_index = true;
+                    break;
+                }
+            }
+        }
+
+        if (search_val.length > 0 && (alias_index || abbr_index == 0 || (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")))) {
             //Find substring matching search term to make bold
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
@@ -85,12 +99,14 @@ function displayResults() {
             else if (_completeMajorMap[maj]["campus"] == _currentCampus)
                 appendTo = "#currentCampus";
             else appendTo ="#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
-            var checked = "";
-            $(".chosen_major").each(function() {
-               if ($(this).text() == maj) {
-                   checked = "checked";
-               }
-            });
+
+            // var checked = "";
+            // $(".chosen_major").each(function() {
+            //    if ($(this).text() == maj) {
+            //        checked = "checked";
+            //    }
+            // });
+
             //Bolds search terms that appear at beginning of word other than first
             var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
             $(appendTo).append(template({major: majText}));
