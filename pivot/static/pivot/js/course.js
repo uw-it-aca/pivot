@@ -221,7 +221,7 @@ function protectedResult(maj) {
 
     var source = $("#protected-result-warning").html();
     var template = Handlebars.compile(source);
-    $(".protected-result-warning").html(template({search: _completeMajorMap[maj]["major_full_nm"]}));
+    $(".protected-result-warning").html(template({majors: [_completeMajorMap[maj]["major_full_nm"]], plural: false}));
 }
 
 //Hides the suggestion box if user clicks outside it

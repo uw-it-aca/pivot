@@ -41,14 +41,27 @@ function createMajorCard(majors, gpa = null) {
     $(".yourgpa-box").remove();
 
     $(".results-section").css("display","inline"); //Changes css of results section - not sure why
+
     gpa = gpa == "" ? null:gpa;
 
     // Compile template with Handlebars
     var source = $("#create-major-card").html();
     var template = Handlebars.compile(source);
+    var valid_majors = 0;
+    var protected_list = [];
 
     //For each selected major...
     for (var l in majors) {
+
+        var major = filterByMajors([majors[l]]);
+        var med = major[0]["median"];
+        if (med == -1) {
+            // If the median GPA is -1... that means that this major is protected
+            protected_list.push(_completeMajorMap[majors[l]]["major_full_nm"]);
+            continue;
+        }
+
+        valid_majors++;
 
         //draw the major's data "card" in the table
         var id = majors[l].replace(" ","_");
@@ -64,8 +77,6 @@ function createMajorCard(majors, gpa = null) {
         }));
 
         $("#" + id).data("code", majors[l]);
-        var major = filterByMajors([majors[l]]);
-        var med = major[0]["median"];
 
         //Add the initial content for the major
         createBoxForMajor(l, med, id);
@@ -75,8 +86,18 @@ function createMajorCard(majors, gpa = null) {
         //D3 - vars to pass = gpa, id, med, major
 
     }
-    overlayGPA(gpa);
-    showCompareModule(gpa = (gpa == null) ? "":gpa);
+    if (protected_list.length > 0) {
+        // Display a message for the protected majors, if there are any
+        protectedResult(protected_list);
+    }
+
+    if (valid_majors > 0) {
+        overlayGPA(gpa);
+        showCompareModule(gpa = (gpa == null) ? "":gpa);
+    } else {
+        // There were no majors we could display
+        $(".results-section").css("display","none");
+    }
     //$("#loadingModal").modal('hide');
 }
 
@@ -389,6 +410,16 @@ function noResults() {
         search: $("input#search").val()
     }));
     //$("#loadingModal").modal('hide');
+}
+
+function protectedResult(protected_list) {
+    $(".sample-data").css("display","none");
+    $("#suggestions").css("display","none");
+    $(".protected-result-warning").css("display","inline");
+
+    var source = $("#protected-result-warning").html();
+    var template = Handlebars.compile(source);
+    $(".protected-result-warning").html(template({majors: protected_list, plural: (protected_list.length > 1)}));
 }
 
 //Item selection
