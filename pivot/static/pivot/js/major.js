@@ -391,22 +391,6 @@ function noResults() {
     //$("#loadingModal").modal('hide');
 }
 
-//Displays message when no results found in selected college
-function noResultsCollege(col) {
-    // Compile no-results-college Handlebars template
-    var source = $("#no-results-college").html();
-    var template = Handlebars.compile(source);
-    $(".sample-data").css("display","none");
-    $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","block");
-    if (multipleSelected())
-        $(".no-results-warning").addClass("alert alert-info");
-    $(".no-results-warning").html(template({
-        search: $("input#search").val(),
-        college: col
-    }));
-}
-
 //Item selection
 function updateEvents() {
     // Compile update-events Handlebars template
