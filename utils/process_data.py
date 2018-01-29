@@ -31,7 +31,10 @@ def sort_by_course_and_popularity(a, b):
 
 if (len(sys.argv) < 3):
     sys.exit('Please pass in the Majors and Courses file AND ' +
-             'the Student Data - All Majors file to parse as arguments!')
+             'the Student Data - All Majors file to parse as arguments!\n' +
+             'Example: \npython process_data.py ' +
+             '../data/v8\ -\ Majors\ and\ Courses.csv ' +
+             '../data/v8\ -\ Student\ Data\ -\ All\ Majors.csv')
 
 with open(sys.argv[1]) as f:
     as_csv = csv.reader(f)
