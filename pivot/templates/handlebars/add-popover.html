@@ -1,19 +1,19 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "add-popover" %}
 <div>
-<div>
+<div class="distributionPopover">
     <div class='boxLegend LQ'></div>
     <p style='display:inline-block;'>
         Lower&nbsp;quartile:&nbsp;{{ lower_quartile }}
     </p>
 </div>
-<div>
+<div class="distributionPopover">
     <div class='boxLegend MD'></div>
     <p style='display:inline-block;'>
         Median:&nbsp;{{ median }}
     </p>
 </div>
-<div>
+<div class="distributionPopover">
     <div class='boxLegend UQ'></div>
     <p style='display:inline-block;'>
         Upper&nbsp;quartile:&nbsp;{{ upper_quartile }}
