@@ -208,6 +208,7 @@ function goSearch() {
 function noResults() {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
+    // $(".protected-result-warning").css("display","none");
     $(".no-results-warning").css("display","inline");
     var source = $("#no-results").html();
     var template = Handlebars.compile(source);
@@ -220,11 +221,23 @@ function noResults() {
 function multipleResults() {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","inline")
+    $(".protected-result-warning").css("display","none");
+    $(".no-results-warning").css("display","inline");
     var source = $("#multiple-results").html();
     var template = Handlebars.compile(source);
     var search_key = $("input#search").val();
     $(".no-results-warning").html(template({search: search_key}));
+}
+
+function protectedResult(maj) {
+    $(".sample-data").css("display","none");
+    $("#suggestions").css("display","none");
+    $(".results-section").css("display","none");
+    $(".protected-result-warning").css("display","inline");
+
+    var source = $("#protected-result-warning").html();
+    var template = Handlebars.compile(source);
+    $(".protected-result-warning").html(template({majors: [_completeMajorMap[maj]["major_full_nm"]], plural: false}));
 }
 
 //Hides the suggestion box if user clicks outside it
@@ -251,12 +264,21 @@ function listCoursesForMajor(maj) {
     $("#clear_majors").css("display","inline");
     $(".results-section").css("display","inline");
     $(".no-results-warning").css("display", "none");
+    $(".protected-result-warning").css("display", "none");
 
     //maj = major code A A-0
     var id = maj.replace(" ","_");
 
     // Compile the dynamic table data and pass it as a variable to outer template.
     var courses = _completeMajorMap[maj]["courses"];
+
+    // If the course has a -1 in it, that means that this major is protected
+    // (does not have more than 5 students), so display an alert
+    if(Object.keys(courses).some(function(k){ return ~k.indexOf("-1") })){
+       protectedResult(maj);
+       return;
+    }
+
     var count = 0;
     // Create a list of all the inner table data
     var inner_table_data = [];
