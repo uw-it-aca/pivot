@@ -115,11 +115,12 @@ h2 {
 /* Hyperlink style:*/
 a, a:hover {
 	color:#0077c2;
+	border: solid 1px transparent;
 }
 
 a:focus { /* Hyperlink style:*/
-	  color: #b5754d;
-	  border: 1px dotted ;
+	color: #b5754d;
+	border: 1px dotted;
 }
 
 a.no-hover:hover, a.no-hover:focus {
@@ -623,6 +624,11 @@ fill: #7C89A4;
 	text-align: left;
 }
 
+/* prevents text wrap in boxplot popover*/ 
+.distributionPopover {
+        white-space: nowrap !important ;
+}
+
 .LQ {
     background-color: #B8C9EB;
 }
@@ -875,7 +881,7 @@ p.course-table-row {
     border-right:2px dashed red;
     position: absolute;
     top:0px;
-    z-index:1000;
+    z-index: 999;
 }
 
 .gpaLabel {
@@ -884,7 +890,7 @@ p.course-table-row {
     color:red;
     font-size: 0.85em;
     font-weight: bold;
-    z-index: 1000;
+    z-index: 999;
 }
 
 /* Search: options */
@@ -1108,4 +1114,4 @@ body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 .major-height { /* major name row height*/
 	max-height: 120px ;
 }
-} /* end of small screen style */
+}/* end of small screen style */

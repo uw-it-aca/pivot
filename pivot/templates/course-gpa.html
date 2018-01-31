@@ -21,7 +21,7 @@
 						    <div class="input-group">
 						      <div id="college-dropdown" class="input-group-btn">
                                 <label id="college-dropdown-label" class="sr-only">Optional: Filter majors by first selecting a college.</label>
-						        <button id="dropdownMenu" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-controls="college-dropdown-list"  aria-haspopup="true" aria-expanded="false" aria-labelledby="college-dropdown-label" style="width:100px;text-align:left;">All <span class="sr-only">Colleges</span><span class="caret"></span></button>
+						        <button id="dropdownMenu" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-controls="college-dropdown-list"  aria-haspopup="true" aria-expanded="true" aria-labelledby="college-dropdown-label" label="College" aria-label="college" style="width:100px;text-align:left;">All<span class="caret"></span></button>
 
 						        <!-- JS generated college list goes in ul -->
 						        <ul id="college-dropdown-list" class="dropdown-menu" aria-labelledby="college-dropdown-label" role="listbox" aria-activedescendant="college-opt1">
@@ -30,14 +30,15 @@
 							  <!-- major search -->
 
 						     <div class="form-group">
-							      <label for="search" class="sr-only" >Enter a major name to look up</label>
-								  <input id="search" type="text" class="form-control" name="searchQuery" value="" size="" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Biology, etc." autocomplete="off">
+							      <label for="search" class="sr-only" >Major</label>
+							      <div class="sr-only" id="search-description">Enter the name of a major. Matches results will be shown below as you type.</div>
+								  <input id="search" type="text" class="form-control" name="searchQuery" value="" size="" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Biology, etc." autocomplete="off" aria-describedby="search-description" aria-owns="suggestions" aria-haspopup="true" aria-expanded="false" aria-autocomplete="both" aria-activedescendant="">
 								  <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
 
 						      <!-- search results go in #suggestions -->
-					            <div id="suggestions"></div>
+					            <div id="suggestions" aria-live="polite" role="listbox"></div>
 					            <!-- hidden div to track selected majors -->
-                                <div class="selected"></div>
+                                <div class="selected" hidden="true"></div>
 							</div>	<!-- .form-group for Search label +input -->
 						      <div class="input-group-btn" id="selected-course-page">
 							      	<button class="btn btn-default btn-search" type="submit" id="goBtn"><i class="glyphicon glyphicon-search" aria-hidden="true"></i><span class="sr-only">search</span></button>
@@ -53,7 +54,9 @@
 				</div><!-- end of .panel panel-default -->
 		    </section>
             <!-- placeholder for 0 results warning -->
-            <section class='no-results-warning'>
+            <section class='no-results-warning' role="alert">
+            </section>
+            <section class='protected-result-warning' role="alert">
             </section>
     <!-- Sample data placeholder -->
     		<section class="sample-data">

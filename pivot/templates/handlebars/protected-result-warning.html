@@ -1,0 +1,23 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "protected-result-warning" %}
+<div class="protected-result-warning alert alert-info" role="alert" aria-atomic="true">
+	{{#if plural}}
+	<!-- List out the majors selected (case on the major.html page) -->
+	<p> <b> Protected Majors:</b> </p>
+		<ul>
+		{{#each majors}}
+			<li> -{{ this }}</li>
+		{{/each}}
+		</ul>
+	<br>
+	{{else}}
+	<!-- Simply just put the major along with the title -->
+	<p> <b> Protected Major: {{ majors.[0] }} </b> </p>
+	{{/if}}
+
+<p>
+    To protect students' privacy, we only show data for majors with 5 or more declared students.
+</p>
+
+</div>
+{% endtplhandlebars %}

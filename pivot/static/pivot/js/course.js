@@ -75,22 +75,38 @@ function displayResults() {
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     for(var maj in _completeMajorMap) {
+        // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
-        if (search_val.length > 0 && index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
+        // If the search term matches the major abbreviation
+        var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
+        // If the search term matches an alias (listed in alias.js)
+        var alias_index = false;
+        if (alias[maj]) {
+            for (var i = 0; i < alias[maj].length; i++) {
+                if (alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
+                    alias_index = true;
+                    break;
+                }
+            }
+        }
+
+        if (search_val.length > 0 && (alias_index || abbr_index == 0 || (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")))) {
             //Find substring matching search term to make bold
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus"))
                 appendTo = "#selectedCollege";
             else if (_completeMajorMap[maj]["campus"] == _currentCampus)
                 appendTo = "#currentCampus";
             else appendTo ="#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
-            var checked = "";
-            $(".chosen_major").each(function() {
-               if ($(this).text() == maj) {
-                   checked = "checked";
-               }
-            });
+
+            // var checked = "";
+            // $(".chosen_major").each(function() {
+            //    if ($(this).text() == maj) {
+            //        checked = "checked";
+            //    }
+            // });
+
             //Bolds search terms that appear at beginning of word other than first
             var majText = _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>");
             $(appendTo).append(template({major: majText}));
@@ -98,7 +114,7 @@ function displayResults() {
             count++;
         }
         //else if nothing has been entered but a college is selected, load all majors in college
-        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+        else if (search_val.length == 0 && _completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus")) {
             var appendTo = "#selectedCollege";
             var majText = _completeMajorMap[maj]["major_full_nm"];
             $("#selectedCollege").append(template({major: majText}));
@@ -129,7 +145,7 @@ function showCurrentSelections() {
 
     $(".chosen_major").each(function() {
         var appendTo = "";
-        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu:first-child").val()) {
+        if (_completeMajorMap[$(this).text()]["college"] == $("#dropdownMenu").val()) {
             appendTo = "#selectedCollege";
         } else if (_completeMajorMap[$(this).text()]["campus"] == _currentCampus) {
             appendTo = "#currentCampus";
@@ -151,7 +167,7 @@ function closeSuggestions() {
 
 //Toggles the Go button if search enabled/disabled
 function toggleGo() {
-    var selectedCol = $("#dropdownMenu:first-child").val();
+    var selectedCol = $("#dropdownMenu").val();
     if (($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") ||
         ($("#currentCampus li.suggested_major").length == 1 && selectedCol == "All") ||
         (selectedCol != "All" && $("#selectedCollege li.suggested_major").length == 1)) {
@@ -166,7 +182,7 @@ function goSearch() {
     //This should only work if a single major matches, otherwise error message
     $("#courseList").html("");
     var search = $("#search").val();
-    var selectedCol = $("#dropdownMenu:first-child").val();
+    var selectedCol = $("#dropdownMenu").val();
     var maj = "";
     //if there is one exact match or multiple matches but 1 in the current campus, show the courses for that major
     if ($("#suggestions li.suggested_major").length == 1 && selectedCol == "All") {
@@ -192,6 +208,7 @@ function goSearch() {
 function noResults() {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
+    // $(".protected-result-warning").css("display","none");
     $(".no-results-warning").css("display","inline");
     var source = $("#no-results").html();
     var template = Handlebars.compile(source);
@@ -204,11 +221,23 @@ function noResults() {
 function multipleResults() {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","inline")
+    $(".protected-result-warning").css("display","none");
+    $(".no-results-warning").css("display","inline");
     var source = $("#multiple-results").html();
     var template = Handlebars.compile(source);
     var search_key = $("input#search").val();
     $(".no-results-warning").html(template({search: search_key}));
+}
+
+function protectedResult(maj) {
+    $(".sample-data").css("display","none");
+    $("#suggestions").css("display","none");
+    $(".results-section").css("display","none");
+    $(".protected-result-warning").css("display","inline");
+
+    var source = $("#protected-result-warning").html();
+    var template = Handlebars.compile(source);
+    $(".protected-result-warning").html(template({majors: [_completeMajorMap[maj]["major_full_nm"]], plural: false}));
 }
 
 //Hides the suggestion box if user clicks outside it
@@ -235,12 +264,21 @@ function listCoursesForMajor(maj) {
     $("#clear_majors").css("display","inline");
     $(".results-section").css("display","inline");
     $(".no-results-warning").css("display", "none");
+    $(".protected-result-warning").css("display", "none");
 
     //maj = major code A A-0
     var id = maj.replace(" ","_");
 
     // Compile the dynamic table data and pass it as a variable to outer template.
     var courses = _completeMajorMap[maj]["courses"];
+
+    // If the course has a -1 in it, that means that this major is protected
+    // (does not have more than 5 students), so display an alert
+    if(Object.keys(courses).some(function(k){ return ~k.indexOf("-1") })){
+       protectedResult(maj);
+       return;
+    }
+
     var count = 0;
     // Create a list of all the inner table data
     var inner_table_data = [];

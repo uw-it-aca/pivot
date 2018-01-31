@@ -41,14 +41,27 @@ function createMajorCard(majors, gpa = null) {
     $(".yourgpa-box").remove();
 
     $(".results-section").css("display","inline"); //Changes css of results section - not sure why
+
     gpa = gpa == "" ? null:gpa;
 
     // Compile template with Handlebars
     var source = $("#create-major-card").html();
     var template = Handlebars.compile(source);
+    var valid_majors = 0;
+    var protected_list = [];
 
     //For each selected major...
     for (var l in majors) {
+
+        var major = filterByMajors([majors[l]]);
+        var med = major[0]["median"];
+        if (med == -1) {
+            // If the median GPA is -1... that means that this major is protected
+            protected_list.push(_completeMajorMap[majors[l]]["major_full_nm"]);
+            continue;
+        }
+
+        valid_majors++;
 
         //draw the major's data "card" in the table
         var id = majors[l].replace(" ","_");
@@ -64,8 +77,6 @@ function createMajorCard(majors, gpa = null) {
         }));
 
         $("#" + id).data("code", majors[l]);
-        var major = filterByMajors([majors[l]]);
-        var med = major[0]["median"];
 
         //Add the initial content for the major
         createBoxForMajor(l, med, id);
@@ -75,8 +86,20 @@ function createMajorCard(majors, gpa = null) {
         //D3 - vars to pass = gpa, id, med, major
 
     }
-    overlayGPA(gpa);
-    showCompareModule(gpa = (gpa == null) ? "":gpa);
+    if (protected_list.length > 0) {
+        // Display a message for the protected majors, if there are any
+        protectedResult(protected_list);
+    } else {
+        $(".protected-result-warning").css("display","none");
+    }
+
+    if (valid_majors > 0) {
+        overlayGPA(gpa);
+        showCompareModule(gpa = (gpa == null) ? "":gpa);
+    } else {
+        // There were no majors we could display
+        $(".results-section").css("display","none");
+    }
     //$("#loadingModal").modal('hide');
 }
 
@@ -92,24 +115,34 @@ function createBoxForMajor(i, median, majorId) {
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        boxplot_image: images_paths["boxplot"],
         major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
     }));
 
     //Create the inline help popovers, only needed for major in first row
     if (i == 0) {
         // Compile the popover template if condition to display satisfies.
-        var source = $("#median-help-popover").html();
-        var template = Handlebars.compile(source);
+        var median_source = $("#median-help-popover").html();
+        var median_template = Handlebars.compile(median_source);
+
+        var dist_source = $("#distribution-help-popover").html();
+        var dist_template = Handlebars.compile(dist_source);
 
         $("#medianHelp").popover({
+            trigger: "focus",
             placement: "top",
             html: true,
             container: "body",
-            content: template({})
+            content: median_template({})
         });
+
         $("#distributionHelp").popover({
-            // Add some action here
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+            content: dist_template({
+                boxplot_image: images_paths["boxplot"]
+            })
         });
     }
 }
@@ -129,7 +162,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").attr("data-trigger","focus").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
@@ -184,7 +217,7 @@ function addPopover(id, med) {
     var template = Handlebars.compile(source);
 
     $("#" + id + " .boxPopover").popover({
-       /* trigger: "focus", */
+        trigger: "focus",
         placement: "top",
         html: true,
         content: template({
@@ -195,15 +228,14 @@ function addPopover(id, med) {
         container: "#" + id
     });
 
-   $("#" + id + " .boxPopover").focusin(function() {
+    document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
         $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
-        //console.log();
     });
 
-    $("#" + id + " .boxPopover").focusout(function() {
+    document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
-   });
+    });
 }
 
 
@@ -258,7 +290,20 @@ function displayResults() {
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
+        // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
+        // If the search term matches the major abbreviation
+        var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
+        // If the search term matches an alias (listed in alias.js)
+        var alias_index = false;
+        if (alias[maj]) {
+            for (var i = 0; i < alias[maj].length; i++) {
+                if (alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
+                    alias_index = true;
+                    break;
+                }
+            }
+        }
         var prevSelected = false;
         $(".chosen_major").each(function() {
            if ($(this).text() == maj) {
@@ -267,7 +312,7 @@ function displayResults() {
            }
         });
         //check matches for search term
-        if (search_val.length > 0 && index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")) {
+        if (search_val.length > 0 && (alias_index || abbr_index == 0 || (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")))) {
             //Find substring matching search term to make bold - should only highlight matches at beginning of word
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
@@ -382,20 +427,14 @@ function noResults() {
     //$("#loadingModal").modal('hide');
 }
 
-//Displays message when no results found in selected college
-function noResultsCollege(col) {
-    // Compile no-results-college Handlebars template
-    var source = $("#no-results-college").html();
-    var template = Handlebars.compile(source);
+function protectedResult(protected_list) {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","block");
-    if (multipleSelected())
-        $(".no-results-warning").addClass("alert alert-info");
-    $(".no-results-warning").html(template({
-        search: $("input#search").val(),
-        college: col
-    }));
+    $(".protected-result-warning").css("display","inline");
+
+    var source = $("#protected-result-warning").html();
+    var template = Handlebars.compile(source);
+    $(".protected-result-warning").html(template({majors: protected_list, plural: (protected_list.length > 1)}));
 }
 
 //Item selection
