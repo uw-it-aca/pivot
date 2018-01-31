@@ -89,6 +89,8 @@ function createMajorCard(majors, gpa = null) {
     if (protected_list.length > 0) {
         // Display a message for the protected majors, if there are any
         protectedResult(protected_list);
+    } else {
+        $(".protected-result-warning").css("display","none");
     }
 
     if (valid_majors > 0) {
