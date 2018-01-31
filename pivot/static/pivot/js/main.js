@@ -170,15 +170,14 @@ function getMajorStatus() {
 //Generates HTML to show major name, url and status (for major and course pages)
 function displayMajorStatusURL(code) {
     var parts = code.split('-');
+    var url = "https://myplan.uw.edu/program/#/programs/UG-" + parts[0] + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
-    if (_statusLookup.hasOwnProperty(parts[0]) && _statusLookup[parts[0]]["url"] != "") {
-        var source = $("#display-major-status-url").html();
-        var template = Handlebars.compile(source);
-        msg = template({
-            url: _statusLookup[parts[0]]["url"],
-            msg: msg
-        });
-    }
+    var source = $("#display-major-status-url").html();
+    var template = Handlebars.compile(source);
+    msg = template({
+    	url: url,
+        msg: msg
+    });
     return msg;
 }
 
