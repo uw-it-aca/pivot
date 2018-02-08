@@ -199,7 +199,6 @@ function displayMajorStatusIcon(code) {
 }
 
 function displayMajorStatusText(code) {
-    console.log(code);
     var parts = code.split('-');
     var msg = "";
     if (_statusLookup.hasOwnProperty(parts[0]))
