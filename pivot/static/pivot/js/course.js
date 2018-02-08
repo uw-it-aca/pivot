@@ -319,6 +319,10 @@ function listCoursesForMajor(maj) {
             inner_table_data: inner_table_data
         }
     ));
+   
+    // adding the capacity description to the admission
+    // type link below the course name 
+    addCapacityDescription(maj, "course");
 
     $("#percentHelp").popover({
         placement: "top",

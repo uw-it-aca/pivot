@@ -520,6 +520,35 @@ function clearCollegeSelection() {
     $("#dropdownMenu").val("All");
 }
 
+// Adding the popover for the capacity description links
+function addCapacityDescription(id, location) {
+    var source = $("#admission-type-help-popover").html();
+    var template = Handlebars.compile(source);
+    var clear_id = id.replace("_", " ");
+
+    if (location == "major") {
+       $("#" + id + " #major-status-Help").popover({
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+                   content: template({
+                major_status_text: displayMajorStatusText(clear_id)
+            })
+        });
+   } else if (location == "course") {
+       $("#major-status-Help").popover({
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+            content: template({
+                major_status_text: displayMajorStatusText(clear_id)
+            })
+        });
+   }
+}
+
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero
 /*function trailingZero(value) {
  if (value != null) {

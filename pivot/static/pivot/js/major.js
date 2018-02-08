@@ -182,8 +182,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
 
     addPopover(majorId, y(median));
-
-    addCapacityDescription(majorId);
+    
+    addCapacityDescription(majorId, "major");
 }
 
 //Draw line representing user-entered GPA
@@ -238,23 +238,6 @@ function addPopover(id, med) {
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
     });
-}
-
-// Adding the popover for the capacity description links
-function addCapacityDescription(id) {
-    var source = $("#admission-type-help-popover").html();
-    var template = Handlebars.compile(source);
-
-   $("#" + id + " #major-status-Help").popover({
-	trigger: "focus",
-	placement: "top",
-	html: true,
-	container: "body",
-	content: template({
-		major_status_text: displayMajorStatusText(id.replace("_", " ")) 
-	})
-   });
-
 }
 
 //Gets the data associated with the selected majors
