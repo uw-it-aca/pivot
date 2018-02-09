@@ -213,6 +213,7 @@ function addStudents() {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
             college: d.College.trim(),
+            count: d.count.trim(),
             iqr_min: d.iqr_min.trim(),
             q1: d.q1.trim(),
             median: d.median.trim(),

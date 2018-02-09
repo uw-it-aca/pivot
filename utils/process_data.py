@@ -177,8 +177,8 @@ with open(sys.argv[2]) as f:
 
 with open('Student_Data_All_Majors.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
-    csv_out.writerow(["major_abbr", "pathway", "College", "iqr_min",
-                      "q1", "median", "q3", "iqr_max"])
+    csv_out.writerow(["major_abbr", "pathway", "College", "count",
+                      "iqr_min", "q1", "median", "q3", "iqr_max"])
 
     for key in sdata:
         major_abbr = sdata[key]["raw"][2].strip() + "_" +\
@@ -189,6 +189,7 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
             csv_out.writerow([sdata[key]["raw"][2],
                               sdata[key]["raw"][3],
                               sdata[key]["raw"][5],
+                              -1,
                               -1,
                               -1,
                               -1,
@@ -226,6 +227,7 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
             csv_out.writerow([sdata[key]["raw"][2],
                               sdata[key]["raw"][3],
                               sdata[key]["raw"][5],
+                              len(gpas),
                               gpas[iqr_index_min],
                               qv1,
                               median,
