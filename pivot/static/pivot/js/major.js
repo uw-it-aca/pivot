@@ -545,9 +545,12 @@ function goSearch() {
         //Only if user has not made new selections
         if (!_searchResultsChecked) {
             $("#suggestions li.suggested_major").each(function() {
-                newMajors += template({
-                    chosen: $(this).data("code")
-                });
+                // Only add this to new majors if it isn't already checked
+                if(!$(this).find("input").is(":checked")) {
+                    newMajors += template({
+                        chosen: $(this).data("code")
+                    });
+                }
             });
         }
         results = true;
