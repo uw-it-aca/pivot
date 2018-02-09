@@ -182,6 +182,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
 
     addPopover(majorId, y(median));
+    
+    addCapacityDescription(majorId, "major");
 }
 
 //Draw line representing user-entered GPA
@@ -237,7 +239,6 @@ function addPopover(id, med) {
       $(this).popover("hide");
     });
 }
-
 
 //Gets the data associated with the selected majors
 function filterByMajors(list) {
