@@ -16,7 +16,7 @@ before_script:
   - npm install jquery
   - npm install jsdom@10
 script:
-  - pep8 pivot/ utils/ --exclude=migrations
+  - pycodestyle pivot/ utils/ --exclude=migrations
   - coverage run --source=pivot/ --omit=pivot/migrations/* manage.py test pivot
 #  - mocha scout/static/gps/js/test --recursive
 after_script:

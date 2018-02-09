@@ -29,6 +29,7 @@ little_majors = set([])
 def sort_by_course_and_popularity(a, b):
     return -1
 
+
 if (len(sys.argv) < 3):
     sys.exit('Please pass in the Majors and Courses file AND ' +
              'the Student Data - All Majors file to parse as arguments!\n' +
