@@ -8,7 +8,7 @@ install:
 before_script:
   - pip install coverage
   - pip install python-coveralls
-  - pip install pep8
+  - pip install pycodestyle
   - pip install .
   - cp travis-ci/manage.py manage.py
   - python manage.py migrate --noinput
