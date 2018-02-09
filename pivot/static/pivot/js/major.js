@@ -180,7 +180,10 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
 
     //Add numbers for screen reader
     $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
+    
     addPopover(majorId, y(median), majorData[0]["count"]);
+    
+    addCapacityDescription(majorId, "major");
 }
 
 //Draw line representing user-entered GPA
@@ -237,7 +240,6 @@ function addPopover(id, med, count) {
       $(this).popover("hide");
     });
 }
-
 
 //Gets the data associated with the selected majors
 function filterByMajors(list) {
@@ -545,9 +547,12 @@ function goSearch() {
         //Only if user has not made new selections
         if (!_searchResultsChecked) {
             $("#suggestions li.suggested_major").each(function() {
-                newMajors += template({
-                    chosen: $(this).data("code")
-                });
+                // Only add this to new majors if it isn't already checked
+                if(!$(this).find("input").is(":checked")) {
+                    newMajors += template({
+                        chosen: $(this).data("code")
+                    });
+                }
             });
         }
         results = true;
