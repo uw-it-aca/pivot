@@ -37,4 +37,16 @@ class CsvDataApiTest(TestCase):
         self.assertTrue(data == response.content)
 
     def test_data_map(self):
-        pass
+        url = '/api/v1/data_map/'
+        file_name = 'Data_Map.csv'
+        path = os.path.join(settings.CSV_ROOT, file_name)
+        with open(path, 'r') as csvfile:
+            data = csvfile.read()
+
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        self.assertTrue(data == response.content)
