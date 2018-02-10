@@ -28,9 +28,10 @@ class CsvDataApiTest(TestCase):
         with open(path, 'r') as csvfile:
             data = csvfile.read()
 
+        print(self.client.login(username='testuser',
+                                password='password'))
         login_successful = self.client.login(username='testuser',
                                              password='password')
-        print(login_successful)
         self.assertTrue(login_successful)
 
         response = self.client.get(url)
