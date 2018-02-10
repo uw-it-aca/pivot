@@ -158,7 +158,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
     var yAxis = d3.svg.axis().scale(y).orient("left");
-    var x = d3.scale.linear().domain([1.5, 4.0]).range([0, width]);
+    // Setting the domain to start from 1.4999 instead of 1.5 so the tick at 1.5 will show
+    var x = d3.scale.linear().domain([1.4999, 4.0]).range([0, width]);
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
