@@ -65,3 +65,18 @@ class CsvDataApiTest(TestCase):
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
         self.assertTrue(data == response.content)
+
+    def test_student_data(self):
+        url = '/api/v1/student_data/'
+        file_name = 'Student_Data_All_Majors.csv'
+        path = os.path.join(settings.CSV_ROOT, file_name)
+        with open(path, 'r') as csvfile:
+            data = csvfile.read()
+
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        self.assertTrue(data == response.content)
