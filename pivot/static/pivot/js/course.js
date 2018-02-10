@@ -327,13 +327,13 @@ function listCoursesForMajor(maj) {
     $("#percentHelp").popover({
         placement: "top",
         html: true,
-        container: "body",
+        container: ".course-table",
         content: "<p>Percent of students who had taken the course by the time they declared for the major that you've selected.</p>"
     });
     $("#courseGradeHelp").popover({
         placement: "top",
         html: true,
-        container: "body",
+        container: ".course-table",
         content: "<p>Median course grade of students who had taken the course by the time they declared for the major that you've selected.</p>"
     });
     //$("#loadingModal").modal('hide');
@@ -368,3 +368,8 @@ function colorBucket(gpa) {
     }
     return 0;
 }
+
+// Close any open popovers when someone resizes the window!
+$(window).resize(function() {
+    $('a[data-toggle="popover"]:focus').blur();
+});

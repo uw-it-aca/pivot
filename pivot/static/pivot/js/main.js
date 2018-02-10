@@ -530,7 +530,7 @@ function addCapacityDescription(id, location) {
             trigger: "focus",
             placement: "top",
             html: true,
-            container: "body",
+            container: "#" + id,
                    content: template({
                 major_status_text: displayMajorStatusText(clear_id)
             })

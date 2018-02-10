@@ -131,7 +131,7 @@ function createBoxForMajor(i, median, majorId) {
             trigger: "focus",
             placement: "top",
             html: true,
-            container: "body",
+            container: "#" + majorId,
             content: median_template({})
         });
 
@@ -139,7 +139,7 @@ function createBoxForMajor(i, median, majorId) {
             trigger: "focus",
             placement: "top",
             html: true,
-            container: "body",
+            container: "#" + majorId,
             content: dist_template({
                 boxplot_image: images_paths["boxplot"]
             })
