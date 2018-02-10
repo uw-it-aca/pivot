@@ -1,3 +1,5 @@
+import os
+
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse
@@ -12,7 +14,7 @@ class DataFileView(View):
         return HttpResponse(csv)
 
     def _get_csv(self):
-        path = settings.CSV_ROOT + self.file_name
+        path = os.path.join(settings.CSV_ROOT, self.file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
             return data
