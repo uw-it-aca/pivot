@@ -8,9 +8,9 @@ from django.test.utils import override_settings
 import pivot
 
 
-@override_settings(CSV_ROOT = os.path.join(os.path.dirname(pivot.__file__),
-                   'test_resources',
-                   'csvfiles',))
+@override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
+                                         'test_resources',
+                                         'csvfiles',))
 class CsvDataApiTest(TestCase):
     """ Tests the api/v1 CSV apis.
     """
@@ -31,7 +31,10 @@ class CsvDataApiTest(TestCase):
         login_successful = self.client.login(username='testuser',
                                              password='password')
         self.assertTrue(login_successful)
-        
+
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
         self.assertTrue(data == response.content)
+
+    def test_data_map(self):
+        pass
