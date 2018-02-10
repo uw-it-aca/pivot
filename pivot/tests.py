@@ -30,6 +30,7 @@ class CsvDataApiTest(TestCase):
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
+        print(login_successful)
         self.assertTrue(login_successful)
 
         response = self.client.get(url)
