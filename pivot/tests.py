@@ -15,8 +15,9 @@ class CsvDataApiTest(TestCase):
     """ Tests the api/v1 CSV apis.
     """
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser',
-                                             password='password')
+        self.user = User.objects.create(username='testuser')
+        self.user.set_password('password')
+        self.user.save()
 
     def tearDown(self):
         self.user.delete()
@@ -28,8 +29,6 @@ class CsvDataApiTest(TestCase):
         with open(path, 'r') as csvfile:
             data = csvfile.read()
 
-        print(self.client.login(username='testuser',
-                                password='password'))
         login_successful = self.client.login(username='testuser',
                                              password='password')
         self.assertTrue(login_successful)
