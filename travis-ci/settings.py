@@ -137,3 +137,7 @@ COMPRESS_JS_FILTERS = [
 ]
 
 CSV_ROOT = ""
+
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
