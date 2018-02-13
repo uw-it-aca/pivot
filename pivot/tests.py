@@ -32,7 +32,7 @@ class CsvDataApiTest(TestCase):
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
-        # self.assertTrue(login_successful)
+        self.assertTrue(login_successful)
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
@@ -48,7 +48,7 @@ class CsvDataApiTest(TestCase):
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
-        # self.assertTrue(login_successful)
+        self.assertTrue(login_successful)
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
@@ -64,7 +64,7 @@ class CsvDataApiTest(TestCase):
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
-        # self.assertTrue(login_successful)
+        self.assertTrue(login_successful)
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
@@ -80,7 +80,7 @@ class CsvDataApiTest(TestCase):
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
-        # self.assertTrue(login_successful)
+        self.assertTrue(login_successful)
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
