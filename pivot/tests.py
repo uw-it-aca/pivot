@@ -28,6 +28,7 @@ class CsvDataApiTest(TestCase):
         path = os.path.join(settings.CSV_ROOT, file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
+            data = data.encode()  # For comparison to bytes type
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -43,6 +44,7 @@ class CsvDataApiTest(TestCase):
         path = os.path.join(settings.CSV_ROOT, file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
+            data = data.encode()  # For comparison to bytes type
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -58,6 +60,7 @@ class CsvDataApiTest(TestCase):
         path = os.path.join(settings.CSV_ROOT, file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
+            data = data.encode()  # For comparison to bytes type
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -73,6 +76,7 @@ class CsvDataApiTest(TestCase):
         path = os.path.join(settings.CSV_ROOT, file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
+            data = data.encode()  # For comparison to bytes type
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
