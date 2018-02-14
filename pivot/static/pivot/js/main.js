@@ -167,9 +167,25 @@ function getMajorStatus() {
     });
 }
 
+// Seattle business school exceptions, should use "BUS"
+var business_exceptions_s = ["ACCTG", "B A", "ENTRE", "FINANC", "HRMGT", "I S", "MKTG", "OSCM"];
+
+// Bothell business school exceptions, should use "B BUS"
+var business_exceptions_b = ["B BUSX"];
+
+// Tacoma business school exceptions, should "T BUS"
+var business_exceptions_t = ["T ACCT", "T FIN", "T MGMT", "T MKTG"];
+
 //Generates HTML to show major name, url and status (for major and course pages)
 function displayMajorStatusURL(code) {
     var parts = code.split('-');
+    if (business_exceptions_s.includes(parts[0])) {
+	parts[0] = "BUS";
+    } else if (business_exceptions_b.includes(parts[0])) {
+	parts[0] = "B BUS";
+    } else if (business_exceptions_t.includes(parts[0])) {
+	parts[0] = "T BUS";
+    }
     var url = "https://myplan.uw.edu/program/#/programs/UG-" + parts[0] + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
     var source = $("#display-major-status-url").html();
