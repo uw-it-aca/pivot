@@ -178,12 +178,13 @@ with open(sys.argv[2]) as f:
 
 with open('Student_Data_All_Majors.csv', 'wb') as outf:
     csv_out = csv.writer(outf, delimiter=',')
-    csv_out.writerow(["major_abbr", "pathway", "College", "iqr_min",
-                      "q1", "median", "q3", "iqr_max"])
+    csv_out.writerow(["major_abbr", "pathway", "College", "count",
+                      "iqr_min", "q1", "median", "q3", "iqr_max"])
 
     for key in sdata:
         major_abbr = sdata[key]["raw"][2].strip() + "_" +\
                      sdata[key]["raw"][3].strip()
+
         if major_abbr in little_majors:
             # This major has less than st_num students! Hide the data
             csv_out.writerow([sdata[key]["raw"][2],
@@ -193,8 +194,12 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
                               -1,
                               -1,
                               -1,
+                              -1,
                               -1])
-
+        elif len(sdata[key]["gpas"]) < st_num:
+            # We need at least st_num GPAs to calculate the
+            # quartile ranges for the boxplot
+            continue
         else:
             gpas = sorted(sdata[key]["gpas"])
             q1 = int(len(gpas) * .25)
@@ -223,6 +228,7 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
             csv_out.writerow([sdata[key]["raw"][2],
                               sdata[key]["raw"][3],
                               sdata[key]["raw"][5],
+                              len(gpas),
                               gpas[iqr_index_min],
                               qv1,
                               median,

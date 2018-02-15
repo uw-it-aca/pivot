@@ -181,8 +181,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
 
     //Add numbers for screen reader
     $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
-
-    addPopover(majorId, y(median));
+    
+    addPopover(majorId, y(median), majorData[0]["count"]);
     
     addCapacityDescription(majorId, "major");
 }
@@ -214,7 +214,7 @@ function storeSelections(majors, gpa) {
 
 
 //Initializes the popover for a boxplot
-function addPopover(id, med) {
+function addPopover(id, med, count) {
     // Compile the Handlebars template
     var source = $("#add-popover").html();
     var template = Handlebars.compile(source);
@@ -226,7 +226,8 @@ function addPopover(id, med) {
         content: template({
         lower_quartile: round(Number($("#" + id + " .boxLQ").attr("data")),2),
         median: round(Number($("#" + id + " .median").attr("data")),2),
-        upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2)
+        upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2),
+        count: count
             }),
         container: "#" + id
     });
