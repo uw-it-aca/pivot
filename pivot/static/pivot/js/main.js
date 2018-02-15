@@ -450,6 +450,15 @@ function populateCollegeDropdown() {
 
     //Show selection in button
     $("#college-dropdown .dropdown-menu li a").click(function(){
+        // Remove the previously selected dropdown option
+        var prev_selected = $("#college-dropdown .dropdown-menu .active");
+        prev_selected.removeClass("active");
+        prev_selected.removeAttr("aria-selected");
+
+        // Visually select the clicked on option
+        $(this).parent().addClass("active");
+        $(this).parent().attr("aria-selected","true");
+
         var selection_source = $("#populate-college-dropdown-college-selection").html();
         var selection_template = Handlebars.compile(selection_source);
 
@@ -518,6 +527,14 @@ function clearCollegeSelection() {
     var template = Handlebars.compile(source);
     $("#dropdownMenu").html(template({college_selection: "All"}));
     $("#dropdownMenu").val("All");
+    // Remove the previously selected dropdown option
+    var prev_selected = $("#college-dropdown .dropdown-menu .active");
+    prev_selected.removeClass("active");
+    prev_selected.removeAttr("aria-selected");
+
+    // Visually select the first option (All)
+    $("#college-dropdown .dropdown-menu li").first().addClass("active");
+    $("#college-dropdown .dropdown-menu li").first().attr("aria-selected","true");
 }
 
 // Adding the popover for the capacity description links
