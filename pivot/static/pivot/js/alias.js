@@ -25,7 +25,6 @@ const search_alias = {
 
 // Define constants in case a common link changes
 var seattle_business = ['BUS'];
-
 var tacoma_business = ['T BUS'];
 
 const myplan_alias = {
@@ -37,7 +36,7 @@ const myplan_alias = {
 	"HRMGT": seattle_business,
 	'MKTG': seattle_business,
 	'OSCM': seattle_business,
-	'B BUSX': ['B BUS'],
+	'B BUSX': ['B BUS'],  // No var above because there's only one exception.
 	'T ACCT': tacoma_business,
 	'T FIN': tacoma_business,
 	'T MGMT': tacoma_business,
