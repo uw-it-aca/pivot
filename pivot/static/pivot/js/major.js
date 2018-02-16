@@ -131,7 +131,7 @@ function createBoxForMajor(i, median, majorId) {
             trigger: "focus",
             placement: "top",
             html: true,
-            container: "body",
+            container: "#" + majorId,
             content: median_template({})
         });
 
@@ -139,7 +139,7 @@ function createBoxForMajor(i, median, majorId) {
             trigger: "focus",
             placement: "top",
             html: true,
-            container: "body",
+            container: "#" + majorId,
             content: dist_template({
                 boxplot_image: images_paths["boxplot"]
             })
@@ -158,7 +158,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
     var yAxis = d3.svg.axis().scale(y).orient("left");
-    var x = d3.scale.linear().domain([1.5, 4.0]).range([0, width]);
+    // Setting the domain to start from 1.4999 instead of 1.5 so the tick at 1.5 will show
+    var x = d3.scale.linear().domain([1.4999, 4.0]).range([0, width]);
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
 
     //draw the boxplot
@@ -180,8 +181,10 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
 
     //Add numbers for screen reader
     $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
-
-    addPopover(majorId, y(median));
+    
+    addPopover(majorId, y(median), majorData[0]["count"]);
+    
+    addCapacityDescription(majorId, "major");
 }
 
 //Draw line representing user-entered GPA
@@ -211,7 +214,7 @@ function storeSelections(majors, gpa) {
 
 
 //Initializes the popover for a boxplot
-function addPopover(id, med) {
+function addPopover(id, med, count) {
     // Compile the Handlebars template
     var source = $("#add-popover").html();
     var template = Handlebars.compile(source);
@@ -223,7 +226,8 @@ function addPopover(id, med) {
         content: template({
         lower_quartile: round(Number($("#" + id + " .boxLQ").attr("data")),2),
         median: round(Number($("#" + id + " .median").attr("data")),2),
-        upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2)
+        upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2),
+        count: count
             }),
         container: "#" + id
     });
@@ -237,7 +241,6 @@ function addPopover(id, med) {
       $(this).popover("hide");
     });
 }
-
 
 //Gets the data associated with the selected majors
 function filterByMajors(list) {
@@ -545,9 +548,12 @@ function goSearch() {
         //Only if user has not made new selections
         if (!_searchResultsChecked) {
             $("#suggestions li.suggested_major").each(function() {
-                newMajors += template({
-                    chosen: $(this).data("code")
-                });
+                // Only add this to new majors if it isn't already checked
+                if(!$(this).find("input").is(":checked")) {
+                    newMajors += template({
+                        chosen: $(this).data("code")
+                    });
+                }
             });
         }
         results = true;

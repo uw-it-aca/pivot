@@ -213,6 +213,7 @@ function addStudents() {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
             college: d.College.trim(),
+            count: d.count.trim(),
             iqr_min: d.iqr_min.trim(),
             q1: d.q1.trim(),
             median: d.median.trim(),
@@ -449,6 +450,15 @@ function populateCollegeDropdown() {
 
     //Show selection in button
     $("#college-dropdown .dropdown-menu li a").click(function(){
+        // Remove the previously selected dropdown option
+        var prev_selected = $("#college-dropdown .dropdown-menu .active");
+        prev_selected.removeClass("active");
+        prev_selected.removeAttr("aria-selected");
+
+        // Visually select the clicked on option
+        $(this).parent().addClass("active");
+        $(this).parent().attr("aria-selected","true");
+
         var selection_source = $("#populate-college-dropdown-college-selection").html();
         var selection_template = Handlebars.compile(selection_source);
 
@@ -517,6 +527,43 @@ function clearCollegeSelection() {
     var template = Handlebars.compile(source);
     $("#dropdownMenu").html(template({college_selection: "All"}));
     $("#dropdownMenu").val("All");
+    // Remove the previously selected dropdown option
+    var prev_selected = $("#college-dropdown .dropdown-menu .active");
+    prev_selected.removeClass("active");
+    prev_selected.removeAttr("aria-selected");
+
+    // Visually select the first option (All)
+    $("#college-dropdown .dropdown-menu li").first().addClass("active");
+    $("#college-dropdown .dropdown-menu li").first().attr("aria-selected","true");
+}
+
+// Adding the popover for the capacity description links
+function addCapacityDescription(id, location) {
+    var source = $("#admission-type-help-popover").html();
+    var template = Handlebars.compile(source);
+    var clear_id = id.replace("_", " ");
+
+    if (location == "major") {
+       $("#" + id + " #major-status-Help").popover({
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "#" + id,
+                   content: template({
+                major_status_text: displayMajorStatusText(clear_id)
+            })
+        });
+   } else if (location == "course") {
+       $("#major-status-Help").popover({
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+            content: template({
+                major_status_text: displayMajorStatusText(clear_id)
+            })
+        });
+   }
 }
 
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero

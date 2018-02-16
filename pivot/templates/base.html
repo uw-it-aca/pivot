@@ -137,6 +137,7 @@
 </div><!-- footer role -->
 <script src="{% static "pivot/js/alias.js" %}"></script>
 <script src="{% static "pivot/js/main.js" %}"></script>
+<script src="{% static "pivot/js/handlebars_helper.js" %}"></script>
 {% if request.path == '/major-gpa/' %}<script src="{% static "pivot/js/major.js" %}"></script>{% endif %}
 {% if request.path == '/course-gpa/' %}<script src="{% static "pivot/js/course.js" %}"></script>{% endif %}
 {% include "handlebars/no-results.html" %}
@@ -162,5 +163,6 @@
 {% include "handlebars/show-compare-module.html" %}
 {% include "handlebars/validate-gpa.html" %}
 {% include "handlebars/protected-result-warning.html" %}
+{% include "handlebars/admission-type-help-popover.html" %}
 </body>
 </html>
