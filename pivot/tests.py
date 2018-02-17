@@ -10,7 +10,7 @@ import pivot
 
 @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
                                          'test_resources',
-                                         'csvfiles',))
+                                         'csvfiles/',))
 class CsvDataApiTest(TestCase):
     """ Tests the api/v1 CSV apis.
     """
