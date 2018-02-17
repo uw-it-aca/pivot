@@ -8,6 +8,11 @@ from django.test.utils import override_settings
 import pivot
 
 
+TEST_CSV_ROOT = os.path.join(os.path.dirname(pivot.__file__),
+                             'test_resources',
+                             'csvfiles/',)
+
+
 class CsvDataApiTest(TestCase):
     """ Tests the api/v1 CSV apis.
     """
@@ -19,27 +24,19 @@ class CsvDataApiTest(TestCase):
     def tearDown(self):
         self.user.delete()
 
-    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
-                                             'test_resources',
-                                             'csvfiles/',))
+    @override_settings(CSV_ROOT=TEST_CSV_ROOT)
     def test_major_course(self):
         self._major_course()
 
-    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
-                                             'test_resources',
-                                             'csvfiles/',))
+    @override_settings(CSV_ROOT=TEST_CSV_ROOT)
     def test_data_map(self):
         self._data_map()
 
-    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
-                                             'test_resources',
-                                             'csvfiles/',))
+    @override_settings(CSV_ROOT=TEST_CSV_ROOT)
     def test_status_lookup(self):
         self._status_lookup()
 
-    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
-                                             'test_resources',
-                                             'csvfiles/',))
+    @override_settings(CSV_ROOT=TEST_CSV_ROOT)
     def test_student_data(self):
         self._student_data()
 
