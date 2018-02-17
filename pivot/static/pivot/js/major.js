@@ -233,12 +233,26 @@ function addPopover(id, med) {
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
-        $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
+        var boxEl = document.querySelector("#" + id + " .boxP");
+        // Try using offset.top; won't work on Safari so use getPageTopLeft instead
+        var top = $("#" + id + " .boxP").offset().top || getPageTopLeft(boxEl).top;
+        var calc_top = top - $("#" + id + " .popover").height();
+        $("#" + id + " .popover").css("top", calc_top);
     });
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
     });
+}
+
+// Safari doesn't support offset.top so we use this as a workaround
+function getPageTopLeft(el) {
+    var rect = el.getBoundingClientRect();
+    var docEl = document.documentElement;
+    return {
+        left: rect.left + (window.pageXOffset || docEl.scrollLeft || 0),
+        top: rect.top + (window.pageYOffset || docEl.scrollTop || 0)
+    };
 }
 
 //Gets the data associated with the selected majors
