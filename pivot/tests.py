@@ -8,9 +8,6 @@ from django.test.utils import override_settings
 import pivot
 
 
-@override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
-                                         'test_resources',
-                                         'csvfiles/',))
 class CsvDataApiTest(TestCase):
     """ Tests the api/v1 CSV apis.
     """
@@ -22,7 +19,33 @@ class CsvDataApiTest(TestCase):
     def tearDown(self):
         self.user.delete()
 
+    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
+                                             'test_resources',
+                                             'csvfiles/',))
     def test_major_course(self):
+        self._major_course()
+
+    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
+                                             'test_resources',
+                                             'csvfiles/',))
+    def test_data_map(self):
+        self._data_map()
+
+    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
+                                             'test_resources',
+                                             'csvfiles/',))
+    def test_status_lookup(self):
+        self._status_lookup()
+
+    @override_settings(CSV_ROOT=os.path.join(os.path.dirname(pivot.__file__),
+                                             'test_resources',
+                                             'csvfiles/',))
+    def test_student_data(self):
+        self._student_data()
+
+    # TODO: Now override with CSV_URL, instead
+
+    def _major_course(self):
         url = '/api/v1/major_course/'
         file_name = 'Majors_and_Courses.csv'
         path = os.path.join(settings.CSV_ROOT, file_name)
@@ -38,7 +61,7 @@ class CsvDataApiTest(TestCase):
         self.assertTrue(200 == response.status_code)
         self.assertTrue(data == response.content)
 
-    def test_data_map(self):
+    def _data_map(self):
         url = '/api/v1/data_map/'
         file_name = 'Data_Map.csv'
         path = os.path.join(settings.CSV_ROOT, file_name)
@@ -54,7 +77,7 @@ class CsvDataApiTest(TestCase):
         self.assertTrue(200 == response.status_code)
         self.assertTrue(data == response.content)
 
-    def test_status_lookup(self):
+    def _status_lookup(self):
         url = '/api/v1/status_lookup/'
         file_name = 'Status_Lookup.csv'
         path = os.path.join(settings.CSV_ROOT, file_name)
@@ -70,7 +93,7 @@ class CsvDataApiTest(TestCase):
         self.assertTrue(200 == response.status_code)
         self.assertTrue(data == response.content)
 
-    def test_student_data(self):
+    def _student_data(self):
         url = '/api/v1/student_data/'
         file_name = 'Student_Data_All_Majors.csv'
         path = os.path.join(settings.CSV_ROOT, file_name)
