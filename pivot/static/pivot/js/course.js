@@ -81,10 +81,10 @@ function displayResults() {
         var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
         // If the search term matches an alias (listed in alias.js)
         var alias_index = false;
-        if (alias[maj]) {
-            for (var i = 0; i < alias[maj].length; i++) {
-                if (alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
-                    alias_index = true;
+        if (search_alias[maj]) {
+            for (var i = 0; i < search_alias[maj].length; i++) {
+                if (search_alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
+                    search_alias_index = true;
                     break;
                 }
             }
