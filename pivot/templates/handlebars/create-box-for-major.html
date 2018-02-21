@@ -1,0 +1,32 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "create-box-for-major" %}
+
+<div class='median-box col-xs-3 col-md-2'>
+    <!--Check if i is one-->
+    {{ #if i }}
+    <div class='data-heading'><p>
+        <a class='inlineHelp' id='medianHelp' tabindex='0' role='button' aria-label='Info about median GPA' data-toggle='popover'>Median GPA
+            <span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span>
+        </a></p>
+    </div>
+    {{ /if }}
+    <!--end of check-->
+    <h4 class='median-value'>{{ display_median }}</h4>
+</div>
+<div class='data-display col-xs-9 col-md-6'>
+    <!--Check if i is one-->
+    {{ #if i }}
+    <div class='data-heading'><p>
+        <a class='inlineHelp' id='distributionHelp' tabindex='0' role='button' aria-label='Info about GPA distribution' data-toggle='popover'>Distribution
+            <span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span>
+        </a></p>
+    </div>
+    {{ /if }}
+    <!--end of check-->
+
+</div>
+<div class='course-link col-xs-12'>
+    <a href='/course-gpa/?code={{ major_id }}' title="View most commonly taken courses in {{major_name}}"><span class="glyphicon glyphicon-menu-right link-arrow" aria-hidden="true"></span> View most commonly taken courses in {{major_name}}</a>
+</div>
+
+{% endtplhandlebars %}

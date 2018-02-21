@@ -90,3 +90,21 @@ ENV/
 
 # Prevent accidental data commits
 .csv
+
+# virtualenv
+bin/
+include/
+local/
+pip-selfcheck.json
+share/
+
+# django project
+db.sqlite3
+manage.py
+project/
+
+# pivot data
+data/
+
+#DS_Store
+.DS_Store

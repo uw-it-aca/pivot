@@ -1,0 +1,20 @@
+<!-- Template for the distribution help popover (explaining quartiles/median) -->
+{% load templatetag_handlebars %}
+{% tplhandlebars "distribution-help-popover" %}
+<p>
+	<b>Distribution</b>
+</p>
+
+<p>
+<!-- Note: Hardcoded the width/height of the image so bootstrap popover
+     would recognize it. If the image/popover dimensions are changed
+     you have to change the width/height here to be accurate as well -->
+<img src="{{ boxplot_image }}" style="width:244px;height:197.617px;" alt="GPA distribution graph, called Boxplot, shows 50% of GPAs fall in between lower quartile and upper quartile. ">
+</p>
+
+<p>
+	<a href="/about/" title="More about the boxplot"> Learn more about the Lower Quartile, Median GPA, and Upper Quartile.</a>
+</p>
+
+{% endtplhandlebars %}
+

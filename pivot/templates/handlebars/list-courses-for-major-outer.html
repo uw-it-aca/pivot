@@ -1,0 +1,79 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "list-courses-for-major-outer" %}
+
+<div class='course-card row' id='{{ id }}'>
+    <p class='college-heading'>{{ college }} - {{ campus }} campus</p>
+    <div class='col-xs-12 course-table'>
+        <h2 class='major-heading-course'>{{{ major_status_url }}}</h2>
+        <div class='major-gpa-line'>
+            <a class='inlineHelp' id='major-status-Help' tabindex='0' role='button' aria-label='Info about major status' data-placement='top' data-toggle='popover' data-trigger='focus' data-html='true' data-content=''>{{{ major_status_icon }}}  {{{ major_status_text }}}</a>
+            <span class='gpa-small'>  Median GPA: {{{ median_gpa }}} </span>
+        </div>
+    </div>
+</div>
+
+<div class='col-md-9 course-table row'>
+    <table class='table table-striped'>
+	    <caption class="sr-only">Most commonly taken courses among {{{ major_status_url }}} students</caption>
+        <thead>
+            <tr>
+                <th scope="col" class="sr-only">courses</th>
+                <th scope="col">
+                    <div class='data-heading'><span class="sr-only">Popularity in percentile</span>
+                        <a class='inlineHelp' id='percentHelp' tabindex='0' role='button' aria-label='Show info about the percent' data-toggle='popover' data-trigger='focus' data-content=''>%
+                            <span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span>
+                        </a>
+                    </div>
+                </th>
+                <th scope="col">
+                    <p class='data-heading'><span class="sr-only">Course</span>Code</p>
+                </th>
+                <th scope="col">
+                    <p class='data-heading'>Most Commonly Taken Course<span class="sr-only">name</span></p>
+                </th>
+                <th scope="col">
+                    <div class='data-heading'>
+                        <a class='inlineHelp' id='courseGradeHelp' tabindex='0' role='button' aria-label='Show info about median course grade' data-toggle='popover' data-trigger='focus' data-content=''>Median Course Grade
+                            <span class='glyphicon glyphicon-info-sign' aria-hidden='true'></span>
+                        </a>
+                    </div>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Inner table data goes here-->
+            {{ #each inner_table_data }}
+            <tr>
+	            <th scope="row" class="col0"><h3 class="sr-only">{{ dept_abbrev }} {{ course_number }}</h3></th>
+                {{ #with this }}
+                <td>
+                    <p>{{ popularity }}</p>
+                </td>
+                <td>
+                    <p class='coursecode'><a title="{{ dept_abbrev }} {{ course_number }}" target="_blank" href="https://myplan.uw.edu/student/myplan/course/{{ dept_abbrev }}{{course_number }}">{{ dept_abbrev }} {{ course_number }}</a></p>
+                </td>
+                <td>
+                    <p>{{ course_long_name }}</p>
+                </td>
+                <td>
+                    <h4 class='course-median course-table-row {{ col }}'>{{ percentile }}</h4>
+                </td>
+                {{ /with }}
+            </tr>
+            {{ /each }}
+        </tbody>
+    </table>
+</div>
+
+<div class='col-xs-2 panel panel-default bar-legend' aria-hidden="true">
+    <p class="bar-legend-header">Color Legend:</p>
+    <div id='color-legend'>
+        <div class='q0-9 color-block'></div><div class='bar-legend-0'> 1.50 to 1.99</div>
+        <div class='q1-9 color-block'></div><div class='bar-legend-0'> 2.00 to 2.49</div>
+        <div class='q2-9 color-block'></div><div class='bar-legend-0'> 2.50 to 2.99</div>
+        <div class='q3-9 color-block'></div><div class='bar-legend-0'> 3.00 to 3.49</div>
+        <div class='q4-9 color-block'></div><div class='bar-legend-0'> 3.50 to 4.00</div>
+    </div>
+</div>
+
+{% endtplhandlebars %}

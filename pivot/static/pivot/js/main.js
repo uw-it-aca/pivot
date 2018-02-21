@@ -17,23 +17,54 @@ var _searchResultsChecked = false;
 /**** SETUP ****/
 if (window.location.search == "?slow") {
     window.setTimeout(function() { getDataNameMap(); }, 5000);
-}
-else {
+} else {
     getDataNameMap();
 }
 
-//initializes Bootstrap popover plugin
+// initializes app
 $(function () {
-    $('[data-toggle="popover"]').popover()
-})
+    // initializes bootstrap popover plugin
+    $('[data-toggle="popover"]').popover();
+    // initializes onboarding dialog
+    initOnboardingDialog();
+});
 
+// checks local storage and initializes onboarding dialog
+function initOnboardingDialog() {
+    // check the session if modal has been temporarily dismissed
+    var isTempForgotten = sessionStorage.getItem("isTempForgotten");
+    // if isTempForgotten is anything other than null, then
+    // then don't show the modal
+    if (isTempForgotten == null) {
+        // check if the modal has been permanently forgotten or not
+        var isPermForgotten = localStorage.getItem("isPermForgotten");
+        isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
+        // if the modal has not been permanently forgotten, show it
+        if (isPermForgotten == false || isPermForgotten == "false") {
+            $("#onboard-modal").modal("show");
+        } else {
+            // set temp forgotten to represent forgotten state to
+            // prevent execution of multiple if conditions
+            sessionStorage.setItem("isTempForgotten", true);
+        }
+    }
 
+    // add event listener when modal is dismissed
+    // set isTempForgotten to prevent further modals during the session
+    $("#onboard-modal").on("hidden.bs.modal", function() {
+        sessionStorage.setItem("isTempForgotten", true);
+    });
+
+    $("#perm-forget-modal").on("click", function(){
+        localStorage.setItem("isPermForgotten", true);
+    });
+}
 
 /**** READ DATA FROM CSV ****/
 
 //Reads file that maps data from course file to major file
 function getDataNameMap() {
-    d3.csv("api/v1/data_map", function(d) {
+    d3.csv("/api/v1/data_map/", function(d) {
         return {
             is_course: d.is_course.trim(),
             is_major: d.is_major.trim(),
@@ -59,7 +90,7 @@ function getDataNameMap() {
 
 //Reads major and course data file
 function getCompleteMajorMap() {
-    d3.csv("api/v1/major_course", function(d) {
+    d3.csv("/api/v1/major_course/", function(d) {
         return {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
@@ -120,7 +151,7 @@ function getCompleteMajorMap() {
 
 //Reads seattle major status file
 function getMajorStatus() {
-    d3.csv("api/v1/status_lookup", function (d) {
+    d3.csv("/api/v1/status_lookup/", function (d) {
         return {
             code: d.Code.trim(),
             url: d.URL.trim(),
@@ -139,10 +170,14 @@ function getMajorStatus() {
 //Generates HTML to show major name, url and status (for major and course pages)
 function displayMajorStatusURL(code) {
     var parts = code.split('-');
+    var url = "https://myplan.uw.edu/program/#/programs/UG-" + parts[0] + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
-    if (_statusLookup.hasOwnProperty(parts[0]) && _statusLookup[parts[0]]["url"] != "") {
-        msg = "<a href='" + _statusLookup[parts[0]]["url"] + "' target=_blank>" + msg + "</a>";
-    }
+    var source = $("#display-major-status-url").html();
+    var template = Handlebars.compile(source);
+    msg = template({
+    	url: url,
+        msg: msg
+    });
     return msg;
 }
 
@@ -150,8 +185,15 @@ function displayMajorStatusIcon(code) {
     var parts = code.split('-');
     var msg = "";
     if (_statusLookup.hasOwnProperty(parts[0])) {
-        var status_name = _statusLookup[parts[0]]["status"];
-        msg = "<img src="+images_paths[status_name]+" title='Admission type: "+ status_name +"' alt='Admission type: "+ status_name +"'/>";
+        var title = _statusLookup[parts[0]]["status"];
+        var url = images_paths[title];
+        // Compile the Handlebar template
+        var source = $("#display-major-status-icon").html();
+        var template = Handlebars.compile(source);
+        msg = template({
+            src: url,
+            title: title
+        });
     }
     return msg;
 }
@@ -166,11 +208,12 @@ function displayMajorStatusText(code) {
 
 //Reads student data file
 function addStudents() {
-    d3.csv("api/v1/student_data", function (d) {
+    d3.csv("/api/v1/student_data/", function (d) {
         return {
             major_abbr: d.major_abbr.trim(),
             pathway: d.pathway.trim(),
             college: d.College.trim(),
+            count: d.count.trim(),
             iqr_min: d.iqr_min.trim(),
             q1: d.q1.trim(),
             median: d.median.trim(),
@@ -224,6 +267,12 @@ function init_search_events() {
     //When user clicks on college dropdown menu, hide search suggestions
     $("#dropdownMenu").on("click", function(e) {
         $("#suggestions").css("display","none");
+
+        // Set focus on the selected item
+        window.setTimeout(function() {
+            $("#college-dropdown>ul>li[aria-selected]>a").focus();
+        }, 100);
+
     });
 
     //Keyboard navigation for search input field
@@ -257,6 +306,9 @@ function init_search_events() {
                     $("a:focus").parent("li").parent("ul").prev().children("li").children("a").last().focus();
                 else ($("#suggestions a").last().focus());
             }
+        } else if (e.which == 32) { //select with space key
+            e.preventDefault();
+            $("a:focus").trigger("click");
         }
     });
 }
@@ -264,20 +316,23 @@ function init_search_events() {
 
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
-    console.log('prep')
     //close college dropdown menu if it is currently open
-    if ($(".dropdown-menu").css("display") != "none")
+    if ($(".dropdown-menu").css("display") != "none") {
         $("#dropdownMenu").dropdown("toggle");
-    $("#suggestions").html('<ul id="selectedCollege"><li class="dropdown-header">' + $("#dropdownMenu:first-child").val() + '</li></ul><ul id="currentCampus"><li class="dropdown-header">' + _currentCampus + ' campus</li></ul><ul id="bothellCampus"><li class="dropdown-header">Bothell campus</li></ul><ul id="seattleCampus"><li class="dropdown-header">Seattle campus</li></ul><ul id="tacomaCampus"><li class="dropdown-header">Tacoma campus</li></ul>');
+    }
+    var source = $("#prepare-results").html();
+    var template = Handlebars.compile(source);
+    $("#suggestions").html(template({
+        selected_campus: $("#dropdownMenu").val(),
+        current_campus: _currentCampus
+    }));
     //If a college is selected from the dropdown menu or text has been entered in the input field
-    if ($("#dropdownMenu:first-child").val() != "All" || $("#search").val().length > 0) {
-        console.log('prep1')
+    //if college selected, should show everything in college AND current selections
+    if ($("#dropdownMenu").val() != "All" || $("#search").val().length > 0) {
         displayResults();
     } else if ($(".chosen_major").length > 0) { //If nothing has been entered in the text field, but the user has made selections
-        console.log('prep2')
         showCurrentSelections();
     } else { //Nothing to display
-        console.log('prep')
         $("#suggestions").css("display","none");
     }
     toggleGo(); //Update the "go" button display
@@ -287,30 +342,55 @@ function prepareResults(e) {
 
 //Hides unused placeholder areas in search suggestions
 function finishResults() {
-    if ($("#dropdownMenu:first-child").val() == "All")
+    // Compile the handlebar templates
+    var source = $("#finish-results").html();
+    var template = Handlebars.compile(source);
+    var source_divider = $("#finish-results-divider").html();
+    var template_divider = Handlebars.compile(source_divider);
+
+    if ($("#dropdownMenu").val() == "All")
         $("#selectedCollege").remove();
     else {
-        if (all_data_loaded) {
-            if ($("#selectedCollege li").length == 1 && $("#dropdownMenu:first-child").val() != "All")  $("#selectedCollege").append("<li class='noSelect'>No matching major in this college</li>");
-            $("#selectedCollege").append('<li role="separator" class="divider"></li>');
+        if (all_data_loaded && $("#selectedCollege li").length == 1 && $("#dropdownMenu").val() != "All") {
+            $("#selectedCollege").append(template({
+                message: "No matching major in this college"
+            }));
+        } else if ($("#selectedCollege li").length == 1 && $("#dropdownMenu").val() != "All") {
+            $("#selectedCollege").append(template({
+                message: "Loading..."
+            }));
         }
-        else {
-            if ($("#selectedCollege li").length == 1 && $("#dropdownMenu:first-child").val() != "All")  $("#selectedCollege").append("<li class='noSelect'>Loading...</li>");
-            $("#selectedCollege").append('<li role="separator" class="divider"></li>');
-        }
+        $("#selectedCollege").append(template_divider({}));
     }
-    if ($("#currentCampus li").length == 1)
+
+    // Handle current campus
+    if ($("#currentCampus li").length == 1) {
         $("#currentCampus").remove();
-    else $("#currentCampus").append('<li role="separator" class="divider"></li>');
-    if ($("#bothellCampus li").length == 1)
+    } else {
+        $("#currentCampus").append(template_divider({}));
+    }
+
+    // Handle bothell campus
+    if ($("#bothellCampus li").length == 1) {
         $("#bothellCampus").remove();
-    else $("#bothellCampus").append('<li role="separator" class="divider"></li>');
-    if ($("#seattleCampus li").length == 1)
+    } else {
+        $("#bothellCampus").append(template_divider({}));
+    }
+
+    // Handle seattle campus
+    if ($("#seattleCampus li").length == 1) {
         $("#seattleCampus").remove();
-    else $("#seattleCampus").append('<li role="separator" class="divider"></li>');
-    if ($("#tacomaCampus li").length == 1)
+    } else {
+        $("#seattleCampus").append(template_divider({}));
+    }
+
+    // Handle tacoma campus
+    if ($("#tacomaCampus li").length == 1) {
         $("#tacomaCampus").remove();
-    else $("#tacomaCampus").append('<li role="separator" class="divider"></li>');
+    } else {
+        $("#tacomaCampus").append(template_divider({}));
+    }
+
     $("#suggestions .divider").last().remove();
 }
 
@@ -320,41 +400,77 @@ $("#goBtn").click(function (e) {
         goSearch();
 });
 
+//hides search results and clears input
+function hideSearchSuggestions() {
+    $("#suggestions").css("display","none");
+    $("#search").val("");
+    $("#search").blur();
+}
+
 /*** COLLEGE DROPDOWN ****/
 //Called when data files have been read - populates college dropdown menu
 function populateCollegeDropdown() {
     //Put colleges from _currentCampus first, otherwise alphabetical order
     var campuses = [];
     campuses.push(_currentCampus);
-    if (campuses.indexOf("Bothell") == -1)
+    if (campuses.indexOf("Bothell") == -1) {
         campuses.push("Bothell");
-    if (campuses.indexOf("Seattle") == -1)
+    }
+    if (campuses.indexOf("Seattle") == -1) {
         campuses.push("seattle");
-    if (campuses.indexOf("Tacoma") == -1)
+    }
+    if (campuses.indexOf("Tacoma") == -1) {
         campuses.push("Tacoma");
-    $("#college-dropdown .dropdown-menu").append('<li><a href="#">All</a></li><li role="separator" class="divider"></li>');
-    $("#dropdownMenu:first-child").val("All");
+    }
+
+    $("#dropdownMenu").val("All");
+
+    // Compile the handlebar template
+    var source = $("#populate-college-dropdown").html();
+    var template = Handlebars.compile(source);
+    var campus_college = [];
+
+    // Construct the dict to be used by the template
     for (var c = 0; c < campuses.length; c++) {
-        if (c > 0)
-            $("#college-dropdown .dropdown-menu").append('<li role="separator" class="divider"></li>');
-        $("#college-dropdown .dropdown-menu").append('<li class="dropdown-header college-list">Colleges in ' + campuses[c] + ' campus:</li>');
         var colleges = [];
         for (var maj in _completeMajorMap) {
             if (_completeMajorMap[maj]["campus"] == campuses[c] && colleges.indexOf(_completeMajorMap[maj]["college"]) == -1)
                 colleges.push(_completeMajorMap[maj]["college"])
         }
         colleges.sort();
-        for (var col in colleges) {
-            $("#college-dropdown .dropdown-menu").append('<li><a href="#">' + colleges[col] + '</a></li>');
-        }
-
+        campus_college.push({
+            campus: campuses[c],
+            colleges: colleges
+        });
     }
+
+    $("#college-dropdown .dropdown-menu").append(template({
+        campus_college: campus_college
+    }));
 
     //Show selection in button
     $("#college-dropdown .dropdown-menu li a").click(function(){
-        $("#dropdownMenu:first-child").html('<span id="college-selection">' + $(this).text()  + ' </span><span class="caret"></span>');
-        $("#dropdownMenu:first-child").val($(this).text());
+        // Remove the previously selected dropdown option
+        var prev_selected = $("#college-dropdown .dropdown-menu .active");
+        prev_selected.removeClass("active");
+        prev_selected.removeAttr("aria-selected");
+
+        // Visually select the clicked on option
+        $(this).parent().addClass("active");
+        $(this).parent().attr("aria-selected","true");
+
+        var selection_source = $("#populate-college-dropdown-college-selection").html();
+        var selection_template = Handlebars.compile(selection_source);
+
+        $("#dropdownMenu").html(selection_template({college_selection: $(this).text()}));
+        $("#dropdownMenu").val($(this).text());
+        $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
+        if (window.location.href.indexOf("course-gpa") > -1) {
+            // creates a user like click
+            setTimeout(prepareResults, 10);
+        }
+        $( "#dropdownMenu" ).focus();
     });
 
     //If this is the course page and a code is provided, load the data without searching
@@ -393,6 +509,61 @@ function getParameterByName(name, url) {
 //rounds to the specified decimal place
 function round(value, decimals) {
     return value.toFixed(decimals);
+}
+
+function clearCommonSelection() {
+    $("#clear_majors").css("display","none");
+    $(".chosen_major").remove();
+    $(".no-results-warning").css("display","none");
+    $(".protected-result-warning").css("display","none");
+    $("input#search").val("");
+    $(".results-section").css("display","none");
+    $(".sample-data").css("display","block");
+    clearCollegeSelection();
+}
+
+function clearCollegeSelection() {
+    var source = $("#populate-college-dropdown-college-selection").html();
+    var template = Handlebars.compile(source);
+    $("#dropdownMenu").html(template({college_selection: "All"}));
+    $("#dropdownMenu").val("All");
+    // Remove the previously selected dropdown option
+    var prev_selected = $("#college-dropdown .dropdown-menu .active");
+    prev_selected.removeClass("active");
+    prev_selected.removeAttr("aria-selected");
+
+    // Visually select the first option (All)
+    $("#college-dropdown .dropdown-menu li").first().addClass("active");
+    $("#college-dropdown .dropdown-menu li").first().attr("aria-selected","true");
+}
+
+// Adding the popover for the capacity description links
+function addCapacityDescription(id, location) {
+    var source = $("#admission-type-help-popover").html();
+    var template = Handlebars.compile(source);
+    var clear_id = id.replace("_", " ");
+
+    if (location == "major") {
+       $("#" + id + " #major-status-Help").popover({
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "#" + id,
+                   content: template({
+                major_status_text: displayMajorStatusText(clear_id)
+            })
+        });
+   } else if (location == "course") {
+       $("#major-status-Help").popover({
+            trigger: "focus",
+            placement: "top",
+            html: true,
+            container: "body",
+            content: template({
+                major_status_text: displayMajorStatusText(clear_id)
+            })
+        });
+   }
 }
 
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero
