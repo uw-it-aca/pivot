@@ -230,11 +230,14 @@ function addPopover(id, med, count) {
         count: count
             }),
         container: "#" + id
-    });
+    })
+    .data('bs.popover')
+    .tip()
+    .addClass("bp"); // ID for the actual boxplot popover
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
-        $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
+        $("#" + id + " .bp").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .bp").height());
     });
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
