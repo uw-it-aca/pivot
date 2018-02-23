@@ -742,9 +742,12 @@ p.college-heading{
 	margin-top: 10px;
 	margin-bottom: 10px;
 }
-.gpa-small {
-	margin-left: 15px;
+
+/* Adding padding for the course admission popover link */
+.courseAdmissionStatus {
+	margin-right: 15px;
 }
+
 /* Slight tweak of major name on course page */
 .major-heading-course {
 margin-bottom: 2px;
