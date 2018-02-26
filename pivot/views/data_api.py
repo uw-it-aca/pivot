@@ -3,6 +3,14 @@ from django.views import View
 from django.http import HttpResponse
 from django.conf import settings
 
+# In order to get the right import, we need to determine
+# the runtime version of python
+import sys
+if sys.version_info[0] < 3:
+    from urlparse import parse_qs
+else:
+    from urllib.parse import parse_qs
+
 
 class DataFileView(View):
     file_name = None
@@ -27,7 +35,16 @@ class DataMap(DataFileView):
 
 
 class StudentData(DataFileView):
-    file_name = "Student_Data_All_Majors.csv"
+    # Default file when there are no queries (aggregate of all years)
+    file_name = "Student_Data_All_Majors_All_Years.csv"
+
+    def get(self, request):
+        q = parse_qs(request.GET.urlencode())
+        if q and q['year']:
+            # Year query exists, change the csv file we access
+            self.file_name = "Student_Data_All_Majors_%s.csv" % (q['year'][0])
+        csv = self._get_csv()
+        return HttpResponse(csv)
 
 
 class StatusLookup(DataFileView):
