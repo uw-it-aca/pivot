@@ -161,13 +161,15 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     // Setting the domain to start from 1.4999 instead of 1.5 so the tick at 1.5 will show
     var x = d3.scale.linear().domain([1.4999, 4.0]).range([0, width]);
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
-
+    // height for the xAxis
+    var xHeight = height - 1; 
+    
     //draw the boxplot
     svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
-    svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text")
+    svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + xHeight + ")").call(xAxis).selectAll("text")
 .style("text-anchor", "end");
     $("#" + majorId + " .card-heading, #"+majorId+" .median-box").height($("#" + majorId + " .data-display").height());
 
