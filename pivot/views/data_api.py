@@ -22,7 +22,7 @@ class DataFileView(View):
 
     def _get_csv(self):
         try:
-            url = urljoin(getattr(settings, 'CSV_URL', None), self.file_name)
+            url = urljoin(getattr(settings, 'CSV_ROOT', None), self.file_name)
             response = urlopen(url)
             data = response.read()
         except ValueError:
