@@ -1,7 +1,7 @@
 import os
 try:
     from urllib.parse import urljoin
-except:
+except ImportError:
     # for Python 2.7 compatibility
     from urlparse import urljoin
 
