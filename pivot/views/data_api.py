@@ -23,13 +23,13 @@ class DataFileView(View):
     def _get_csv(self):
         try:
             url = urljoin(getattr(settings, 'CSV_URL', None), self.file_name)
-            with urlopen(url) as response:
-                data = response.read()
+            response = urlopen(url)
+            data = response.read()
         except ValueError:
             url = urljoin('file://', getattr(settings, 'CSV_ROOT', None))
             url = urljoin(url, self.file_name)
-            with urlopen(url) as response:
-                data = response.read()
+            response = urlopen(url)
+            data = response.read()
         except Exception as err:
             data = "Error: {}".format(err)
 
