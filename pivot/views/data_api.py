@@ -21,10 +21,10 @@ class DataFileView(View):
         return HttpResponse(csv)
 
     def _get_csv(self):
-        try:
-            url = urljoin(settings.CSV_URL, self.file_name)
-        except:
-            url = urljoin('file://', settings.CSV_ROOT)
+        if hasattr(settings, 'CSV_URL') and settings.CSV_URL is not None and settings.CSV_URL != '':
+            url = urljoin(getattr(settings, 'CSV_URL', None), self.file_name)
+        elif hasattr(settings, 'CSV_ROOT') and settings.CSV_ROOT is not None and settings.CSV_ROOT != '':
+            url = urljoin('file://', getattr(settings, 'CSV_ROOT', None))
             url = urljoin(url, self.file_name)
         with urlopen(url) as response:
             data = response.read()
