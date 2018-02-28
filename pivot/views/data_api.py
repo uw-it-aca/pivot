@@ -31,7 +31,7 @@ class DataFileView(View):
             response = urlopen(url)
             data = response.read()
         except Exception as err:
-            data = "Error: {}".format(err)
+            data = "Error {}: {}".format(err.errno, err.reason)
 
         return data
 
