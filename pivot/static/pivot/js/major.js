@@ -230,15 +230,18 @@ function addPopover(id, med, count) {
         count: count
             }),
         container: "#" + id
-    });
+    })
+    .data('bs.popover')
+    .tip()
+    .addClass("bp"); // ID for the actual boxplot popover
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
         var boxEl = document.querySelector("#" + id + " .boxP");
         // Try using offset.top; won't work on Safari so use getPageTopLeft instead
         var top = $("#" + id + " .boxP").offset().top || getPageTopLeft(boxEl).top;
-        var calc_top = top - $("#" + id + " .popover").height();
-        $("#" + id + " .popover").css("top", calc_top);
+        var calc_top = top - $("#" + id + " .bp").height();
+        $("#" + id + " .bp").css("top", calc_top);
     });
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
