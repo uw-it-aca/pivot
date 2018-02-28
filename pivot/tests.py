@@ -62,6 +62,32 @@ class CsvDataApiTest(TestCase):
     def test_student_data_url(self):
         self._student_data()
 
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    def test_student_data_valid_year_path(self):
+        self._student_data_valid_year()
+
+    @override_settings(CSV_ROOT=TEST_CSV_URL)
+    def test_student_data_valid_year_url(self):
+        self._student_data_valid_year()
+
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    def test_student_data_invalid_year_path(self):
+        self._student_data_invalid_year()
+
+    @override_settings(CSV_ROOT=TEST_CSV_URL)
+    def test_student_data_invalid_year_url(self):
+        self._student_data_invalid_year()
+
+    def test_no_api(self):
+        # Trying to access an api endpoint that does not exist
+        url = '/api/v1/error/'
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+        response = self.client.get(url)
+        # Expect a 404!
+        self.assertTrue(404 == response.status_code)
+
     # TODO: Now override with CSV_URL, instead
 
     def _major_course(self):
@@ -114,7 +140,7 @@ class CsvDataApiTest(TestCase):
 
     def _student_data(self):
         url = '/api/v1/student_data/'
-        file_name = 'Student_Data_All_Majors.csv'
+        file_name = 'Student_Data_All_Majors_All_Years.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
@@ -127,3 +153,31 @@ class CsvDataApiTest(TestCase):
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
         self.assertTrue(data == response.content)
+
+    def _student_data_valid_year(self):
+        # Trying to access a year csv file that does exist
+        url = '/api/v1/student_data/?year=2017'
+        file_name = 'Student_Data_All_Majors_2017.csv'
+        path = os.path.join(TEST_CSV_PATH, file_name)
+        with open(path, 'r') as csvfile:
+            data = csvfile.read()
+            data = data.encode()  # For comparison to bytes type
+
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        self.assertTrue(data == response.content)
+
+    def _student_data_invalid_year(self):
+        # Trying to access a csv file that doesn't exist
+        # in this case the csv file for year 999 does not exist...
+        url = '/api/v1/student_data/?year=999'
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+        response = self.client.get(url)
+        # Expect a 404!
+        self.assertTrue(404 == response.status_code)
