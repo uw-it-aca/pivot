@@ -1,3 +1,12 @@
+import os
+try:
+    from urllib.parse import urljoin
+    from urllib.request import urlopen
+except ImportError:
+    # for Python 2.7 compatibility
+    from urlparse import urljoin
+    from urllib2 import urlopen
+
 from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse
@@ -20,10 +29,19 @@ class DataFileView(View):
         return HttpResponse(csv)
 
     def _get_csv(self):
-        path = settings.CSV_ROOT + self.file_name
-        with open(path, 'r') as csvfile:
-            data = csvfile.read()
-            return data
+        try:
+            url = urljoin(getattr(settings, 'CSV_ROOT', None), self.file_name)
+            response = urlopen(url)
+            data = response.read()
+        except ValueError:
+            url = urljoin('file://', getattr(settings, 'CSV_ROOT', None))
+            url = urljoin(url, self.file_name)
+            response = urlopen(url)
+            data = response.read()
+        except Exception as err:
+            data = "Error {}: {}".format(err.errno, err.reason)
+
+        return data
 
 
 class MajorCourse(DataFileView):
