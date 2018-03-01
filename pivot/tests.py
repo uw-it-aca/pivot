@@ -12,11 +12,14 @@ from django.test.utils import override_settings
 
 import pivot
 
-
+# For tests in which CSV_ROOT is correctly set
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
                              'test_resources',
                              'csvfiles/',)
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
+# For tests in which CSV_ROOT is incorrectly set
+INVALID_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__), 'FAKE')
+INVALID_CSV_URL = urljoin('file://', INVALID_CSV_PATH)
 
 
 class CsvDataApiTest(TestCase):
@@ -77,6 +80,14 @@ class CsvDataApiTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_URL)
     def test_student_data_invalid_year_url(self):
         self._student_data_invalid_year()
+
+    @override_settings(CSV_ROOT=INVALID_CSV_PATH)
+    def test_no_csv_found_path(self):
+        self._no_csv_found()
+
+    @override_settings(CSV_ROOT=INVALID_CSV_URL)
+    def test_no_csv_found_url(self):
+        self._no_csv_found()
 
     def test_no_api(self):
         # Trying to access an api endpoint that does not exist
@@ -175,6 +186,17 @@ class CsvDataApiTest(TestCase):
         # Trying to access a csv file that doesn't exist
         # in this case the csv file for year 999 does not exist...
         url = '/api/v1/student_data/?year=999'
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+        response = self.client.get(url)
+        # Expect a 404!
+        self.assertTrue(404 == response.status_code)
+
+    def _no_csv_found(self):
+        # Trying to access a csv file that doesn't exist, to test this
+        # we set the CSV_ROOT to be some invalid directory
+        url = '/api/v1/student_data/'
         login_successful = self.client.login(username='testuser',
                                              password='password')
         self.assertTrue(login_successful)
