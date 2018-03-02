@@ -197,10 +197,11 @@ def write_csv(outfile, data):
     csv_out.writerow(["major_abbr", "pathway", "College", "count",
                       "iqr_min", "q1", "median", "q3", "iqr_max"])
     count = 0
+    total_count = 0
     for key in data:
         major_abbr = data[key]["raw"][2].strip() + "_" +\
                      data[key]["raw"][3].strip()
-
+        total_count += len(data[key]["gpas"])
         if major_abbr in little_majors:
             # This major has less than st_num students! Hide the data
             csv_out.writerow([data[key]["raw"][2],
@@ -251,13 +252,14 @@ def write_csv(outfile, data):
                               median,
                               qv3,
                               gpas[iqr_index_max]])
-    print "GPAs Documented: " + str(count)
+    print "Total GPAs Seen: " + str(total_count)
+    print "Valid GPAs Documented: " + str(count)
 
 
 for key, value in year_data.iteritems():
     # key = Year
     # value = Majors mapped to Data
-    print "Writing out # majors " + str(len(value)) + " for: " + str(key)
+    print "# of Majors " + str(len(value)) + " for: " + str(key)
     output_name = 'Student_Data_All_Majors_' + str(key) + '.csv'
     with open(output_name, 'wb') as outf:
         write_csv(outf, year_data[key])
