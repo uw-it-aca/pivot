@@ -26,7 +26,8 @@ function checkStoredData() {
 /**** DISPLAY DATA FOR SELECTED MAJOR(S) ****/
 
 //Main function that draws/redraws the data table whenever a major is been selected
-function createMajorCard(majors, gpa = null) {
+function createMajorCard(majors, gpa) {
+    gpa = (typeof gpa !== 'undefined') ? gpa : null;
     storeSelections(majors, gpa); //Store user's selections
     $(".sample-data").css("display","none"); //Hide the placeholder how-to image
 
