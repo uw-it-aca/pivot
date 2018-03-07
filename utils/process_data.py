@@ -75,13 +75,13 @@ with open(sys.argv[1], 'rU') as f:
 
         # major abbreviation with the pathway appeneded
         exc_major_abbr = abbr + "_" + pathway
-	added = False
+        added = False
         # Check if the abbr is in the major exceptions dict
         if (exc_major_abbr in major_name_exc and
                 major_name_exc[exc_major_abbr] not in major_name_map):
             # Put in the appropriate major name
-	    added = True
-	    major_name_map[major_name_exc[exc_major_abbr]] = \
+            added = True
+            major_name_map[major_name_exc[exc_major_abbr]] = \
                 len(major_name_map.keys())
 
         if CourseLongName not in course_name_map:
