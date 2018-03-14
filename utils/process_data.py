@@ -15,11 +15,23 @@ major_name_map = {}
 campus_name_map = {}
 
 # Exceptions to make.
-# Example: "NURSX": "Nursing (Accelerated)" means that we should replace the
-# major name of NURSX with Nursing (Accelerated) instead of the csv value
+# Example: "NURSX_0": "Nursing (Accelerated)" means that we
+# should replace the major name of NURSX and pathway 0 with
+# Nursing (Accelerated) instead of the csv value
+
 major_name_exc = {
-    "NURSX": "Nursing (Accelerated)"
+    "NURSX_0": "Nursing (Accelerated)",
+    "ACCTG_0": "Business Administration (Accounting)",
+    "ENTRE_0": "Business Administration (Entrepreneurship)",
+    "HRMGT_0": "Business Administration (Human Resource Management)",
+    "I S_0": "Business Administration (Information Systems)",
+    "OSCM_0": "Business Administration (Operations Supply Chain Management)",
+    "HCDE_5": "Human Centered Design and Engineering: " +
+              "Human-Computer Interaction",
+    "T_ACCT_0": "Business Administration (Accounting)"
 }
+
+
 # Ignore majors with less than st_num students
 st_num = 5
 # Majors who disqualify (< 5 students)
@@ -37,7 +49,7 @@ if (len(sys.argv) < 3):
              '../data/v8\ -\ Majors\ and\ Courses.csv ' +
              '../data/v8\ -\ Student\ Data\ -\ All\ Majors.csv')
 
-with open(sys.argv[1]) as f:
+with open(sys.argv[1], 'rU') as f:
     as_csv = csv.reader(f)
     header = as_csv.next()
     for row in as_csv:
@@ -60,11 +72,17 @@ with open(sys.argv[1]) as f:
 
         # major_abbr stripped
         abbr = major_abbr.strip()
+
+        # major abbreviation with the pathway appeneded
+        exc_major_abbr = abbr + "_" + pathway
+        added = False
         # Check if the abbr is in the major exceptions dict
-        if (abbr in major_name_exc and
-                major_name_exc[abbr] not in major_name_map):
+        if (exc_major_abbr in major_name_exc and
+                major_name_exc[exc_major_abbr] not in major_name_map):
             # Put in the appropriate major name
-            major_name_map[major_name_exc[abbr]] = len(major_name_map.keys())
+            added = True
+            major_name_map[major_name_exc[exc_major_abbr]] = \
+                len(major_name_map.keys())
 
         if CourseLongName not in course_name_map:
             course_name_map[CourseLongName] = len(course_name_map.keys())
@@ -72,7 +90,7 @@ with open(sys.argv[1]) as f:
         if Campus not in campus_name_map:
             campus_name_map[Campus] = len(campus_name_map.keys())
 
-        if major_full_nm not in major_name_map:
+        if major_full_nm not in major_name_map and not added:
             major_name_map[major_full_nm] = len(major_name_map.keys())
 
         if CoursePopularityRank <= 10:
@@ -115,9 +133,10 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
 
         major_name_id = major_name_map[original_row[9]]
         abbr = original_row[0].strip()
+        exc_major_abbr = abbr + '_' + original_row[1]
         # Check to see there is an exception to the major id we need to include
-        if (abbr in major_name_exc):
-            major_name_id = major_name_map[major_name_exc[abbr]]
+        if (exc_major_abbr in major_name_exc):
+            major_name_id = major_name_map[major_name_exc[exc_major_abbr]]
 
         median_gpa = data[key]['50']
         course_name = course_name_map[original_row[8]]
@@ -156,7 +175,7 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
 
 sdata = {}
 
-with open(sys.argv[2]) as f:
+with open(sys.argv[2], 'rU') as f:
     as_csv = csv.reader(f)
     header = as_csv.next()
     for row in as_csv:
@@ -236,6 +255,6 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
                               gpas[iqr_index_max]])
 
 # Displaying a message to the console
-print "Majors who have less than 5 students:"
+print("Majors who have less than 5 students:")
 for major in little_majors:
-    print major
+    print(major)
