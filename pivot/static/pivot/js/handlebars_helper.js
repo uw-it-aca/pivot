@@ -1,5 +1,5 @@
 // Helper function allows us to perfom equality logic within a handlebar template
-Handlebars.registerHelper('ifEquals', (a, b, options) => {
+Handlebars.registerHelper('ifEquals', function(a, b, options) {
   if (a === b) {
     return options.fn(this)
   }

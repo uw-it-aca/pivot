@@ -18,7 +18,8 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
       <!-- Main Bootstrap JS file -->
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        <link rel="stylesheet" type="text/css" href="css/styles.css"/>
+      {% load static %}
+      <link rel="stylesheet" type="text/css" href="{% static 'pivot/css/styles.css' %}"/>
 
 <!-- Fontawesome CDN-->
 		<script src="https://use.fontawesome.com/c89804655d.js"></script>
@@ -95,7 +96,8 @@
 	                </ul>
 	            </div><!-- end of footer links -->
 	            <p class="credit">©2016 University of Washington Information Technology </p>
-	            <div><img src="Assets/images/InfoTech_UW_footer.png"  class="uw-it-logo" alt="UW-IT logo"></div>
+                {% load static %}
+	            <div><img src="{% static 'pivot/img/InfoTech_UW_footer.png' %}"  class="uw-it-logo" alt="UW-IT logo"></div>
 		</div><!-- end of footer content -->
 	</footer>
 </div><!-- footer role -->
