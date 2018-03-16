@@ -47,7 +47,7 @@ if (len(sys.argv) < 3):
              'the Student Data - All Majors file to parse as arguments!\n' +
              'Example: \npython process_data.py ' +
              '../data/v8\ -\ Majors\ and\ Courses.csv ' +
-             '../data/v8\ -\ Student\ Data\ -\ All\ Majors.csv')
+             '../data/v8\ -\ Student\ Data\ -\ All\ Majors\ by\ Year.csv')
 
 with open(sys.argv[1], 'rU') as f:
     as_csv = csv.reader(f)
@@ -169,11 +169,18 @@ with open('Majors_and_Courses.csv', 'wb') as outf:
 # This converts raw student data into one line per major, with the
 # quartiles and iqr ranges defined.
 
-# Given the location of the original Student Data - All Majors csv file
-# spits out...
-# Student_Data_All_Majors.csv: modified version of the original
+# This will be made also to separate out years into their own CSVs to support
+# the by year functionality
 
+# Given the location of the original Student Data - All Majors By Year csv file
+# spits out...
+# Student_Data_All_Majors_By_Year.csv: modified version of the original
+
+# Aggregated data (across all years)
 sdata = {}
+# Keys = Years, Values = Dictionaries of major key
+# mapped with raw:row as well as gpas:[]
+year_data = {}
 
 with open(sys.argv[2], 'rU') as f:
     as_csv = csv.reader(f)
@@ -187,40 +194,50 @@ with open(sys.argv[2], 'rU') as f:
         college = row[5]
         major_name = row[6]
         gpa = row[7]
+        year = row[8]
 
         key = "%s - %s" % (major_abbr, pathway)
+
+        if year not in year_data:
+            year_data[year] = {}
 
         if key not in sdata:
             sdata[key] = {"raw": row, "gpas": []}
 
-        sdata[key]["gpas"].append(float(gpa))
+        if key not in year_data[year]:
+            year_data[year][key] = {"raw": row, "gpas": []}
 
-with open('Student_Data_All_Majors.csv', 'wb') as outf:
-    csv_out = csv.writer(outf, delimiter=',')
+        sdata[key]["gpas"].append(float(gpa))
+        year_data[year][key]["gpas"].append(float(gpa))
+
+
+def write_csv(outfile, data):
+    csv_out = csv.writer(outfile, delimiter=',')
     csv_out.writerow(["major_abbr", "pathway", "College", "count",
                       "iqr_min", "q1", "median", "q3", "iqr_max"])
-
-    for key in sdata:
-        major_abbr = sdata[key]["raw"][2].strip() + "_" +\
-                     sdata[key]["raw"][3].strip()
-
+    count = 0
+    total_count = 0
+    for key in data:
+        major_abbr = data[key]["raw"][2].strip() + "_" +\
+                     data[key]["raw"][3].strip()
+        total_count += len(data[key]["gpas"])
         if major_abbr in little_majors:
             # This major has less than st_num students! Hide the data
-            csv_out.writerow([sdata[key]["raw"][2],
-                              sdata[key]["raw"][3],
-                              sdata[key]["raw"][5],
+            csv_out.writerow([data[key]["raw"][2],
+                              data[key]["raw"][3],
+                              data[key]["raw"][5],
                               -1,
                               -1,
                               -1,
                               -1,
                               -1,
                               -1])
-        elif len(sdata[key]["gpas"]) < st_num:
+        elif len(data[key]["gpas"]) < st_num:
             # We need at least st_num GPAs to calculate the
             # quartile ranges for the boxplot
             continue
         else:
-            gpas = sorted(sdata[key]["gpas"])
+            gpas = sorted(data[key]["gpas"])
             q1 = int(len(gpas) * .25)
             q2 = int(len(gpas) * .5)
             q3 = int(len(gpas) * .75)
@@ -236,6 +253,7 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
 
             iqr_index_min = 0
             iqr_index_max = len(gpas) - 1
+            count += len(gpas)
 
             while iqr_index_min < len(gpas) and gpas[iqr_index_min] < qv1-iqr:
                 iqr_index_min += 1
@@ -244,15 +262,31 @@ with open('Student_Data_All_Majors.csv', 'wb') as outf:
                 iqr_index_max -= 1
 
             # print "IQR Min, Max: ", gpas[iqr_index_min], gpas[iqr_index_max]
-            csv_out.writerow([sdata[key]["raw"][2],
-                              sdata[key]["raw"][3],
-                              sdata[key]["raw"][5],
+            csv_out.writerow([data[key]["raw"][2],
+                              data[key]["raw"][3],
+                              data[key]["raw"][5],
                               len(gpas),
                               gpas[iqr_index_min],
                               qv1,
                               median,
                               qv3,
                               gpas[iqr_index_max]])
+    print "Total GPAs Seen: " + str(total_count)
+    print "Valid GPAs Documented: " + str(count)
+
+
+for key, value in year_data.iteritems():
+    # key = Year
+    # value = Majors mapped to Data
+    print "# of Majors " + str(len(value)) + " for: " + str(key)
+    output_name = 'Student_Data_All_Majors_' + str(key) + '.csv'
+    with open(output_name, 'wb') as outf:
+        write_csv(outf, year_data[key])
+
+with open('Student_Data_All_Majors_All_Years.csv', 'wb') as outf:
+    print "Writing out data for aggregated data:"
+    write_csv(outf, sdata)
+
 
 # Displaying a message to the console
 print("Majors who have less than 5 students:")
