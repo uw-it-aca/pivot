@@ -28,7 +28,10 @@ major_name_exc = {
     "OSCM_0": "Business Administration (Operations Supply Chain Management)",
     "HCDE_5": "Human Centered Design and Engineering: " +
               "Human-Computer Interaction",
-    "T_ACCT_0": "Business Administration (Accounting)"
+    "T_ACCT_0": "Business Administration (Accounting)",
+    "CSSE_80": "Computer Science and Software Engineering: " + 
+             "Information Assurance and Cybersecuity",
+    "HIHIME_0": "Health Informatics and Health Information Systems"
 }
 
 
