@@ -53,7 +53,7 @@ with open(sys.argv[1], 'rU') as f:
     as_csv = csv.reader(f)
     try:
         next(as_csv)
-    except:
+    except AttributeError:
         header = as_csv.next()
     for row in as_csv:
         major_abbr = row[0]
@@ -182,7 +182,7 @@ with open(sys.argv[2], 'rU') as f:
     as_csv = csv.reader(f)
     try:
         header = next(as_csv)
-    except:
+    except AttributeError:
         header = as_csv.next()
     for row in as_csv:
         major_id = row[0]
