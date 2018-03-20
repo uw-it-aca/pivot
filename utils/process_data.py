@@ -28,7 +28,9 @@ major_name_exc = {
     "OSCM_0": "Business Administration (Operations Supply Chain Management)",
     "HCDE_5": "Human Centered Design and Engineering: " +
               "Human-Computer Interaction",
-    "T_ACCT_0": "Business Administration (Accounting)"
+    "T ACCT_0": "Business Administration (Accounting)",
+    "B BUS_10": "Business Administration (Accounting)",
+    "B BUS_5": "Business Administration (ELC)"
 }
 
 
