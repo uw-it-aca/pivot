@@ -31,7 +31,10 @@ major_name_exc = {
     "T_ACCT_0": "Business Administration (Accounting)",
     "CSSE_80": "Computer Science and Software Engineering: " +
              "Information Assurance and Cybersecuity",
-    "HIHIME_0": "Health Informatics and Health Information Systems"
+    "HIHIME_0": "Health Informatics and Health Information Systems",
+    "T ACCT_0": "Business Administration (Accounting)",
+    "B BUS_10": "Business Administration (Accounting)",
+    "B BUS_5": "Business Administration (ELC)"
 }
 
 
@@ -54,7 +57,10 @@ if (len(sys.argv) < 3):
 
 with open(sys.argv[1], 'rU') as f:
     as_csv = csv.reader(f)
-    header = as_csv.next()
+    try:
+        next(as_csv)
+    except AttributeError:
+        header = as_csv.next()
     for row in as_csv:
         major_abbr = row[0]
         pathway = row[1]
@@ -109,7 +115,7 @@ with open(sys.argv[1], 'rU') as f:
 
             data[combo_key][percentile] = course_gpa
 
-with open('Data_Map.csv', 'wb') as outf:
+with open('Data_Map.csv', 'w') as outf:
     csv_out = csv.writer(outf, delimiter=',')
     csv_out.writerow(["is_course", "is_major", "is_campus", "name", "id"])
 
@@ -123,7 +129,7 @@ with open('Data_Map.csv', 'wb') as outf:
         csv_out.writerow([0, 0, 1, key, campus_name_map[key]])
 
 
-with open('Majors_and_Courses.csv', 'wb') as outf:
+with open('Majors_and_Courses.csv', 'w') as outf:
     csv_out = csv.writer(outf, delimiter=',')
     csv_out.writerow(["major_abbr", "pathway", "dept_abbrev",
                       "course_number", "student_count",
@@ -180,7 +186,10 @@ sdata = {}
 
 with open(sys.argv[2], 'rU') as f:
     as_csv = csv.reader(f)
-    header = as_csv.next()
+    try:
+        header = next(as_csv)
+    except AttributeError:
+        header = as_csv.next()
     for row in as_csv:
         major_id = row[0]
         fake_id = row[1]
@@ -198,7 +207,7 @@ with open(sys.argv[2], 'rU') as f:
 
         sdata[key]["gpas"].append(float(gpa))
 
-with open('Student_Data_All_Majors.csv', 'wb') as outf:
+with open('Student_Data_All_Majors.csv', 'w') as outf:
     csv_out = csv.writer(outf, delimiter=',')
     csv_out.writerow(["major_abbr", "pathway", "College", "count",
                       "iqr_min", "q1", "median", "q3", "iqr_max"])
