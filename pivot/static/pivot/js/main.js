@@ -41,7 +41,8 @@ function initOnboardingDialog() {
         isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
-            $("#onboard-modal").modal("show");
+	     $("#onboard-modal").modal("show");
+	     $("#perm-forget-modal").focus();
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
