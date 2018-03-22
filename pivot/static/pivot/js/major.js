@@ -165,8 +165,11 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     // height for the xAxis
     var xHeight = height - 1; 
     
+    // Getting the full major name to use as an identifier for the boxplot
+    var name = majorId.replace("_", " ");
+    var majorName = _completeMajorMap[name]["major_full_nm"];
     //draw the boxplot
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("id",majorName).attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
