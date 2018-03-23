@@ -380,6 +380,7 @@ function displayResults() {
             }
         }
     }
+
     //start timer to make suggestions box disappear after 1sec
     clearTimeout(_timer);
     // _timer = setTimeout(hideSearchSuggestions, 3000);
@@ -390,7 +391,31 @@ function displayResults() {
         }
         update_results_on_load = true;
     }
+      
+    // Number of suggestions currently listed in dropdown
+    num_suggestions = count;
+
+    // Displays the number of current suggestions
+    // in the dropdown search menu
+    function doneTyping() {
+	document.getElementById("numResults").innerHTML = "Number of Suggestions: " + num_suggestions;
+    }
+
+    var typingTimer;
+    var doneTypingInterval = 50; // time in milliseconds
+
+    // Initiates the doneTyping function whenever
+    // the user is finished typing in the search box,
+    // and the time reaches the doneTypingInterval
+    $('#search').keyup(function(){
+	clearTimeout(typingTimer);
+	if ($('#search').val()) {
+	    typingTimer = setTimeout(doneTyping, doneTypingInterval);
+	}
+    });
 }
+
+
 
 //Shows any currently selected majors
 function showCurrentSelections() {
