@@ -347,7 +347,8 @@ function prepareResults(e) {
     var raw_search = $("#search").val().replace('(','').replace(')','');
     if (raw_search == ""){
 	var results = $('.suggested_major').length;
-	document.getElementById("numResults").innerHTML = results + " results";
+	var college_suggestions = results + " results";
+	document.getElementById("numResults").innerHTML = college_suggestions;
     }
 }
 

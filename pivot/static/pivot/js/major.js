@@ -399,7 +399,8 @@ function displayResults() {
     // Displays the number of current suggestions
     // in the dropdown search menu
     function doneTyping() {
-	document.getElementById("numResults").innerHTML = num_suggestions + " results for " + raw_search;
+	var suggestion_text = num_suggestions + " results for '" + raw_search + "'";
+	document.getElementById("numResults").innerHTML = suggestion_text;
     }
 
     var typingTimer;
