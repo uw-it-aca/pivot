@@ -1,6 +1,10 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "prepare-results" %}
 
+<ul id="numSuggestions">
+    <li class="dropdown-header" id="numResults" aria-live="assertive"></li>
+    <li role="separator" class="divider" id="numResultsStyle"></li>
+</ul>
 <ul id="selectedCollege">
     <li class="dropdown-header">{{ selected_campus }}</li>
 </ul>
@@ -16,5 +20,4 @@
 <ul id="tacomaCampus">
     <li class="dropdown-header">Tacoma campus</li>
 </ul>
-
 {% endtplhandlebars %}
