@@ -342,6 +342,13 @@ function prepareResults(e) {
     toggleGo(); //Update the "go" button display
     finishResults(); //Display search suggestions
     updateEvents();
+    // adding the number of majors in the selected college
+    // to the dropdown menu.
+    var raw_search = $("#search").val().replace('(','').replace(')','');
+    if (raw_search == ""){
+	var results = $('.suggested_major').length;
+	document.getElementById("numResults").innerHTML = results + " results";
+    }
 }
 
 //Hides unused placeholder areas in search suggestions

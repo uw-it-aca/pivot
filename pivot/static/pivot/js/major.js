@@ -311,6 +311,7 @@ function displayResults() {
     $("#search").attr("aria-expanded", "true");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    var raw_search = $("#search").val().replace('(','').replace(')','');
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
@@ -393,16 +394,16 @@ function displayResults() {
     }
       
     // Number of suggestions currently listed in dropdown
-    num_suggestions = count;
+    num_suggestions = $('.suggested_major').length;
 
     // Displays the number of current suggestions
     // in the dropdown search menu
     function doneTyping() {
-	document.getElementById("numResults").innerHTML = "Number of Suggestions: " + num_suggestions;
+	document.getElementById("numResults").innerHTML = num_suggestions + " results for " + raw_search;
     }
 
     var typingTimer;
-    var doneTypingInterval = 50; // time in milliseconds
+    var doneTypingInterval = 1000; // time in milliseconds
 
     // Initiates the doneTyping function whenever
     // the user is finished typing in the search box,
