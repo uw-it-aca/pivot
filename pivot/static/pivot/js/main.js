@@ -41,7 +41,8 @@ function initOnboardingDialog() {
         isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
-            $("#onboard-modal").modal("show");
+	     $("#onboard-modal").modal("show");
+	     $("#perm-forget-modal").focus();
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
@@ -342,6 +343,14 @@ function prepareResults(e) {
     toggleGo(); //Update the "go" button display
     finishResults(); //Display search suggestions
     updateEvents();
+    // adding the number of majors in the selected college
+    // to the dropdown menu.
+    var raw_search = $("#search").val().replace('(','').replace(')','');
+    if (raw_search == ""){
+	var results = $('.suggested_major').length;
+	var college_suggestions = results + " results";
+	document.getElementById("numResults").innerHTML = college_suggestions;
+    }
 }
 
 //Hides unused placeholder areas in search suggestions

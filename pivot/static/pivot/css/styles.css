@@ -841,10 +841,15 @@ p.course-table-row {
 
 #suggestions .divider {
     height: 1px;
-    margin: 9px 0;
+    margin: 9px;
     overflow: hidden;
     background-color: #e5e5e5;
 }
+
+#suggestions #numResultsStyle {
+    margin: 0px;
+}
+
 .clear-btn {
 	margin-left: 0px;
 }
