@@ -154,17 +154,31 @@ function getCompleteMajorMap() {
 function getMajorStatus() {
     d3.csv("/api/v1/status_lookup/", function (d) {
         return {
-            code: d.Code.trim(),
-            url: d.URL.trim(),
-            status: d.Status.trim()
+            code: d.code.trim(),
+            status: d.credentialAdmissionType.trim()
         }
     }, function (error, data) {
         for (var index in data) {
-            _statusLookup[data[index]["code"]] = {
-                "url": data[index]["url"],
-                "status": data[index]["status"]
+            var parts = data[index]["code"].split('-');
+            // MajorAbbreviation - Pathway - Major(1)/Minor(0) - Bachelor Type
+            major_pathway = parts[0] + '-' + parts[1];
+            if (parts[2] === "1") { // Ensuring we only add in majors
+                if (data[index]["status"] === "minimumRequirements") {
+                    data[index]["status"] = "minimum"; // a bit more reader friendly
+                }
+                _statusLookup[major_pathway] = {
+                    "status": data[index]["status"]
+                }
             }
         }
+        // Debugging: what majors do not have a corresponding status
+        // var majorMapKeys = Object.keys(_completeMajorMap);
+        // var programKeys = Object.keys(_statusLookup);
+        // for (var i in majorMapKeys) {
+        //     if (!programKeys.includes(majorMapKeys[i])) {
+        //         console.log(majorMapKeys[i]);
+        //     }
+        // }
     });
 }
 
@@ -187,10 +201,9 @@ function displayMajorStatusURL(code) {
 }
 
 function displayMajorStatusIcon(code) {
-    var parts = code.split('-');
     var msg = "";
-    if (_statusLookup.hasOwnProperty(parts[0])) {
-        var title = _statusLookup[parts[0]]["status"];
+    if (_statusLookup.hasOwnProperty(code)) {
+        var title = _statusLookup[code]["status"];
         var url = images_paths[title];
         // Compile the Handlebar template
         var source = $("#display-major-status-icon").html();
@@ -204,10 +217,9 @@ function displayMajorStatusIcon(code) {
 }
 
 function displayMajorStatusText(code) {
-    var parts = code.split('-');
     var msg = "";
-    if (_statusLookup.hasOwnProperty(parts[0]))
-        msg = _statusLookup[parts[0]]["status"];
+    if (_statusLookup.hasOwnProperty(code))
+        msg = _statusLookup[code]["status"];
     return msg;
 }
 
