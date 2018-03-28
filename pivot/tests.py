@@ -98,7 +98,7 @@ class CsvDataApiTest(TestCase):
 
     def _status_lookup(self):
         url = '/api/v1/status_lookup/'
-        file_name = 'Status_Lookup.csv'
+        file_name = 'programs.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
             data = csvfile.read()
