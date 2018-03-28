@@ -476,7 +476,11 @@ function populateCollegeDropdown() {
         var selection_template = Handlebars.compile(selection_source);
 
         $("#dropdownMenu").html(selection_template({college_selection: $(this).text()}));
-        $("#dropdownMenu").val($(this).text());
+        if ($(this).text() === "All Colleges") {
+            $("#dropdownMenu").val("All");
+        } else {
+            $("#dropdownMenu").val($(this).text());
+        }
         $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
         if (window.location.href.indexOf("course-gpa") > -1) {
