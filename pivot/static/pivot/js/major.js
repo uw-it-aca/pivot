@@ -418,10 +418,10 @@ function displayResults() {
     // the user is finished typing in the search box,
     // and the time reaches the doneTypingInterval
     $('#search').keyup(function(){
-	clearTimeout(typingTimer);
-	if ($('#search').val()) {
-	    typingTimer = setTimeout(doneTyping, doneTypingInterval);
-	}
+        clearTimeout(typingTimer);
+        if ($('#search').val()) {
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        }
     });
 }
 

@@ -74,6 +74,7 @@ function displayResults() {
 
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    var raw_search = $("#search").val().replace('(','').replace(')','');
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
@@ -135,6 +136,34 @@ function displayResults() {
         clearTimeout(_timer);
         // _timer = setTimeout(hideSearchSuggestions, 3000);
     }
+
+    // Number of suggestions currently listed in dropdown
+    num_suggestions = $('.suggested_major').length;
+
+    // Displays the number of current suggestions
+    // in the dropdown search menu
+    function doneTyping() {
+        var suggestion_text;
+        if (num_suggestions === 1) {
+            suggestion_text = num_suggestions + " result for '" + raw_search + "'";
+        } else {
+            suggestion_text = num_suggestions + " results for '" + raw_search + "'";
+        }
+        document.getElementById("numResults").innerHTML = suggestion_text;
+    }
+
+    var typingTimer;
+    var doneTypingInterval = 1000; // time in milliseconds
+
+    // Initiates the doneTyping function whenever
+    // the user is finished typing in the search box,
+    // and the time reaches the doneTypingInterval
+    $('#search').keyup(function(){
+        clearTimeout(typingTimer);
+        if ($('#search').val()) {
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        }
+    });
 }
 
 //Shows any currently selected majors in the search suggestions
