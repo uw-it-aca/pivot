@@ -158,7 +158,7 @@ function displayResults() {
     // Initiates the doneTyping function whenever
     // the user is finished typing in the search box,
     // and the time reaches the doneTypingInterval
-    $('#search').keyup(function(){
+    $('#search').on('keyup focus', function(e){
         clearTimeout(typingTimer);
         if ($('#search').val()) {
             typingTimer = setTimeout(doneTyping, doneTypingInterval);
