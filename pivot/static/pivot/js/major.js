@@ -402,8 +402,13 @@ function displayResults() {
     // Displays the number of current suggestions
     // in the dropdown search menu
     function doneTyping() {
-	var suggestion_text = num_suggestions + " results for '" + raw_search + "'";
-	document.getElementById("numResults").innerHTML = suggestion_text;
+        var suggestion_text;
+        if (num_suggestions === 1) {
+            suggestion_text = num_suggestions + " result for '" + raw_search + "'";
+        } else {
+            suggestion_text = num_suggestions + " results for '" + raw_search + "'";
+        }
+        document.getElementById("numResults").innerHTML = suggestion_text;
     }
 
     var typingTimer;
