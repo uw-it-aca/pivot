@@ -161,7 +161,6 @@ function showCurrentSelections() {
 //Hide the search suggestions box
 function closeSuggestions() {
    $("#suggestions").css("display","none");
-   $("#search").val("");
    $("#search").blur();
 }
 
