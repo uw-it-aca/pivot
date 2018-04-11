@@ -2,8 +2,8 @@
 {% tplhandlebars "major-display-results" %}
 
 <li class='suggested_major'>
-    <a href='#' aria-live='polite'>
-        <input type='checkbox' tabindex="-1" {{ status }}/>
+    <a href='#'>
+        <input type='checkbox' tabindex="-1" {{ status }} onclick="this.setAttribute('aria-selected',this.checked);"/>
         &nbsp;{{{ data }}}
     </a>
 </li>
