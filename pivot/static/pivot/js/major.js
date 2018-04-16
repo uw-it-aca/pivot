@@ -506,7 +506,7 @@ function updateEvents() {
     );
 
     //Update selected majors when user clicks on suggested major
-    $("#suggestions li").click(function (e) {
+    $("#suggestions li.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
             $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
