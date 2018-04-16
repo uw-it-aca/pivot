@@ -506,13 +506,13 @@ function updateEvents() {
     );
 
     //Update selected majors when user clicks on suggested major
-    $("#suggestions li, #suggestions a").click(function (e) {
+    $("#suggestions li").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
             $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
         }
         var list = [];
-        var code = $(this).parent("li").data("code");
+        var code = $(this).data("code");
 
         if ($(this).children("input:checkbox").prop("checked")) {
             $(".selected").prepend(template({
