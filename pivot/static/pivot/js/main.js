@@ -42,7 +42,7 @@ function initOnboardingDialog() {
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
 	     $("#onboard-modal").modal("show");
-	     $("#perm-forget-modal").focus();
+	     $("#close-modal-btn-top").focus();
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
