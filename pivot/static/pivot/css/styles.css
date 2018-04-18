@@ -850,6 +850,11 @@ p.course-table-row {
     margin: 0px;
 }
 
+.suggested_major:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .clear-btn {
 	margin-left: 0px;
 }
