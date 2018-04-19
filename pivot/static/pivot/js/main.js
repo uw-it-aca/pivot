@@ -346,10 +346,15 @@ function prepareResults(e) {
     // adding the number of majors in the selected college
     // to the dropdown menu.
     var raw_search = $("#search").val().replace('(','').replace(')','');
-    if (raw_search == ""){
-	var results = $('.suggested_major').length;
-	var college_suggestions = results + " results";
-	document.getElementById("numResults").innerHTML = college_suggestions;
+    if (raw_search == "") {
+        var results = $('.suggested_major').length;
+        var college_suggestions;
+        if (results === 1) {
+            college_suggestions = results + " result";
+        } else {
+            college_suggestions = results + " results";
+        }
+        document.getElementById("numResults").innerHTML = college_suggestions;
     }
 }
 
@@ -582,6 +587,35 @@ function addCapacityDescription(id, location) {
         });
    }
 }
+
+/* The following functions display the number of current 
+   suggestions in the dropdown search menu */
+function doneTyping() {
+    var suggestion_text;
+    var raw_search = $("#search").val().replace('(','').replace(')','');
+    // Number of suggestions currently listed in dropdown
+    num_suggestions = $('.suggested_major').length;
+
+    if (num_suggestions === 1) {
+        suggestion_text = num_suggestions + " result for '" + raw_search + "'";
+    } else {
+        suggestion_text = num_suggestions + " results for '" + raw_search + "'";
+    }
+    document.getElementById("numResults").innerHTML = suggestion_text;
+}
+
+var typingTimer;
+var doneTypingInterval = 1000; // time in milliseconds
+
+// Initiates the doneTyping function whenever
+// the user is finished typing in the search box,
+// and the time reaches the doneTypingInterval
+$('#search').on('keyup.num focus.num', function(e){
+    clearTimeout(typingTimer);
+    if ($('#search').val()) {
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    }
+});
 
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero
 /*function trailingZero(value) {
