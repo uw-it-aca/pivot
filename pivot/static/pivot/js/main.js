@@ -41,7 +41,8 @@ function initOnboardingDialog() {
         isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
-            $("#onboard-modal").modal("show");
+	     $("#onboard-modal").modal("show");
+	     $("#perm-forget-modal").focus();
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
@@ -342,6 +343,19 @@ function prepareResults(e) {
     toggleGo(); //Update the "go" button display
     finishResults(); //Display search suggestions
     updateEvents();
+    // adding the number of majors in the selected college
+    // to the dropdown menu.
+    var raw_search = $("#search").val().replace('(','').replace(')','');
+    if (raw_search == "") {
+        var results = $('.suggested_major').length;
+        var college_suggestions;
+        if (results === 1) {
+            college_suggestions = results + " result";
+        } else {
+            college_suggestions = results + " results";
+        }
+        document.getElementById("numResults").innerHTML = college_suggestions;
+    }
 }
 
 //Hides unused placeholder areas in search suggestions
@@ -404,13 +418,6 @@ $("#goBtn").click(function (e) {
         goSearch();
 });
 
-//hides search results and clears input
-function hideSearchSuggestions() {
-    $("#suggestions").css("display","none");
-    $("#search").val("");
-    $("#search").blur();
-}
-
 /*** COLLEGE DROPDOWN ****/
 //Called when data files have been read - populates college dropdown menu
 function populateCollegeDropdown() {
@@ -467,7 +474,11 @@ function populateCollegeDropdown() {
         var selection_template = Handlebars.compile(selection_source);
 
         $("#dropdownMenu").html(selection_template({college_selection: $(this).text()}));
-        $("#dropdownMenu").val($(this).text());
+        if ($(this).text() === "All Colleges") {
+            $("#dropdownMenu").val("All");
+        } else {
+            $("#dropdownMenu").val($(this).text());
+        }
         $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
         if (window.location.href.indexOf("course-gpa") > -1) {
@@ -569,6 +580,35 @@ function addCapacityDescription(id, location) {
         });
    }
 }
+
+/* The following functions display the number of current 
+   suggestions in the dropdown search menu */
+function doneTyping() {
+    var suggestion_text;
+    var raw_search = $("#search").val().replace('(','').replace(')','');
+    // Number of suggestions currently listed in dropdown
+    num_suggestions = $('.suggested_major').length;
+
+    if (num_suggestions === 1) {
+        suggestion_text = num_suggestions + " result for '" + raw_search + "'";
+    } else {
+        suggestion_text = num_suggestions + " results for '" + raw_search + "'";
+    }
+    document.getElementById("numResults").innerHTML = suggestion_text;
+}
+
+var typingTimer;
+var doneTypingInterval = 1000; // time in milliseconds
+
+// Initiates the doneTyping function whenever
+// the user is finished typing in the search box,
+// and the time reaches the doneTypingInterval
+$('#search').on('keyup.num focus.num', function(e){
+    clearTimeout(typingTimer);
+    if ($('#search').val()) {
+        typingTimer = setTimeout(doneTyping, doneTypingInterval);
+    }
+});
 
 //NOT IN USE? checks last digit after decimal places, returns true if trailing zero
 /*function trailingZero(value) {
