@@ -418,13 +418,6 @@ $("#goBtn").click(function (e) {
         goSearch();
 });
 
-//hides search results and clears input
-function hideSearchSuggestions() {
-    $("#suggestions").css("display","none");
-    $("#search").val("");
-    $("#search").blur();
-}
-
 /*** COLLEGE DROPDOWN ****/
 //Called when data files have been read - populates college dropdown menu
 function populateCollegeDropdown() {

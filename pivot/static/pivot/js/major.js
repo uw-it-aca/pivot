@@ -546,11 +546,9 @@ $("html").keydown(function (e) {
 
 //hides search results and clears input
 function hideSearchSuggestions() {
-    console.log("hide me!");
     $("#suggestions").css("display","none");
-       $("#search").val("");
-       $("#search").blur();
-       $("#search").attr("aria-expanded", "false");
+    $("#search").blur();
+    $("#search").attr("aria-expanded", "false");
 }
 
 //Search major list for text in input field
