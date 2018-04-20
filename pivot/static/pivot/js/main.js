@@ -49,11 +49,17 @@ function initOnboardingDialog() {
             sessionStorage.setItem("isTempForgotten", true);
         }
     }
-    // NEED-TO-FIX: add event for tab key to loop the focus inside the modal
-    $("#perm-forget-modal").keypress(function(){
-	    $("#close-modal-btn-top").focus();
-	    console.log("Triggered");
+
+    // Loop the tabbing on the modal, if we get to the last
+    // tabbable element and someone presses tab, go back up to the top
+    $("#perm-forget-modal").on('keydown', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 9) {
+            e.preventDefault();
+            $("#close-modal-btn-top").focus();
+        }
 	});
+
     // add event listener when modal is dismissed
     // set isTempForgotten to prevent further modals during the session
     // Restore focus to the main content
