@@ -3,7 +3,7 @@
 
 <li class='suggested_major'>
     <a href='#'>
-        <input type='checkbox' tabindex="-1" {{ status }} onclick="this.setAttribute('aria-selected',this.checked);"/>
+        <input type='checkbox' tabindex="-1" {{ status }} aria-live="polite" onclick="this.setAttribute('aria-selected',this.checked);"/>
         &nbsp;{{{ data }}}
     </a>
 </li>
