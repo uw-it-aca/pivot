@@ -314,7 +314,6 @@ function displayResults() {
     $("#search").attr("aria-expanded", "true");
     var count = 0;
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
-    var raw_search = $("#search").val().replace('(','').replace(')','');
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
@@ -395,29 +394,6 @@ function displayResults() {
         }
         update_results_on_load = true;
     }
-      
-    // Number of suggestions currently listed in dropdown
-    num_suggestions = $('.suggested_major').length;
-
-    // Displays the number of current suggestions
-    // in the dropdown search menu
-    function doneTyping() {
-	var suggestion_text = num_suggestions + " results for '" + raw_search + "'";
-	document.getElementById("numResults").innerHTML = suggestion_text;
-    }
-
-    var typingTimer;
-    var doneTypingInterval = 1000; // time in milliseconds
-
-    // Initiates the doneTyping function whenever
-    // the user is finished typing in the search box,
-    // and the time reaches the doneTypingInterval
-    $('#search').keyup(function(){
-	clearTimeout(typingTimer);
-	if ($('#search').val()) {
-	    typingTimer = setTimeout(doneTyping, doneTypingInterval);
-	}
-    });
 }
 
 
@@ -506,13 +482,13 @@ function updateEvents() {
     );
 
     //Update selected majors when user clicks on suggested major
-    $("#suggestions li, #suggestions a").click(function (e) {
+    $("#suggestions li.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
             $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
         }
         var list = [];
-        var code = $(this).parent("li").data("code");
+        var code = $(this).data("code");
 
         if ($(this).children("input:checkbox").prop("checked")) {
             $(".selected").prepend(template({
@@ -570,11 +546,9 @@ $("html").keydown(function (e) {
 
 //hides search results and clears input
 function hideSearchSuggestions() {
-    console.log("hide me!");
     $("#suggestions").css("display","none");
-       $("#search").val("");
-       $("#search").blur();
-       $("#search").attr("aria-expanded", "false");
+    $("#search").blur();
+    $("#search").attr("aria-expanded", "false");
 }
 
 //Search major list for text in input field

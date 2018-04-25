@@ -1,11 +1,9 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "major-display-results" %}
 
-<li class='suggested_major'>
-    <a href='#'>
-        <input type='checkbox' tabindex="-1" {{ status }} aria-live="polite" onclick="this.setAttribute('aria-selected',this.checked);"/>
-        &nbsp;{{{ data }}}
-    </a>
+<li class='suggested_major' tabindex="0">
+    <input type='checkbox' tabindex="-1" {{ status }} aria-live="polite" onclick="this.setAttribute('aria-selected',this.checked);"/>
+    &nbsp;{{{ data }}}
 </li>
 
 {% endtplhandlebars %}
