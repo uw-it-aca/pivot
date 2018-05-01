@@ -42,7 +42,7 @@ function initOnboardingDialog() {
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
 	     $("#onboard-modal").modal("show");
-	     $("#perm-forget-modal").focus();
+	     $("#close-modal-btn-top").focus();
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
@@ -50,10 +50,22 @@ function initOnboardingDialog() {
         }
     }
 
+    // Loop the tabbing on the modal, if we get to the last
+    // tabbable element and someone presses tab, go back up to the top
+    $("#perm-forget-modal").on('keydown', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 9) {
+            e.preventDefault();
+            $("#close-modal-btn-top").focus();
+        }
+	});
+
     // add event listener when modal is dismissed
     // set isTempForgotten to prevent further modals during the session
+    // Restore focus to the main content
     $("#onboard-modal").on("hidden.bs.modal", function() {
         sessionStorage.setItem("isTempForgotten", true);
+        $("#shortcut").focus();
     });
 
     $("#perm-forget-modal").on("click", function(){
