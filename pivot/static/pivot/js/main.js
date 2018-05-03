@@ -283,9 +283,9 @@ function init_search_events() {
     //Keyboard navigation for search input field
     $("#search").keydown(function(e) {
         if (e.which == 40) { //down arrow key - go to first suggestion
-            $("#suggestions li.suggested_major").first().focus();
+            $("#suggestions li.suggested_major input").first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
-            $("#suggestions li.suggested_major").last().focus();
+            $("#suggestions li.suggested_major input").last().focus();
         else if (e.which == 13) { //enter key - search for keyword in input field
             goSearch();
         }
@@ -296,24 +296,24 @@ function init_search_events() {
         clearTimeout(_timer); //cancel timer checking for inactivity
         if (e.which == 40) { //down arrow key
             e.preventDefault();
-            if (!$("li.suggested_major:focus").next().is(".divider")) {
-                if (!$("li.suggested_major:focus").is("#suggestions ul:last-child li.suggested_major:last-child"))
-                    $("li.suggested_major:focus").next().focus();
-                else ($("#suggestions li.suggested_major").first().focus());
+            if (!$("input:focus").parents("li").next().is(".divider")) {
+                if (!$("input:focus").parents("li").is("#suggestions ul:last-child li.suggested_major:last-child"))
+                    $("input:focus").parents("li").next().find("input").focus();
+                else ($("#suggestions li.suggested_major").first().find("input").focus());
             }
-            else $("li.suggested_major:focus").parent("ul").next().children("li.suggested_major").first().focus();
+            else $("input:focus").parents("ul").next().children("li.suggested_major").first().find("input").focus();
         } else if (e.which == 38) { //up arrow key
             e.preventDefault();
-            if (!$("li.suggested_major:focus").prev().is(".dropdown-header"))
-                $("li.suggested_major:focus").prev().focus();
+            if (!$("input:focus").parents("li").prev().is(".dropdown-header"))
+                $("input:focus").parents("li").prev().find("input").focus();
             else {
-                if (!$("li.suggested_major:focus").is("#suggestions ul:first-child li.suggested_major:first-child"))
-                    $("li.suggested_major:focus").parent("ul").prev().children("li.suggested_major").last().focus();
-                else ($("#suggestions li.suggested_major").last().focus());
+                if (!$("input:focus").parents("li").is("#suggestions ul:first-child li.suggested_major:first-child"))
+                    $("input:focus").parents("ul").prev().children("li.suggested_major").last().find("input").focus();
+                else ($("#suggestions li.suggested_major").last().find("input").focus());
             }
         } else if (e.which == 32 || e.which == 13) { //select with space key
             e.preventDefault();
-            $("li.suggested_major:focus").trigger("click");
+            $("input:focus").parents("li").trigger("click");
         }
     });
 }

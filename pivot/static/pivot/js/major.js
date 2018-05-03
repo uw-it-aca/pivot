@@ -485,12 +485,12 @@ function updateEvents() {
     $("#suggestions li.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
-            $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
+            $(this).find("input:checkbox").prop("checked", !$(this).find("input:checkbox").prop("checked"));
         }
         var list = [];
         var code = $(this).data("code");
 
-        if ($(this).children("input:checkbox").prop("checked")) {
+        if ($(this).find("input:checkbox").prop("checked")) {
             $(".selected").prepend(template({
                 chosen: code
             }));
@@ -503,6 +503,7 @@ function updateEvents() {
             $(".remove").remove();
         }
         $(".chosen_major").each(function() {
+            console.log(this);
             list.push($(this).text());
         });
 
