@@ -64,7 +64,7 @@ pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$cours
 # take only most recent year for the name
 course.names <- course.names %>% group_by(ckey) %>% filter(yrq == max(yrq))
 
-
+# I'm not fixing typos (career palnning sounds fun)
 
 # re: long names, the base r solution is *extremely* slow(?)
 # tools::toTitleCase(tolower(course.names$course.lname))
@@ -139,21 +139,9 @@ i <- unique(active.majors$MajorCode)
 pre.maj.courses <- pre.maj.courses %>% filter(maj.code %in% i)
 pre.maj.gpa <- pre.maj.gpa %>% filter(maj.code %in% i)
 
-# Calc rankings for courses by majors; add additional fields for final file -------------------------------------
-
-course.rank <- pre.maj.courses %>%
-  group_by(mkey, ckey) %>%
-  summarize(n.course = n(), mgrade = median(grade)) %>%
-  arrange(desc(n.course), .by_group = T) %>%
-  filter(row_number() <= 10) %>%
-  ungroup()
-
-# need: code, course abbv, course#, n_course, n_major,
-xtra <-
-course.rank <-
-
-
 # add "college" and calc n, iqr for majors -----------------------------------------------------
+
+pre.maj.gpa <- pre.maj.gpa %>% inner_join(active.majors, by = "mkey")
 
 med.tot <- pre.maj.gpa %>%
   group_by(mkey, FinCollegeReportingName) %>%
@@ -166,9 +154,9 @@ med.tot <- pre.maj.gpa %>%
             iqr_max = if_else(q3 + IQR(cgpa) > 4, 4, q3 + IQR(cgpa))) %>%
   ungroup()
 
-
 med.ann <- pre.maj.gpa %>%
-  group_by(mkey, yrq.decl) %>%
+  mutate(yr.decl = yrq.decl %/% 10) %>%
+  group_by(mkey, FinCollegeReportingName, yr.decl) %>%
   summarize(count = n(),
             campus = max(campus),
             q1 = quantile(cgpa, .25),
@@ -178,188 +166,43 @@ med.ann <- pre.maj.gpa %>%
             iqr_max = if_else(q3 + IQR(cgpa) > 4, 4, q3 + IQR(cgpa))) %>%
   ungroup()
 
+# Calc rankings for courses by majors; add additional fields for final file -------------------------------------
 
+# first check for courses without names:
+i <- !(pre.maj.courses$ckey %in% course.names$ckey)
+table(i)
+pre.maj.courses$ckey[i]
+# I've checked through many of these in the full course names file, which has no filters applied
+# Not much to do to reconcile them right now (check with team)
 
-
-# merge files -------------------------------------------------------------
-
-majors <- majors %>%
-  select(major,
-         pathway,
-         branch = campus.code,
-         college.lname = finorg.college.reporting.name,
-         major.lname,
-         major.id)
-
-# verify (against old pivot) that majors + branches are correct:
-table(majors$college.lname, majors$branch)
-
-gpapre <- inner_join(gpapre, majors, by = c("major", "pathway", "branch"))
-gpapre <- gpapre %>% filter(cum.gpa > 0) %>% distinct()   # safe removing these, the reasons are idiosyncratic but many of the transcripts with '0' occur far back in antiquity
-
-# remove majors that slipped through filters
-# later iterations should remove these ahead of time
-nix <- c("Tacoma Dual Enrollment",
-         "Tacoma Dual Enrollment - TCC",
-         "Dual Enrollment Comput & Sftwr Sys (Tac)",
-         "Education Certificate Tacoma",
-         "Academy for Young Scholars",
-         "General Studies",
-         "Certificate in International Business",
-         "Computer Science & Systems (Proj/Thesis)",
-         "Center for Study of Capable Youth",
-         "Tacoma General Studies",
-         "Postbaccalaureate Study",
-         "Medex (Medex Certificate Program)",
-         "Exchange - Engineering",
-         "Exchange - Arts and Sciences",
-         "Dual Enrollment Comput & Sftwr Sys (Tac)",
-         "Post Bac Studies (Tacoma Campus)",
-         "Law Special",
-         "Law Visiting",
-         "Pharmacy",
-         "General Studies - Distance Learning",
-         "Hlth Inf & Hlth Inf Mgt Certificate Prog",
-         "Pre Major Sustainable Urb Dev (Tacoma)",
-         "Dual Enrollment Comput Engr & Sys (Tac)")
-gpapre <- gpapre %>% filter(!(major.lname %in% nix))
-
-# check that college names need cleanup here:
-table(gpapre$college.lname)
-gpapre <- gpapre %>% filter(college.lname != "Graduate School")
-
-# summarize:
-mj.annual <- gpapre %>% group_by(major, pathway, college.lname, maj.first.yr, major.lname, branch) %>%
-  summarize(major.id = max(major.id),
-            count = n(),
-            q1 = quantile(cum.gpa, .25),
-            median = median(cum.gpa),
-            q3 = quantile(cum.gpa, .75),
-            iqr_min = q1 - IQR(cum.gpa),
-            iqr_max = if_else(q3 + IQR(cum.gpa) > 4, 4, q3 + IQR(cum.gpa))) %>%
-  arrange(maj.first.yr, major, pathway) %>%
-  ungroup()
-# this if_else might actually be slower than just passing through the summarized data but for 140k data points it doesn't matter
-mj.all <- gpapre %>% group_by(major, pathway, college.lname, major.lname, branch) %>%
-  summarize(major.id = max(major.id),
-            count = n(),
-            median = median(cum.gpa),
-            q1 = quantile(cum.gpa, .25),
-            q3 = quantile(cum.gpa, .75),
-            iqr_min = q1 - IQR(cum.gpa),
-            iqr_max = if_else(q3 + IQR(cum.gpa) > 4, 4, q3 + IQR(cum.gpa))) %>%
-  arrange(major, pathway) %>%
+course.rank <- pre.maj.courses %>%
+  filter(ckey %in% course.names$ckey) %>%               # filter slows the whole query down significantly
+  group_by(mkey, ckey) %>%
+  summarize(n.course = n(), mgrade = median(grade)) %>%
+  arrange(desc(n.course), .by_group = T) %>%
+  filter(row_number() <= 10) %>%
+  mutate(pop = seq_along(n.course)) %>%
   ungroup()
 
-# how many per year?
-cbind(table(mj.annual$maj.first.yr))
-# run script to boxplot all the majors+pathways?
-# source("one script to print them all.R")
+nrow(course.rank) / length(unique(course.rank$mkey))      # hmm, something doesn't have 10 majors
+course.rank %>% group_by(mkey) %>% filter(max(pop) < 10)  # tacoma individualized study, but it only has 4 transcripts and 1 student anyway
 
+# need: long name, major name, and campus (for MAJOR) are supposed to be numeric codes
+course.names$ckey.num <- seq_along(course.names$ckey)
+active.majors$mkey.num <- seq_along(active.majors$mkey)
 
-# create majors and courses file ------------------------------------------
+c <- course.names %>% select(ckey, ckey.num)
+course.rank <- course.rank %>% left_join(c, by = "ckey")
+m <- active.majors %>% select(mkey, mkey.num, MajorCampus)
+course.rank <- course.rank %>% left_join(m, by = "mkey")
+m <- med.tot %>% select(mkey, count)
+course.rank <- course.rank %>% left_join(m, by = "mkey")
 
-# with major, pathway, dept_abbv, course_number, student count, students in major, course median gpa, course long name (as code for lookup), major full name (as code for lookup),
-# major id (code), rank, campus (code)
-# Note: I kept the years in here in case this data might be wanted later
-
-
-# n.maj will serve for the key lookup later but I don't like this joining, script is getting klunky
-n.maj <- mj.all %>% select(major, pathway, count, major.id, major.lname, branch) %>% distinct()
-
-courses <- courses %>% filter(incomplete == 0)   # H is honors, HP-high pass
-
-# with popularity, we don't care about the class branch, branch/campus number should be for the MAJOR
-pop <- courses %>% group_by(major, pathway, dept, course.num, rank) %>%
-  summarize(student_count = n(), course_gpa_50pct = median(grade.deriv, na.rm = T) / 10) %>%
-  arrange(major, pathway, rank) %>%
-  ungroup()
-pop <- inner_join(pop, n.maj, by = c("major", "pathway")) %>% mutate(check.p = student_count / count)
-
-## popularity needs the courselongname numeric lookup added to it from cnames
-x <- cnames %>% select(name.lookup = id, dept, course.num = course_num)
-pop <- inner_join(pop, x) %>% distinct()
-# Ok - course long name (in pop) will map back to 'id' in the course long name file, which is used for the Data Map
-# It *should* be ok if there are duplicate names between courses and majors b/c they also have a binary 'what is this' lookup field. I think.
-
-rm(a, d, x, nix)
-
-
-# create “data map" and 'status lookup' -------------------------------------------------------
-cnames$is_course <- 1
-cnames$is_major <- 0
-cnames$is_campus <- 0
-n.maj$is_course <- 0     # because it aligns with pop
-n.maj$is_major <- 1
-n.maj$is_campus <- 0
-campus <- data.frame(is_course = 0,
-                     is_major = 0,
-                     is_campus = 1,
-                     name = c("Seattle",
-                              "Bothell",
-                              "Tacoma"),
-                     id = c(0,1,2))
-
-# intelligently bind rows
-
-a <- cnames %>% select(is_course, is_major, is_campus, name = CourseLongName, id)
-b <- n.maj %>% ungroup() %>% select(is_course, is_major, is_campus, name = major.lname, id = major.id)
-
-data.map <- bind_rows(a, b, campus)
-
-
-# write files -------------------------------------------------------------
-mj.annual <- mj.annual %>% select(year = maj.first.yr,
-                                  major_abbr = major,
-                                  pathway,
-                                  College = college.lname,
-                                  count,
-                                  iqr_min,
-                                  q1,
-                                  median,
-                                  q3,
-                                  iqr_max)
-mj.all <- mj.all %>% select(major_abbr = major,
-                            pathway,
-                            College = college.lname,
-                            count,
-                            iqr_min,
-                            q1,
-                            median,
-                            q3,
-                            iqr_max)
-
-# replace n <5 w/ -1
-mj.annual$count[mj.annual$count < 5] <- -1
-mj.all$count[mj.all$count < 5] <- -1
-# apply(mj.all[,Cs(iqr_min, q1, median, q3, iqr_max)], 2, function(x) ifelse(mj.all$count == -1, -1, x))
-cols <- Cs(iqr_min, q1, median, q3, iqr_max)
-mj.all[,cols] <- lapply(mj.all[,cols], function(x) ifelse(mj.all$count == -1, -1, x))
-
-
-pop <- pop %>% select(major_abbr = major,
-                      pathway,
-                      dept_abbrev = dept,
-                      course_number = course.num,
-                      student_count,
-                      students_in_major = count,
-                      course_gpa_50pct,
-                      CourseLongName = name.lookup,  # = name.lookup
-                      major_full_nm = major.id,   # = major.id
-                      # MajorID = NA,         # omit this
-                      CoursePopularityRank = rank,
-                      Campus = branch)
-
-urls <- urls %>% select(Code = major, Name = major.lname, URL, Status) %>% distinct()
-
-
-
-## FUTURE: name files accordingly and output with single lapply; parallel lists of files + desired names would work fine too in a for loop
-# paste0(outdir, "Status_Lookup.csv")
-outdir <- "/Volumes/GoogleDrive/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/"
-write.csv(urls, paste0(outdir, "Status_Lookups.csv"), row.names = F)
-write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
-write.csv(mj.all, paste0(outdir, "Student Data - All Majors.csv"), row.names = F)
-write.csv(data.map, paste0(outdir, "Data Map.csv"), row.names = F)
-write.csv(pop, paste0(outdir, "course-major rankings.csv"), row.names = F)
+# check: number in course should never exceed total in major:
+table(course.rank$n.course > course.rank$count)
+i <- course.rank$n.course > course.rank$count
+course.rank[i,]
+###
+## need to resolve this
+###
 
