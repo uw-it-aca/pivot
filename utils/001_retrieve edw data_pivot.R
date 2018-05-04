@@ -21,12 +21,11 @@ options(tibble.print_max = 800)
 
 # create connection to UWSDBDataStore
 # sdbcon <- dbConnect(odbc::odbc(), "sqlserver01", Database = "UWSDBDataStore", UID = "netid\\zane", PWD = rstudioapi::askForPassword("pwd-"))
-# connect to AnalyticInteg
+# connect to AnalyticInteg (VPN now req'd off campus as of ~4/18)
 aicon <- dbConnect(odbc::odbc(), "sqlserver01", Database = "AnalyticInteg", UID = "netid\\zane", PWD = rstudioapi::askForPassword("pwd-"))
 sdbcon <- dbConnect(odbc::odbc(), "sqlserver01", Database = "UWSDBDataStore", UID = "netid\\zane", PWD = rstudioapi::askForPassword("pwd-"))
 
 # Active majors >> programs.csv (Kuali dump) -------------------------------------
-
 
 tb <- read_csv("programs-kuali.csv")
 active.majors <- tb %>%
@@ -132,6 +131,7 @@ x <- tb %>%
   select(sys.key = system_key,
          tran.yr = tran_yr,
          tran.qtr = tran_qtr,
+         course.campus = course_branch,
          course.dept = dept_abbrev,
          course.num = course_number,
          course.grade = grade,                  # needs correction later
@@ -144,9 +144,26 @@ x$tran.yrq <- (x$tran.yr * 10) + x$tran.qtr
 # this should merge with pre major gpa, not maj.first.yrq b/c maj.first.yrq has students with no prior UW gpa to include
 pre.maj.courses <- left_join(pre.maj.gpa, x, by = "sys.key") %>% select(-yrq, -cgpa) %>% group_by(sys.key, maj.code) %>% arrange(sys.key, maj.code, tran.yrq) %>% filter(tran.yrq < yrq.decl)
 
-# integrity checks so far --------------------------------------------
 
-rm(x, tb)
+# course names ------------------------------------------------------------
+rm(x, y, tb)
+
+tb <- tbl(aicon, in_schema("sec", "IV_CourseSections"))
+# nb: campus in this table is associated with the course, not the degree - the transcript file
+# 'branch' as the corresponding field; so create a matching code in the transcript file when merging
+# with this for the long names
+course.names <- tb %>%
+  select(yrq = AcademicQtrKeyId,
+         course.code = CourseCode,
+         course.lname = CourseLongName,              # fix case in proc script
+         course.sname = CourseShortName) %>%
+  distinct() %>%
+  collect()
+
+
+# integrity checks so far (wip) --------------------------------------------
+
+rm(x, y, tb)
 
 # tabulate students per major
 t <- table(pre.maj.gpa$maj.code)
@@ -204,8 +221,7 @@ length(unique(pre.maj.courses$sys.key))
 
 # Write data ---------------------------------------------------------------
 
-save(active.majors, major.college, pre.maj.courses, pre.maj.gpa, file = paste0("sql output/raw data_", Sys.Date()))
-
+save(active.majors, major.college, pre.maj.courses, pre.maj.gpa, course.names, file = paste0("sql output/raw data_", Sys.Date()))
 
 
 # Disconnect/close --------------------------------------------------------
