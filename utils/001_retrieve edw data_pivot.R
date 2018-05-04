@@ -40,12 +40,17 @@ active.majors <- tb %>%
 # Major to FinOrg ---------------------------------------------------------
 rm(tb)
 
+# Made some post-corrections here after checking in 002 script. There is a mis-match between the EDW data and
+# the kuali dump, so I got rid of the active filter
+# however, there are duplicate id's in the EDW b/c a major can belong to multiple orgs
+
 tb <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations"))
 major.college <- tb %>%
-  filter(ActiveMajorInd == "Y", VisitingMajorInd == "N", PrimaryOrgUnitInd == "Y", PreMajorInd == "N") %>%
+  filter(VisitingMajorInd == "N", PrimaryOrgUnitInd == "Y", PreMajorInd == "N") %>%         # ActiveMajorInd == "Y",
   select(MajorCampus, FinCampusReportingName, FinCollegeReportingName, MajorAbbrCode, MajorPathwayNum, MajorCode) %>%
   collect()
 # fix code mapping from this <-> kuali in script 002
+# and - don't filter these, let kuali record be the filter/truth about active/inactive
 
 
 # First YRQ of students’ major(s) -----------------------------------------
