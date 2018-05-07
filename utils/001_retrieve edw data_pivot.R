@@ -226,7 +226,7 @@ length(unique(pre.maj.courses$sys.key))
 
 # Write data ---------------------------------------------------------------
 
-save(active.majors, major.college, pre.maj.courses, pre.maj.gpa, course.names, file = paste0("sql output/raw data_", Sys.Date()))
+save(active.majors, major.college, pre.maj.courses, pre.maj.gpa, course.names, file = paste0("raw data/raw data_", Sys.Date()))
 
 
 # Disconnect/close --------------------------------------------------------
