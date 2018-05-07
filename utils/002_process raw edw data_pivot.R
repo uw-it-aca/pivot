@@ -8,7 +8,7 @@ library(tidyverse)
 setwd("~/Google Drive File Stream/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/")
 
 # in case there are multiple raw data files, load the most recently created
-f <- list.files("sql output/", pattern = "raw", full.names = T)
+f <- list.files("raw data/", pattern = "raw", full.names = T)
 f <- f[which.max(file.mtime(f))]
 load(f); rm(f)
 
@@ -107,6 +107,10 @@ pre.maj.courses <- pre.maj.courses %>%
   mutate(grade = as.numeric(course.grade) / 10) %>%
   filter(is.na(grade) == F)
 
+# remove duplicate quarterly enrollments
+i <- pre.maj.courses %>% ungroup() %>% select(sys.key, mkey, ckey, tran.yrq) %>% duplicated(); table(i)
+pre.maj.courses <- pre.maj.courses[i == F,]
+
 # validate active majors and kuali names ------------------------------------
 
 # kuali will be the official source. We don't want to add rows to kuali by duping keys nor do we want to drop any
@@ -202,7 +206,108 @@ course.rank <- course.rank %>% left_join(m, by = "mkey")
 table(course.rank$n.course > course.rank$count)
 i <- course.rank$n.course > course.rank$count
 course.rank[i,]
-###
-## need to resolve this
-###
 
+# check the duplicate entries (with duplicated quarters already having been removed above)
+(huh <- course.rank[i,1:2])
+check <- huh %>% inner_join(pre.maj.courses) %>% group_by(sys.key) %>% filter(n() > 1) %>% ungroup()
+# if student took same course more than once for credit, in different quarters - that seems acceptable
+# set n.course equal to n.major
+length(unique(check$sys.key))
+rm(huh, check)
+
+course.rank$n.course <- ifelse(course.rank$n.course > course.rank$count, course.rank$count, course.rank$n.course)
+table(course.rank$n.course > course.rank$count)
+course.rank[course.rank$mkey == "MUSIC_0",]
+
+
+# # run script to boxplot all the majors+pathways?
+# # source("one script to print them all.R")
+
+
+# Create data map -------------------------------------
+
+course.map <- course.names[course.names$ckey %in% course.rank$ckey,]
+course.map <- course.map %>%
+  ungroup() %>%
+  mutate(is_course = 1,
+         is_major = 0,
+         is_campus = 0) %>%
+  select(is_course,
+         is_major,
+         is_campus,
+         name = course.lname,
+         id = ckey.num)
+major.map <- active.majors %>%
+  ungroup() %>%
+  mutate(is_course = 0,
+         is_major = 1,
+         is_campus = 0) %>%
+  select(is_course,
+         is_major,
+         is_campus,
+         name = maj.name,
+         id = mkey.num)
+campus.map <- data.frame(is_course = 0,
+                         is_major = 0,
+                         is_campus = 1,
+                         name = c("Seattle",
+                                  "Bothell",
+                                  "Tacoma"),
+                         id = c(0,1,2),
+                         stringsAsFactors = F)
+
+data.map <- bind_rows(course.map, major.map, campus.map)
+rm(campus.map, course.map, major.map)
+
+
+# create student.data.all.majors (med.tot) ------------------------------------------
+
+student.data.all.majors <- med.tot %>% select(major_path = mkey, College = FinCollegeReportingName, count, iqr_min, q1, median, q3, iqr_max)
+# edit rows with count < 5
+cols <- Cs(count, iqr_min, q1, median, q3, iqr_max)
+student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], function(x) ifelse(med.tot$count < 5, -1, x))
+
+# add majors that are active but have no students
+active.no.stu <- active.majors %>%
+  filter(!(mkey %in% med.tot$mkey)) %>%
+           select(major_path = mkey, College = FinCollegeReportingName) %>%
+  mutate(count = -1, iqr_min = -1, q1 = -1, median = -1, q3 = -1, iqr_max = -1)
+
+student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
+
+
+# status lookup -----------------------------------------------------------
+
+status.lookup <- active.majors %>% select(Code = mkey, Name = maj.name, Status = admission.type)
+
+
+# Course.major.rankings ---------------------------------------------------
+
+course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, student_count = n.course,
+                                      student_in_major = count, course_gpa_50pct = mgrade, CourseLongName = ckey.num,
+                                      major_full_nm = mkey.num, CoursePopularityRank = pop, Campus = MajorCampus)
+
+# write files -------------------------------------------------------------
+
+# paste0(outdir, "Status_Lookup.csv")
+outdir <- "/Volumes/GoogleDrive/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/transformed data/"
+write.csv(status.lookup, paste0(outdir, "Status_Lookups.csv"), row.names = F)
+# write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
+write.csv(student.data.all.majors, paste0(outdir, "Student Data - All Majors.csv"), row.names = F)
+write.csv(data.map, paste0(outdir, "Data Map.csv"), row.names = F)
+write.csv(course.rank, paste0(outdir, "course-major rankings.csv"), row.names = F)
+
+
+
+
+
+# misc --------------------------------------------------------------------
+
+# check on repeating CSE142/143
+blah <- pre.maj.courses %>% ungroup() %>% filter(ckey == "CSE_142" | ckey == "CSE_143")
+blah <- blah %>% group_by(mkey, ckey, sys.key) %>% summarize(n = n()) %>% ungroup()
+blah %>% filter(n > 1) %>% group_by(mkey, ckey) %>% summarize(n = n()) %>% arrange(n)
+
+# cse 142 grades between majors/non-majors
+pre.maj.courses %>% mutate(cse = if_else(maj.abbv == "C SCI", "cs major", "others")) %>% filter(ckey == "CSE_142" | ckey == "CSE_143") %>%
+  group_by(cse, ckey) %>% summarize(md = median(grade, na.rm = T))
