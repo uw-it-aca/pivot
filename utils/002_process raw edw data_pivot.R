@@ -31,7 +31,7 @@ major.college$MajorCode[1:4]
 # campus will be lost from code in SDB/AI sources   --ok
 # remove trailing spaces in SDB/AI sources
 
-# trailing spaces (would be good to wrap this in a function that takes a data.frame as the argument at some point; although that would introduce a dependency on stringr...*)
+# trailing spaces (would be good to wrap this in a function that takes a data.frame as the argument at some point? [although that would introduce a dependency on stringr*])
 # * but who wouldn't have stringr lib installed anyway? inconceivable!
 i <- sapply(major.college, is.character)
 major.college[i] <- lapply(major.college[i], str_trim)
@@ -291,23 +291,8 @@ course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, stud
 
 # paste0(outdir, "Status_Lookup.csv")
 outdir <- "/Volumes/GoogleDrive/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/transformed data/"
-write.csv(status.lookup, paste0(outdir, "Status_Lookups.csv"), row.names = F)
+write.csv(status.lookup, paste0(outdir, "Status_Lookup.csv"), row.names = F)
 # write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
-write.csv(student.data.all.majors, paste0(outdir, "Student Data - All Majors.csv"), row.names = F)
-write.csv(data.map, paste0(outdir, "Data Map.csv"), row.names = F)
-write.csv(course.rank, paste0(outdir, "course-major rankings.csv"), row.names = F)
-
-
-
-
-
-# misc --------------------------------------------------------------------
-
-# check on repeating CSE142/143
-blah <- pre.maj.courses %>% ungroup() %>% filter(ckey == "CSE_142" | ckey == "CSE_143")
-blah <- blah %>% group_by(mkey, ckey, sys.key) %>% summarize(n = n()) %>% ungroup()
-blah %>% filter(n > 1) %>% group_by(mkey, ckey) %>% summarize(n = n()) %>% arrange(n)
-
-# cse 142 grades between majors/non-majors
-pre.maj.courses %>% mutate(cse = if_else(maj.abbv == "C SCI", "cs major", "others")) %>% filter(ckey == "CSE_142" | ckey == "CSE_143") %>%
-  group_by(cse, ckey) %>% summarize(md = median(grade, na.rm = T))
+write.csv(student.data.all.majors, paste0(outdir, "Student_Data_All_Majors.csv"), row.names = F)
+write.csv(data.map, paste0(outdir, "Data_Map.csv"), row.names = F)
+write.csv(course.rank, paste0(outdir, "Majors_and_Courses.csv"), row.names = F)
