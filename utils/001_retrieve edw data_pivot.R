@@ -14,20 +14,22 @@ library(odbc)
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
 Cs <- function(...){as.character(sys.call())[-1]}
-
-setwd("~/Google Drive File Stream/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/")
-
 options(tibble.print_max = 800)
 
-# create connection to UWSDBDataStore
-# sdbcon <- dbConnect(odbc::odbc(), "sqlserver01", Database = "UWSDBDataStore", UID = "netid\\zane", PWD = rstudioapi::askForPassword("pwd-"))
-# connect to AnalyticInteg (VPN now req'd off campus as of ~4/18)
-aicon <- dbConnect(odbc::odbc(), "sqlserver01", Database = "AnalyticInteg", UID = "netid\\zane", PWD = rstudioapi::askForPassword("pwd-"))
-sdbcon <- dbConnect(odbc::odbc(), "sqlserver01", Database = "UWSDBDataStore", UID = "netid\\zane", PWD = rstudioapi::askForPassword("pwd-"))
+# To access local files/vars that are not part of repo, move up one level from project directory
+# but - to start (a tiny bit) more safely:
+setwd(rstudioapi::getActiveProject())
+setwd("..")
+
+source("scripts/config.R")
+
+# create connections to enterprise data server
+aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
+sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 
 # Active majors >> programs.csv (Kuali dump) -------------------------------------
 
-tb <- read_csv("programs-kuali.csv")
+tb <- read_csv("raw data/programs-kuali.csv")
 active.majors <- tb %>%
   filter(program_status == "active",
          grepl("UG-", .$program_code) == T,
@@ -73,7 +75,7 @@ maj.first.yrq <- tb %>%
          VisitingMajorInd == "N",
          Student_ClassCode < 5,
          ProgramEntryInd == "Y",
-         DegreeLevelCode == 1) %>%                # degree level code == 1 is supposed to be Bachelor's: https://studentdata.washington.edu/sdb-code-manual-staff-only-restricted/curriculum-departments-majors-degrees/sdb-degree-level-type-codes/
+         DegreeLevelCode == 1) %>%                # degree level code == 1 is supposed to be Bachelor's
   select(sys.key = SDBSrcSystemKey,
          yrq.decl = ProgramEntryAcademicQtrKeyId,
          campus = MajorCampus,
@@ -122,7 +124,7 @@ table(cut(d$tot, 5))
 rm(x, y, tb)
 
 # dplyr syntax doesn't have a good way to filter from w/in the query so use this list of students and join
-# and the SDB doesn't have a built in notion of yrq, only yyyy and q
+# and the database uses YYYY and Q separately by default
 
 tb <- tbl(sdbcon, in_schema("sec", "transcript_courses_taken"))
 
@@ -192,18 +194,6 @@ maj.first.yrq %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
 (check <- maj.first.yrq[maj.first.yrq$maj.code %in% i,])              # 77 records with those codes
 # do any of those students appear at all in the pre.maj.gpa?
 (pre.maj.gpa[pre.maj.gpa$sys.key %in% check$sys.key,])                # yes
-
-
-# they should have prior UW records though...
-# look at: 1666016; 1758776; 1572717
-k <- c(1666016, 1758776, 1572717)
-check[check$sys.key %in% k,]                                # ART-2 in 20182; two different majors in 20152 and 20181
-(check2 <- pre.maj.courses %>% filter(sys.key %in% k))
-
-# Identified issue with first yrq up above -- some 20182 declarations not coded correctly by if_else
-
-rm(i, check)
-
 
 
 # now we should see which kuali majors are/aren't in the other files

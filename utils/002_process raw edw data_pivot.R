@@ -4,8 +4,12 @@ gc()
 
 library(tidyverse)
 
-# File for processing EDW data to create pivot files
-setwd("~/Google Drive File Stream/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/")
+# To access local files/vars that are not part of repo, move up one level from project directory
+# if running 001 then 002 concurrently, this is included to 'reset' 002 in the event that 001 > 002 aren't being
+# run in the same session. Then proceed up a level to the local directory.
+setwd(rstudioapi::getActiveProject())
+setwd("..")
+
 
 # in case there are multiple raw data files, load the most recently created
 f <- list.files("raw data/", pattern = "raw", full.names = T)
@@ -289,8 +293,7 @@ course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, stud
 
 # write files -------------------------------------------------------------
 
-# paste0(outdir, "Status_Lookup.csv")
-outdir <- "/Volumes/GoogleDrive/My Drive/AXDD/Non-Service Work/Innovation/Peach Cobbler/Student dashboards /Pivot/zk EDW queries/transformed data/"
+outdir <- paste0(getwd(), "/transformed data/")
 write.csv(status.lookup, paste0(outdir, "Status_Lookup.csv"), row.names = F)
 # write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
 write.csv(student.data.all.majors, paste0(outdir, "Student_Data_All_Majors.csv"), row.names = F)
