@@ -49,4 +49,4 @@ class StudentData(DataFileView):
 
 
 class StatusLookup(DataFileView):
-    file_name = "Status_Lookup.csv"
+    file_name = "programs.csv"
