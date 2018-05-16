@@ -458,7 +458,6 @@ function noResults() {
 
 function protectedResult(protected_list) {
     $(".sample-data").css("display","none");
-    $("#suggestions").css("display","none");
     $(".protected-result-warning").css("display","inline");
 
     var source = $("#protected-result-warning").html();
