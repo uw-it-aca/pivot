@@ -65,11 +65,12 @@ function createMajorCard(majors, gpa) {
         valid_majors++;
 
         //draw the major's data "card" in the table
-        var id = majors[l].replace(" ","_");
+        var id = majors[l].replace(/\ /g,"_");
+        var cleanedId = id.replace(/\&/g, '_and_');
 
         // Add the card
         $("#boxplots").append(template({
-            id: id,
+            id: cleanedId,
             college: _completeMajorMap[majors[l]]["college"],
             campus: _completeMajorMap[majors[l]]["campus"],
             major_status_url: displayMajorStatusURL(majors[l]),
@@ -77,7 +78,7 @@ function createMajorCard(majors, gpa) {
             major_status_text: displayMajorStatusText(majors[l]),
         }));
 
-        $("#" + id).data("code", majors[l]);
+        $("#" + cleanedId).data("code", majors[l]);
 
         //Add the initial content for the major
         createBoxForMajor(l, med, id);
@@ -112,11 +113,12 @@ function createBoxForMajor(i, median, majorId) {
     var template = Handlebars.compile(source);
     //Create the data boxes, only show titles for first box
     var yes_or_no = i>=1 ? 0 : 1;
-    $("#" + majorId).append(template({
+    var cleanedMajorId = majorId.replace(/\&/g, '_and_');
+    $("#" + cleanedMajorId).append(template({
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
+        major_name: _completeMajorMap[majorId.replace(/_/g," ")]["major_full_nm"]
     }));
 
     //Create the inline help popovers, only needed for major in first row
@@ -154,7 +156,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var width = $(".data-display").width();
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
-    var svg = d3.select("#" + majorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
+    var cleanedMajorId = majorId.replace(/\&/g, '_and_');
+    var svg = d3.select("#" + cleanedMajorId + " .data-display").append("svg").attr("width", width).attr("height", height).attr("class", "boxChart").append("g");
 
     //create the axes
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
@@ -166,7 +169,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var xHeight = height - 1; 
     
     // Getting the full major name to use as an identifier for the boxplot
-    var name = majorId.replace("_", " ");
+    var name = majorId.replace(/_/g, " ");
     var majorName = _completeMajorMap[name]["major_full_nm"];
     //draw the boxplot
     svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("id",majorName).attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
@@ -175,7 +178,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     //draw the axes
     svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + xHeight + ")").call(xAxis).selectAll("text")
 .style("text-anchor", "end");
-    $("#" + majorId + " .card-heading, #"+majorId+" .median-box").height($("#" + majorId + " .data-display").height());
+    $("#" + cleanedMajorId + " .card-heading, #"+cleanedMajorId+" .median-box").height($("#" + cleanedMajorId + " .data-display").height());
 
     //hide numbers for .5 ticks
     $(".tick text").each(function () {
@@ -186,7 +189,7 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     });
 
     //Add numbers for screen reader
-    $("#" + majorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + majorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + majorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + majorId + " .boxHQ").attr("data")),2) + "</p>");
+    $("#" + cleanedMajorId + " .data-display svg").append("<p class='sr-only'>Lower quartile = " + round(Number($("#" + cleanedMajorId + " .boxLQ").attr("data")),2) + " median = " + round(Number($("#" + cleanedMajorId + " .median").attr("data")),2) + " upper quartile = " + round(Number($("#" + cleanedMajorId + " .boxHQ").attr("data")),2) + "</p>");
     
     addPopover(majorId, y(median), majorData[0]["count"]);
     
@@ -225,32 +228,33 @@ function addPopover(id, med, count) {
     var source = $("#add-popover").html();
     var template = Handlebars.compile(source);
 
-    $("#" + id + " .boxPopover").popover({
+    var cleanedId = id.replace(/\&/, '_and_');
+    $("#" + cleanedId + " .boxPopover").popover({
         trigger: "focus",
         placement: "top",
         html: true,
         content: template({
-        lower_quartile: round(Number($("#" + id + " .boxLQ").attr("data")),2),
-        median: round(Number($("#" + id + " .median").attr("data")),2),
-        upper_quartile: round(Number($("#" + id + " .boxHQ").attr("data")),2),
+        lower_quartile: round(Number($("#" + cleanedId + " .boxLQ").attr("data")),2),
+        median: round(Number($("#" + cleanedId + " .median").attr("data")),2),
+        upper_quartile: round(Number($("#" + cleanedId + " .boxHQ").attr("data")),2),
         count: count
             }),
-        container: "#" + id
+        container: "#" + cleanedId
     })
     .data('bs.popover')
     .tip()
     .addClass("bp"); // ID for the actual boxplot popover
 
-    document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
+    document.querySelector("#" + cleanedId + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
-        var boxEl = document.querySelector("#" + id + " .boxP");
+        var boxEl = document.querySelector("#" + cleanedId + " .boxP");
         // Try using offset.top; won't work on Safari so use getPageTopLeft instead
-        var top = $("#" + id + " .boxP").offset().top || getPageTopLeft(boxEl).top;
-        var calc_top = top - $("#" + id + " .bp").height();
-        $("#" + id + " .bp").css("top", calc_top);
+        var top = $("#" + cleanedId + " .boxP").offset().top || getPageTopLeft(boxEl).top;
+        var calc_top = top - $("#" + cleanedId + " .bp").height();
+        $("#" + cleanedId + " .bp").css("top", calc_top);
     });
 
-    document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
+    document.querySelector("#" + cleanedId + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
     });
 }

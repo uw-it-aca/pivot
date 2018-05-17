@@ -570,12 +570,13 @@ function addCapacityDescription(id, location) {
     var template = Handlebars.compile(source);
     var clear_id = id.replace("_", " ");
 
+    var cleanedId = id.replace(/\&/g, "_and_");
     if (location == "major") {
-       $("#" + id + " #major-status-Help").popover({
+       $("#" + cleanedId + " #major-status-Help").popover({
             trigger: "focus",
             placement: "top",
             html: true,
-            container: "#" + id,
+            container: "#" + cleanedId,
                    content: template({
                 major_status_text: displayMajorStatusText(clear_id)
             })
