@@ -458,7 +458,6 @@ function noResults() {
 
 function protectedResult(protected_list) {
     $(".sample-data").css("display","none");
-    $("#suggestions").css("display","none");
     $(".protected-result-warning").css("display","inline");
 
     var source = $("#protected-result-warning").html();
@@ -482,13 +481,13 @@ function updateEvents() {
     );
 
     //Update selected majors when user clicks on suggested major
-    $("#suggestions li, #suggestions a").click(function (e) {
+    $("#suggestions li.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
             $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
         }
         var list = [];
-        var code = $(this).parent("li").data("code");
+        var code = $(this).data("code");
 
         if ($(this).children("input:checkbox").prop("checked")) {
             $(".selected").prepend(template({

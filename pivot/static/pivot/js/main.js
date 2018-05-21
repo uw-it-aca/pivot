@@ -42,7 +42,7 @@ function initOnboardingDialog() {
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
 	     $("#onboard-modal").modal("show");
-	     $("#perm-forget-modal").focus();
+	     $("#close-modal-btn-top").focus();
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
@@ -50,10 +50,22 @@ function initOnboardingDialog() {
         }
     }
 
+    // Loop the tabbing on the modal, if we get to the last
+    // tabbable element and someone presses tab, go back up to the top
+    $("#perm-forget-modal").on('keydown', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 9) {
+            e.preventDefault();
+            $("#close-modal-btn-top").focus();
+        }
+	});
+
     // add event listener when modal is dismissed
     // set isTempForgotten to prevent further modals during the session
+    // Restore focus to the main content
     $("#onboard-modal").on("hidden.bs.modal", function() {
         sessionStorage.setItem("isTempForgotten", true);
+        $("#shortcut").focus();
     });
 
     $("#perm-forget-modal").on("click", function(){
@@ -283,9 +295,9 @@ function init_search_events() {
     //Keyboard navigation for search input field
     $("#search").keydown(function(e) {
         if (e.which == 40) { //down arrow key - go to first suggestion
-            $("#suggestions a").first().focus();
+            $("#suggestions li.suggested_major").first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
-            $("#suggestions a").last().focus();
+            $("#suggestions li.suggested_major").last().focus();
         else if (e.which == 13) { //enter key - search for keyword in input field
             goSearch();
         }
@@ -296,24 +308,24 @@ function init_search_events() {
         clearTimeout(_timer); //cancel timer checking for inactivity
         if (e.which == 40) { //down arrow key
             e.preventDefault();
-            if (!$("a:focus").parent("li").next().is(".divider")) {
-                if (!$("a:focus").is("#suggestions ul:last-child li:last-child a:last-child"))
-                    $("a:focus").parent("li").next().children("a:first-child").focus();
-                else ($("#suggestions a").first().focus());
+            if (!$("li.suggested_major:focus").next().is(".divider")) {
+                if (!$("li.suggested_major:focus").is("#suggestions ul:last-child li.suggested_major:last-child"))
+                    $("li.suggested_major:focus").next().focus();
+                else ($("#suggestions li.suggested_major").first().focus());
             }
-            else $("a:focus").parent("li").parent("ul").next().children("li").children("a").first().focus();
+            else $("li.suggested_major:focus").parent("ul").next().children("li.suggested_major").first().focus();
         } else if (e.which == 38) { //up arrow key
             e.preventDefault();
-            if (!$("a:focus").parent("li").prev().is(".dropdown-header"))
-                $("a:focus").parent("li").prev().children("a:first-child").focus();
+            if (!$("li.suggested_major:focus").prev().is(".dropdown-header"))
+                $("li.suggested_major:focus").prev().focus();
             else {
-                if (!$("a:focus").is("#suggestions ul:first-child a:first-child"))
-                    $("a:focus").parent("li").parent("ul").prev().children("li").children("a").last().focus();
-                else ($("#suggestions a").last().focus());
+                if (!$("li.suggested_major:focus").is("#suggestions ul:first-child li.suggested_major:first-child"))
+                    $("li.suggested_major:focus").parent("ul").prev().children("li.suggested_major").last().focus();
+                else ($("#suggestions li.suggested_major").last().focus());
             }
-        } else if (e.which == 32) { //select with space key
+        } else if (e.which == 32 || e.which == 13) { //select with space key
             e.preventDefault();
-            $("a:focus").trigger("click");
+            $("li.suggested_major:focus").trigger("click");
         }
     });
 }

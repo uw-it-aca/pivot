@@ -76,16 +76,15 @@
     </div>-->
 
 
-    <!-- ADVISOR ONBOARDING -->
-    <!-- Modal -->
-    <div class="modal" id="onboard-modal" role="dialog" tabindex="0" aria-labelledby="welcome-adviser" aria-hidden="true">
+    <!-- ADVISOR ONBOARDING MODAL -->
+    <div class="modal fade" id="onboard-modal" role="dialog" tabindex="0" aria-labelledby="welcome-adviser" aria-hidden="true">
         <div class="modal-dialog" role="document">
 
             <!-- Modal content-->
             <div class="modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title" id="welcome-adviser">Welcome to Pivot</h2>
-                    <button type="button" class="close modal-close-btn" data-dismiss="modal" aria-label="Close">
+                    <button id="close-modal-btn-top" type="button" class="close modal-close-btn" data-dismiss="modal" aria-label="Close">
 	                    <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -109,30 +108,6 @@
         </div>
     </div> <!-- end Modal -->
 
-<!-- CLOSE:  ADVISER ONBOARDING -->
-<!-- loading modal dialog -->
- <!-- loading modal dialog: SAVED FOR ONBOARDING EXPERIENCE ///   <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog center-modalcontent" role="document">
-          <div class="modal-content">
-            <div class="modal-body">
-                <p class="load-message">Loading... please wait</p>
-                <img src="{% static "pivot/img/ajax-loader.gif" %}" alt="loading data" title="loading data"/>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-     <div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-            <p>Loading... please wait</p>
-            <img src="Assets/images/ajax-loader.gif" alt="loading data" title="loading data"/>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
 </div><!-- footer role -->
 <script src="{% static "pivot/js/alias.js" %}"></script>
