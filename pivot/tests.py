@@ -80,7 +80,6 @@ class CsvDataApiTest(TestCase):
         data = [line.split(b",") for line in response.content.splitlines()]
         for i in range(1, len(data)):
             self.assertEqual(data[i][0], scrubbed_major)
-            self.assertEqual(data[i][1], scrubbed_major[:-1] + str(i) + '"')
 
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_status_lookup(self):

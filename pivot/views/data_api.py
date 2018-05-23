@@ -39,7 +39,7 @@ class DataFileView(View):
         csv_data = csv_data[1:]
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
-        scrub = [b'"major_path"', b'"course_num"', b'"code"']
+        scrub = [b'"major_path"', b'"code"']
         check_index = []
         for s in scrub:
             if s in header:
