@@ -124,7 +124,7 @@ class CsvDataApiTest(TestCase):
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             data = self.csv_to_string(csv_reader)
-            data.encode()
+            data = data.encode('utf-8')
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -141,7 +141,7 @@ class CsvDataApiTest(TestCase):
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             data = self.csv_to_string(csv_reader)
-            data.encode()
+            data = data.encode('utf-8')
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -158,7 +158,7 @@ class CsvDataApiTest(TestCase):
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             data = self.csv_to_string(csv_reader)
-            data.encode()
+            data = data.encode('utf-8')
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -175,7 +175,7 @@ class CsvDataApiTest(TestCase):
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
             data = self.csv_to_string(csv_reader)
-            data.encode()
+            data = data.encode('utf-8')
 
         login_successful = self.client.login(username='testuser',
                                              password='password')

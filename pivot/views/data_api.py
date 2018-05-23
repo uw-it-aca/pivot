@@ -41,7 +41,7 @@ class DataFileView(View):
             data = "Error {}: {}".format(err.errno, err.reason)
 
         # csv_data = [line.split(b",") for line in data.splitlines()][0]
-        header = data.split("\n", 1)[0].split(',')
+        header = data.split(b"\n", 1)[0].split(b",")
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
         scrub = [b'"major_path"', b'"code"']
@@ -52,7 +52,8 @@ class DataFileView(View):
 
         si = StringIO()
         cw = csv.writer(si)
-        csv_reader = csv.reader(data.splitlines())
+        # csv.reader has to take in string not bytes...
+        csv_reader = csv.reader(data.decode("utf-8").splitlines())
 
         if len(check_index) == 0:
             for row in csv_reader:
@@ -61,7 +62,7 @@ class DataFileView(View):
         else:
             for row in csv_reader:
                 for index in check_index:
-                    row[index] = row[index].replace(b"&", b"_AND_")
+                    row[index] = row[index].replace("&", "_AND_")
                 cw.writerow(row)
             return si.getvalue().strip('\r\n')
 
