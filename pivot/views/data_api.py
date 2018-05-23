@@ -1,4 +1,5 @@
 import os
+import csv
 try:
     from urllib.parse import urljoin
     from urllib.request import urlopen
@@ -33,7 +34,27 @@ class DataFileView(View):
         except Exception as err:
             data = "Error {}: {}".format(err.errno, err.reason)
 
-        return data
+        csv_data = [line.split(b",") for line in data.splitlines()]
+        header = csv_data[0]
+        csv_data = csv_data[1:]
+        # Columns we have to scrub out an & (note double quotes are included)
+        # because thats how it is formatted in the csv files...
+        scrub = [b'"major_path"', b'"course_num"', b'"code"']
+        check_index = []
+        for s in scrub:
+            if s in header:
+                check_index.append(header.index(s))
+
+        if len(check_index) == 0:
+            return data
+        else:
+            for line in csv_data:
+                for index in check_index:
+                    line[index] = line[index].replace(b"&", b"_AND_")
+
+            csv_data = [header] + csv_data
+            scrubbed_data = b"\n".join([b",".join(c) for c in csv_data])
+            return scrubbed_data
 
 
 class MajorCourse(DataFileView):
