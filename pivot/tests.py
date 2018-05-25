@@ -11,12 +11,19 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 import pivot
+import csv
 
 
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
                              'test_resources',
                              'csvfiles/',)
+TEST_CSV_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
+                                   'test_resources',
+                                   'csvfiles/scrub/',)
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
+
+# To be used on scrub tests (make sure &'s are replaced with _AND_)
+scrubbed_major = b'"PB_AND_J_10"'
 
 
 class CsvDataApiTest(TestCase):
@@ -62,8 +69,41 @@ class CsvDataApiTest(TestCase):
     def test_student_data_url(self):
         self._student_data()
 
-    # TODO: Now override with CSV_URL, instead
+    @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
+    def test_scrub_major_course(self):
+        url = '/api/v1/major_course/'
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        data = [line.split(b",") for line in response.content.splitlines()]
+        for i in range(1, len(data)):
+            self.assertEqual(data[i][0], scrubbed_major)
 
+    @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
+    def test_scrub_status_lookup(self):
+        url = '/api/v1/status_lookup/'
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        data = [line.split(b",") for line in response.content.splitlines()]
+        self.assertEqual(data[1][0], scrubbed_major)
+
+    @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
+    def test_scrub_student_data(self):
+        url = '/api/v1/student_data/'
+        login_successful = self.client.login(username='testuser',
+                                             password='password')
+        self.assertTrue(login_successful)
+        response = self.client.get(url)
+        self.assertTrue(200 == response.status_code)
+        data = [line.split(b",") for line in response.content.splitlines()]
+        self.assertEqual(data[1][0], scrubbed_major)
+
+    # TODO: Now override with CSV_URL, instead
     def _major_course(self):
         url = '/api/v1/major_course/'
         file_name = 'Majors_and_Courses.csv'
@@ -78,7 +118,7 @@ class CsvDataApiTest(TestCase):
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        self.assertTrue(data == response.content)
+        self.assertEqual(data, response.content)
 
     def _data_map(self):
         url = '/api/v1/data_map/'
@@ -94,7 +134,7 @@ class CsvDataApiTest(TestCase):
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        self.assertTrue(data == response.content)
+        self.assertEqual(data, response.content)
 
     def _status_lookup(self):
         url = '/api/v1/status_lookup/'
@@ -110,7 +150,7 @@ class CsvDataApiTest(TestCase):
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        self.assertTrue(data == response.content)
+        self.assertEqual(data, response.content)
 
     def _student_data(self):
         url = '/api/v1/student_data/'
@@ -126,4 +166,4 @@ class CsvDataApiTest(TestCase):
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        self.assertTrue(data == response.content)
+        self.assertEqual(data, response.content)
