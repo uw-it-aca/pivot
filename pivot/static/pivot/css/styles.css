@@ -818,6 +818,11 @@ p.course-table-row {
     margin-right:10px;
 }
 
+.suggested_major > label {
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
 #suggestions {
     position: absolute;
     z-index: 1000;
