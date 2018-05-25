@@ -1,5 +1,11 @@
 import os
 import csv
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 try:
     from urllib.parse import urljoin
     from urllib.request import urlopen
@@ -34,9 +40,8 @@ class DataFileView(View):
         except Exception as err:
             data = "Error {}: {}".format(err.errno, err.reason)
 
-        csv_data = [line.split(b",") for line in data.splitlines()]
-        header = csv_data[0]
-        csv_data = csv_data[1:]
+        # csv_data = [line.split(b",") for line in data.splitlines()][0]
+        header = data.split("\n", 1)[0].split(',')
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
         scrub = [b'"major_path"', b'"code"']
@@ -45,16 +50,20 @@ class DataFileView(View):
             if s in header:
                 check_index.append(header.index(s))
 
-        if len(check_index) == 0:
-            return data
-        else:
-            for line in csv_data:
-                for index in check_index:
-                    line[index] = line[index].replace(b"&", b"_AND_")
+        si = StringIO()
+        cw = csv.writer(si)
+        csv_reader = csv.reader(data.splitlines())
 
-            csv_data = [header] + csv_data
-            scrubbed_data = b"\n".join([b",".join(c) for c in csv_data])
-            return scrubbed_data
+        if len(check_index) == 0:
+            for row in csv_reader:
+                cw.writerow(row)
+            return si.getvalue().strip('\r\n')
+        else:
+            for row in csv_reader:
+                for index in check_index:
+                    row[index] = row[index].replace(b"&", b"_AND_")
+                cw.writerow(row)
+            return si.getvalue().strip('\r\n')
 
 
 class MajorCourse(DataFileView):

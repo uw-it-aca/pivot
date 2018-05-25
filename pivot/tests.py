@@ -1,9 +1,14 @@
 import os
+import csv
 try:
     from urllib.parse import urljoin
 except ImportError:
     # for Python 2.7 compatibility
     from urlparse import urljoin
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -11,8 +16,6 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 import pivot
-import csv
-
 
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
                              'test_resources',
@@ -23,7 +26,7 @@ TEST_CSV_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
 
 # To be used on scrub tests (make sure &'s are replaced with _AND_)
-scrubbed_major = b'"PB_AND_J_10"'
+scrubbed_major = b'PB_AND_J_10'
 
 
 class CsvDataApiTest(TestCase):
@@ -103,14 +106,25 @@ class CsvDataApiTest(TestCase):
         data = [line.split(b",") for line in response.content.splitlines()]
         self.assertEqual(data[1][0], scrubbed_major)
 
+    # Helper method, takes in csv_reader and returns
+    # a string (to help with eliminating unnecessary ""'s')
+    def csv_to_string(self, csv_reader):
+        si = StringIO()
+        cw = csv.writer(si)
+        for row in csv_reader:
+            cw.writerow(row)
+        return si.getvalue().strip('\r\n')
+
     # TODO: Now override with CSV_URL, instead
     def _major_course(self):
         url = '/api/v1/major_course/'
         file_name = 'Majors_and_Courses.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
+
         with open(path, 'r') as csvfile:
-            data = csvfile.read()
-            data = data.encode()  # For comparison to bytes type
+            csv_reader = csv.reader(csvfile)
+            data = self.csv_to_string(csv_reader)
+            data.encode()
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -125,8 +139,9 @@ class CsvDataApiTest(TestCase):
         file_name = 'Data_Map.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
-            data = csvfile.read()
-            data = data.encode()  # For comparison to bytes type
+            csv_reader = csv.reader(csvfile)
+            data = self.csv_to_string(csv_reader)
+            data.encode()
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -141,8 +156,9 @@ class CsvDataApiTest(TestCase):
         file_name = 'Status_Lookup.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
-            data = csvfile.read()
-            data = data.encode()  # For comparison to bytes type
+            csv_reader = csv.reader(csvfile)
+            data = self.csv_to_string(csv_reader)
+            data.encode()
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
@@ -157,8 +173,9 @@ class CsvDataApiTest(TestCase):
         file_name = 'Student_Data_All_Majors.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
-            data = csvfile.read()
-            data = data.encode()  # For comparison to bytes type
+            csv_reader = csv.reader(csvfile)
+            data = self.csv_to_string(csv_reader)
+            data.encode()
 
         login_successful = self.client.login(username='testuser',
                                              password='password')
