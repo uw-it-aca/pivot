@@ -289,7 +289,6 @@ function resizeCharts() {
 // Returns a function to compute the interquartile range.
 function iqr(k) {
   return function(d, i) {
-    console.trace("in the iqr function");
     var q1 = d.quartiles[0],
         q3 = d.quartiles[2],
         iqr = (q3 - q1) * k,
@@ -418,7 +417,6 @@ function showCurrentSelections() {
             status: "checked",
             data: _completeMajorMap[$(this).text()]["major_full_nm"]
         }));
-        console.log("append " + $(this).text() + " to " + appendTo);
         $(appendTo + " li:last").data("code", $(this).text());
     });
     //start timer to make suggestions box disappear after 3sec
@@ -503,7 +501,6 @@ function updateEvents() {
             $(".remove").remove();
         }
         $(".chosen_major").each(function() {
-            console.log(this);
             list.push($(this).text());
         });
 
