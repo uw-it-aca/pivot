@@ -119,13 +119,19 @@ function getCompleteMajorMap() {
     }, function(error, data) {
         var id = 0;
         for (var index in data) {
-            var cID = data[index]["course_number"].replace("_", "");
-            var major = data[index]["major_abbr"].replace("_", "-");
+            var major = data[index]["major_abbr"].replace(/_/g, "-");
+
+            // Format of a course_number is MATH_126, splitting it into MATH and 126
+            var splitIndex = data[index]["course_number"].lastIndexOf("_");
+            var dept_abbrev = data[index]["course_number"].substring(0, splitIndex);
+            var course_number = data[index]["course_number"].substring(splitIndex + 1);
+            var cID = dept_abbrev + course_number;
+
             if (_completeMajorMap.hasOwnProperty(major)) {
                 if (!_completeMajorMap[major]["courses"].hasOwnProperty(cID)) {
                     _completeMajorMap[major]["courses"][cID] = {
-                        dept_abbrev: data[index]["dept_abbrev"],
-                        course_number: data[index]["course_number"],
+                        dept_abbrev: dept_abbrev,
+                        course_number: course_number,
                         student_count: data[index]["student_count"],
                         course_long_name: data[index]["CourseLongName"],
                         popularity_rank: data[index]["CoursePopularityRank"],
@@ -144,8 +150,8 @@ function getCompleteMajorMap() {
                     courses: {}
                 }
                 _completeMajorMap[major]["courses"][cID] = {
-                    dept_abbrev: data[index]["dept_abbrev"],
-                    course_number: data[index]["course_number"],
+                    dept_abbrev: dept_abbrev,
+                    course_number: course_number,
                     student_count: data[index]["student_count"],
                     course_long_name: data[index]["CourseLongName"],
                     popularity_rank: data[index]["CoursePopularityRank"],
@@ -170,7 +176,7 @@ function getMajorStatus() {
         }
     }, function (error, data) {
         for (var index in data) {
-            var code = data[index]["code"].replace("_", "-");
+            var code = data[index]["code"].replace(/_/g, "-");
             _statusLookup[code] = {
                 "status": data[index]["status"],
                 "name": data[index]["name"]
@@ -237,7 +243,7 @@ function addStudents() {
         }
     }, function (error, data) {
         for (var index in data) {
-            var major = data[index]["major_abbr"].replace("_", "-");
+            var major = data[index]["major_abbr"].replace(/_/g, "-");
 
             if (!_majorLookup[major]) {
                 _majorLookup[major] = data[index];
