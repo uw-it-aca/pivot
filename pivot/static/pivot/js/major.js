@@ -289,7 +289,6 @@ function resizeCharts() {
 // Returns a function to compute the interquartile range.
 function iqr(k) {
   return function(d, i) {
-    console.trace("in the iqr function");
     var q1 = d.quartiles[0],
         q3 = d.quartiles[2],
         iqr = (q3 - q1) * k,
@@ -418,7 +417,6 @@ function showCurrentSelections() {
             status: "checked",
             data: _completeMajorMap[$(this).text()]["major_full_nm"]
         }));
-        console.log("append " + $(this).text() + " to " + appendTo);
         $(appendTo + " li:last").data("code", $(this).text());
     });
     //start timer to make suggestions box disappear after 3sec
@@ -484,12 +482,12 @@ function updateEvents() {
     $("#suggestions li.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
-            $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
+            $(this).find("input:checkbox").prop("checked", !$(this).find("input:checkbox").prop("checked"));
         }
         var list = [];
         var code = $(this).data("code");
 
-        if ($(this).children("input:checkbox").prop("checked")) {
+        if ($(this).find("input:checkbox").prop("checked")) {
             $(".selected").prepend(template({
                 chosen: code
             }));

@@ -1,4 +1,11 @@
 import os
+import csv
+
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 try:
     from urllib.parse import urljoin
     from urllib.request import urlopen
@@ -33,7 +40,31 @@ class DataFileView(View):
         except Exception as err:
             data = "Error {}: {}".format(err.errno, err.reason)
 
-        return data
+        # csv_data = [line.split(b",") for line in data.splitlines()][0]
+        header = data.split(b"\n", 1)[0].split(b",")
+        # Columns we have to scrub out an & (note double quotes are included)
+        # because thats how it is formatted in the csv files...
+        scrub = [b'"major_path"', b'"code"']
+        check_index = []
+        for s in scrub:
+            if s in header:
+                check_index.append(header.index(s))
+
+        si = StringIO()
+        cw = csv.writer(si)
+        # csv.reader has to take in string not bytes...
+        csv_reader = csv.reader(data.decode("utf-8").splitlines())
+
+        if len(check_index) == 0:
+            for row in csv_reader:
+                cw.writerow(row)
+            return si.getvalue().strip('\r\n')
+        else:
+            for row in csv_reader:
+                for index in check_index:
+                    row[index] = row[index].replace("&", "_AND_")
+                cw.writerow(row)
+            return si.getvalue().strip('\r\n')
 
 
 class MajorCourse(DataFileView):

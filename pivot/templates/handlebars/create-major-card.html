@@ -1,7 +1,7 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "create-major-card" %}
 
-<div class='major-card row' id='{{ id }}' aria-live="assertive">
+<div class='major-card row' id='{{ id }}' aria-live="polite">
     <div class='card-heading col-xs-12 col-md-4 major-height'>
         <p class='college-heading'>{{ college }} - {{ campus }}</p>
         <h4 class='major-heading row'>{{{ major_status_url }}}

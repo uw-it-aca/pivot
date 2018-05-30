@@ -105,29 +105,33 @@ function getDataNameMap() {
 function getCompleteMajorMap() {
     d3.csv("/api/v1/major_course/", function(d) {
         return {
-            major_abbr: d.major_abbr.trim(),
-            pathway: d.pathway.trim(),
-            dept_abbrev: d.dept_abbrev.trim(),
-            course_number: d.course_number.trim(),
+            major_abbr: d.major_path.trim(),
+            course_number: d.course_num.trim(),
             student_count: d.student_count.trim(),
             students_in_major: d.students_in_major.trim(),
             course_gpa_50pct: d.course_gpa_50pct.trim(),
-            CourseLongName: _courseNameLookup[d.CourseLongName.trim()],
+            CourseLongName: _courseNameLookup[d.course_long_name.trim()],
             major_full_nm: _majorNameLookup[d.major_full_nm.trim()],
-            CoursePopularityRank: d.CoursePopularityRank.trim(),
-            Campus: _campusNameLookup[d.Campus.trim()]
+            CoursePopularityRank: d.course_popularity_rank.trim(),
+            Campus: _campusNameLookup[d.campus.trim()]
         };
 
     }, function(error, data) {
         var id = 0;
         for (var index in data) {
-            var cID = data[index]["dept_abbrev"] + data[index]["course_number"];
-            var major = data[index]["major_abbr"] + "-" + data[index]["pathway"];
+            var major = data[index]["major_abbr"].replace(/_/g, "-");
+
+            // Format of a course_number is MATH_126, splitting it into MATH and 126
+            var splitIndex = data[index]["course_number"].lastIndexOf("_");
+            var dept_abbrev = data[index]["course_number"].substring(0, splitIndex);
+            var course_number = data[index]["course_number"].substring(splitIndex + 1);
+            var cID = dept_abbrev + course_number;
+
             if (_completeMajorMap.hasOwnProperty(major)) {
                 if (!_completeMajorMap[major]["courses"].hasOwnProperty(cID)) {
                     _completeMajorMap[major]["courses"][cID] = {
-                        dept_abbrev: data[index]["dept_abbrev"],
-                        course_number: data[index]["course_number"],
+                        dept_abbrev: dept_abbrev,
+                        course_number: course_number,
                         student_count: data[index]["student_count"],
                         course_long_name: data[index]["CourseLongName"],
                         popularity_rank: data[index]["CoursePopularityRank"],
@@ -146,8 +150,8 @@ function getCompleteMajorMap() {
                     courses: {}
                 }
                 _completeMajorMap[major]["courses"][cID] = {
-                    dept_abbrev: data[index]["dept_abbrev"],
-                    course_number: data[index]["course_number"],
+                    dept_abbrev: dept_abbrev,
+                    course_number: course_number,
                     student_count: data[index]["student_count"],
                     course_long_name: data[index]["CourseLongName"],
                     popularity_rank: data[index]["CoursePopularityRank"],
@@ -166,15 +170,16 @@ function getCompleteMajorMap() {
 function getMajorStatus() {
     d3.csv("/api/v1/status_lookup/", function (d) {
         return {
-            code: d.Code.trim(),
-            url: d.URL.trim(),
-            status: d.Status.trim()
+            code: d.code.trim(),
+            name: d.name.trim(),
+            status: d.status.trim()
         }
     }, function (error, data) {
         for (var index in data) {
-            _statusLookup[data[index]["code"]] = {
-                "url": data[index]["url"],
-                "status": data[index]["status"]
+            var code = data[index]["code"].replace(/_/g, "-");
+            _statusLookup[code] = {
+                "status": data[index]["status"],
+                "name": data[index]["name"]
             }
         }
     });
@@ -185,7 +190,7 @@ function displayMajorStatusURL(code) {
     var parts = code.split('-');
     var major_abbr = parts[0];
     if (myplan_alias[major_abbr]) {
-	major_abbr = myplan_alias[major_abbr];
+	   major_abbr = myplan_alias[major_abbr];
     }
     var url = "https://myplan.uw.edu/program/#/programs/UG-" + major_abbr + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
@@ -227,9 +232,8 @@ function displayMajorStatusText(code) {
 function addStudents() {
     d3.csv("/api/v1/student_data/", function (d) {
         return {
-            major_abbr: d.major_abbr.trim(),
-            pathway: d.pathway.trim(),
-            college: d.College.trim(),
+            major_abbr: d.major_path.trim(),
+            college: d.college.trim(),
             count: d.count.trim(),
             iqr_min: d.iqr_min.trim(),
             q1: d.q1.trim(),
@@ -239,7 +243,7 @@ function addStudents() {
         }
     }, function (error, data) {
         for (var index in data) {
-            var major = data[index]["major_abbr"] + "-" + data[index]["pathway"];
+            var major = data[index]["major_abbr"].replace(/_/g, "-");
 
             if (!_majorLookup[major]) {
                 _majorLookup[major] = data[index];
@@ -294,10 +298,14 @@ function init_search_events() {
 
     //Keyboard navigation for search input field
     $("#search").keydown(function(e) {
+        //suggestions will be checkboxes on the major page but lis on courses
+        var inputs = $("#suggestions li.suggested_major input");
+        //if the input exists, use it, otherwise use the li
+        var suggestedMajor = inputs.length ? inputs : $("#suggestions li.suggested_major");
         if (e.which == 40) { //down arrow key - go to first suggestion
-            $("#suggestions li.suggested_major").first().focus();
+            suggestedMajor.first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
-            $("#suggestions li.suggested_major").last().focus();
+            suggestedMajor.last().focus();
         else if (e.which == 13) { //enter key - search for keyword in input field
             goSearch();
         }
@@ -306,28 +314,63 @@ function init_search_events() {
     //Keyboard navigation for search suggestions/results box
     $("#suggestions").keydown(function(e) {
         clearTimeout(_timer); //cancel timer checking for inactivity
+        var major;
+
+        var curSelected = $("li.suggested_major").has(":focus").addBack(":focus");
+
         if (e.which == 40) { //down arrow key
             e.preventDefault();
-            if (!$("li.suggested_major:focus").next().is(".divider")) {
-                if (!$("li.suggested_major:focus").is("#suggestions ul:last-child li.suggested_major:last-child"))
-                    $("li.suggested_major:focus").next().focus();
-                else ($("#suggestions li.suggested_major").first().focus());
+            if (!curSelected.next().is(".divider")) {
+                if (!curSelected.is("#suggestions ul:last-child li.suggested_major:last-child")) {
+                    major = curSelected.next().find("input");
+                    if (!major.length) {
+                        major = curSelected.next();
+                    }
+                } else {
+                    //focus the input if it exists, the li if it doesn't
+                    major = $("suggestions li.suggested_major").first().find("input");
+                    if (!major.length) {
+                        major = $("#suggestions li.suggested_major").first();
+                    }
+                }
+            } else {
+                major = curSelected.parent("ul").next().children("li.suggested_major").first().find("input");
+                if(!major.length){
+                    major = curSelected.parent("ul").next().children("li.suggested_major").first();
+                }
             }
-            else $("li.suggested_major:focus").parent("ul").next().children("li.suggested_major").first().focus();
+            major.focus();
         } else if (e.which == 38) { //up arrow key
             e.preventDefault();
-            if (!$("li.suggested_major:focus").prev().is(".dropdown-header"))
-                $("li.suggested_major:focus").prev().focus();
-            else {
-                if (!$("li.suggested_major:focus").is("#suggestions ul:first-child li.suggested_major:first-child"))
-                    $("li.suggested_major:focus").parent("ul").prev().children("li.suggested_major").last().focus();
-                else ($("#suggestions li.suggested_major").last().focus());
+            if (!curSelected.prev().is(".dropdown-header")) {
+                major = curSelected.prev().find("input");
+
+                if (!major.length) {
+                    major = curSelected.prev();
+                }
+            } else {
+                if (!curSelected.is("#suggestions ul:first-child li.suggested_major:first-child")) {
+                    major = curSelected.parent("ul").prev().children("li.suggested_major").last().find("input");
+
+                    if (!major.length) {
+                        major = curSelected.parent("ul").prev().children("li.suggested_major").last();
+                    }
+                } else { 
+                    major = $("#suggestions li.suggested_major").last().find("input");
+
+                    if (!major.length) {
+                        major = $("#suggestions li.suggested_major").last();
+                    }
+                }
             }
+            major.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space key
             e.preventDefault();
-            $("li.suggested_major:focus").trigger("click");
+            //curSelected.find("input").trigger("click");
+            curSelected.trigger("click");
         }
     });
+
 }
 
 
@@ -394,28 +437,28 @@ function finishResults() {
     }
 
     // Handle current campus
-    if ($("#currentCampus li").length == 1) {
+    if ($("#currentCampus li").length == 0) {
         $("#currentCampus").remove();
     } else {
         $("#currentCampus").append(template_divider({}));
     }
 
     // Handle bothell campus
-    if ($("#bothellCampus li").length == 1) {
+    if ($("#bothellCampus li").length == 0) {
         $("#bothellCampus").remove();
     } else {
         $("#bothellCampus").append(template_divider({}));
     }
 
     // Handle seattle campus
-    if ($("#seattleCampus li").length == 1) {
+    if ($("#seattleCampus li").length == 0) {
         $("#seattleCampus").remove();
     } else {
         $("#seattleCampus").append(template_divider({}));
     }
 
     // Handle tacoma campus
-    if ($("#tacomaCampus li").length == 1) {
+    if ($("#tacomaCampus li").length == 0) {
         $("#tacomaCampus").remove();
     } else {
         $("#tacomaCampus").append(template_divider({}));
