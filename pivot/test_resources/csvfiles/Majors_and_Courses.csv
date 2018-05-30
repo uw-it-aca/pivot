@@ -1,1 +1,1 @@
-major_abbr,pathway,dept_abbrev,course_number,student_count,students_in_major,course_gpa_50pct,CourseLongName,major_full_nm,MajorID,CoursePopularityRank,Campus
+"major_path","course_num","student_count","students_in_major","course_gpa_50pct","course_long_name","major_full_nm","course_popularity_rank","campus"
