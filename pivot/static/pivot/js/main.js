@@ -294,10 +294,14 @@ function init_search_events() {
 
     //Keyboard navigation for search input field
     $("#search").keydown(function(e) {
+        //suggestions will be checkboxes on the major page but lis on courses
+        var inputs = $("#suggestions li.suggested_major input");
+        //if the input exists, use it, otherwise use the li
+        var suggestedMajor = inputs.length ? inputs : $("#suggestions li.suggested_major");
         if (e.which == 40) { //down arrow key - go to first suggestion
-            $("#suggestions li.suggested_major").first().focus();
+            suggestedMajor.first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
-            $("#suggestions li.suggested_major").last().focus();
+            suggestedMajor.last().focus();
         else if (e.which == 13) { //enter key - search for keyword in input field
             goSearch();
         }
@@ -306,28 +310,63 @@ function init_search_events() {
     //Keyboard navigation for search suggestions/results box
     $("#suggestions").keydown(function(e) {
         clearTimeout(_timer); //cancel timer checking for inactivity
+        var major;
+
+        var curSelected = $("li.suggested_major").has(":focus").addBack(":focus");
+
         if (e.which == 40) { //down arrow key
             e.preventDefault();
-            if (!$("li.suggested_major:focus").next().is(".divider")) {
-                if (!$("li.suggested_major:focus").is("#suggestions ul:last-child li.suggested_major:last-child"))
-                    $("li.suggested_major:focus").next().focus();
-                else ($("#suggestions li.suggested_major").first().focus());
+            if (!curSelected.next().is(".divider")) {
+                if (!curSelected.is("#suggestions ul:last-child li.suggested_major:last-child")) {
+                    major = curSelected.next().find("input");
+                    if (!major.length) {
+                        major = curSelected.next();
+                    }
+                } else {
+                    //focus the input if it exists, the li if it doesn't
+                    major = $("suggestions li.suggested_major").first().find("input");
+                    if (!major.length) {
+                        major = $("#suggestions li.suggested_major").first();
+                    }
+                }
+            } else {
+                major = curSelected.parent("ul").next().children("li.suggested_major").first().find("input");
+                if(!major.length){
+                    major = curSelected.parent("ul").next().children("li.suggested_major").first();
+                }
             }
-            else $("li.suggested_major:focus").parent("ul").next().children("li.suggested_major").first().focus();
+            major.focus();
         } else if (e.which == 38) { //up arrow key
             e.preventDefault();
-            if (!$("li.suggested_major:focus").prev().is(".dropdown-header"))
-                $("li.suggested_major:focus").prev().focus();
-            else {
-                if (!$("li.suggested_major:focus").is("#suggestions ul:first-child li.suggested_major:first-child"))
-                    $("li.suggested_major:focus").parent("ul").prev().children("li.suggested_major").last().focus();
-                else ($("#suggestions li.suggested_major").last().focus());
+            if (!curSelected.prev().is(".dropdown-header")) {
+                major = curSelected.prev().find("input");
+
+                if (!major.length) {
+                    major = curSelected.prev();
+                }
+            } else {
+                if (!curSelected.is("#suggestions ul:first-child li.suggested_major:first-child")) {
+                    major = curSelected.parent("ul").prev().children("li.suggested_major").last().find("input");
+
+                    if (!major.length) {
+                        major = curSelected.parent("ul").prev().children("li.suggested_major").last();
+                    }
+                } else { 
+                    major = $("#suggestions li.suggested_major").last().find("input");
+
+                    if (!major.length) {
+                        major = $("#suggestions li.suggested_major").last();
+                    }
+                }
             }
+            major.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space key
             e.preventDefault();
-            $("li.suggested_major:focus").trigger("click");
+            //curSelected.find("input").trigger("click");
+            curSelected.trigger("click");
         }
     });
+
 }
 
 

@@ -21,7 +21,6 @@ options(tibble.print_max = 800)
 # custom function to created quoted character vectors from unquoted text
 Cs <- function(...) {as.character(sys.call())[-1]}
 
-
 # reconcile major codes ---------------------------------------------------
 
 # kuali example:
@@ -193,7 +192,7 @@ course.rank <- pre.maj.courses %>%
   ungroup()
 
 nrow(course.rank) / length(unique(course.rank$mkey))      # hmm, something doesn't have 10 majors
-course.rank %>% group_by(mkey) %>% filter(max(pop) < 10)  # tacoma individualized study, but it only has 4 transcripts and 1 student anyway
+course.rank %>% group_by(mkey) %>% filter(max(pop) < 10)  # TINDIV, but it only has 4 transcripts and 1 student
 
 # need: long name, major name, and campus (for MAJOR) are supposed to be numeric codes
 course.names$ckey.num <- seq_along(course.names$ckey)
@@ -269,7 +268,7 @@ rm(campus.map, course.map, major.map)
 student.data.all.majors <- med.tot %>% select(major_path = mkey, College = FinCollegeReportingName, count, iqr_min, q1, median, q3, iqr_max)
 # edit rows with count < 5
 cols <- Cs(count, iqr_min, q1, median, q3, iqr_max)
-student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], function(x) ifelse(med.tot$count < 5, -1, x))
+student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], function(x) ifelse(student.data.all.majors$count < 5, -1, x))
 
 # add majors that are active but have no students
 active.no.stu <- active.majors %>%
@@ -288,8 +287,12 @@ status.lookup <- active.majors %>% select(Code = mkey, Name = maj.name, Status =
 # Course.major.rankings ---------------------------------------------------
 
 course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, student_count = n.course,
-                                      student_in_major = count, course_gpa_50pct = mgrade, CourseLongName = ckey.num,
+                                      students_in_major = count, course_gpa_50pct = mgrade, CourseLongName = ckey.num,
                                       major_full_nm = mkey.num, CoursePopularityRank = pop, Campus = MajorCampus)
+i <- course.rank$students_in_major < 5
+cols <- Cs(student_count, students_in_major, course_gpa_50pct)
+course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$students_in_major < 5, -1, x))
+head(course.rank[i,], 30)
 
 # write files -------------------------------------------------------------
 
@@ -299,3 +302,5 @@ write.csv(status.lookup, paste0(outdir, "Status_Lookup.csv"), row.names = F)
 write.csv(student.data.all.majors, paste0(outdir, "Student_Data_All_Majors.csv"), row.names = F)
 write.csv(data.map, paste0(outdir, "Data_Map.csv"), row.names = F)
 write.csv(course.rank, paste0(outdir, "Majors_and_Courses.csv"), row.names = F)
+
+save(list = Cs(active.majors, pre.maj.courses, med.ann, pre.maj.gpa, course.names, major.college), file = "intermediate data/intermediate cleaned files.RData")
