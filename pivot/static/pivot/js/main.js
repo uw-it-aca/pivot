@@ -105,24 +105,22 @@ function getDataNameMap() {
 function getCompleteMajorMap() {
     d3.csv("/api/v1/major_course/", function(d) {
         return {
-            major_abbr: d.major_abbr.trim(),
-            pathway: d.pathway.trim(),
-            dept_abbrev: d.dept_abbrev.trim(),
-            course_number: d.course_number.trim(),
+            major_abbr: d.major_path.trim(),
+            course_number: d.course_num.trim(),
             student_count: d.student_count.trim(),
             students_in_major: d.students_in_major.trim(),
             course_gpa_50pct: d.course_gpa_50pct.trim(),
-            CourseLongName: _courseNameLookup[d.CourseLongName.trim()],
+            CourseLongName: _courseNameLookup[d.course_long_name.trim()],
             major_full_nm: _majorNameLookup[d.major_full_nm.trim()],
-            CoursePopularityRank: d.CoursePopularityRank.trim(),
-            Campus: _campusNameLookup[d.Campus.trim()]
+            CoursePopularityRank: d.course_popularity_rank.trim(),
+            Campus: _campusNameLookup[d.campus.trim()]
         };
 
     }, function(error, data) {
         var id = 0;
         for (var index in data) {
-            var cID = data[index]["dept_abbrev"] + data[index]["course_number"];
-            var major = data[index]["major_abbr"] + "-" + data[index]["pathway"];
+            var cID = data[index]["course_number"].replace("_", "");
+            var major = data[index]["major_abbr"].replace("_", "-");
             if (_completeMajorMap.hasOwnProperty(major)) {
                 if (!_completeMajorMap[major]["courses"].hasOwnProperty(cID)) {
                     _completeMajorMap[major]["courses"][cID] = {
@@ -166,15 +164,16 @@ function getCompleteMajorMap() {
 function getMajorStatus() {
     d3.csv("/api/v1/status_lookup/", function (d) {
         return {
-            code: d.Code.trim(),
-            url: d.URL.trim(),
-            status: d.Status.trim()
+            code: d.code.trim(),
+            name: d.name.trim(),
+            status: d.status.trim()
         }
     }, function (error, data) {
         for (var index in data) {
-            _statusLookup[data[index]["code"]] = {
-                "url": data[index]["url"],
-                "status": data[index]["status"]
+            var code = data[index]["code"].replace("_", "-");
+            _statusLookup[code] = {
+                "status": data[index]["status"],
+                "name": data[index]["name"]
             }
         }
     });
@@ -185,7 +184,7 @@ function displayMajorStatusURL(code) {
     var parts = code.split('-');
     var major_abbr = parts[0];
     if (myplan_alias[major_abbr]) {
-	major_abbr = myplan_alias[major_abbr];
+	   major_abbr = myplan_alias[major_abbr];
     }
     var url = "https://myplan.uw.edu/program/#/programs/UG-" + major_abbr + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
@@ -227,9 +226,8 @@ function displayMajorStatusText(code) {
 function addStudents() {
     d3.csv("/api/v1/student_data/", function (d) {
         return {
-            major_abbr: d.major_abbr.trim(),
-            pathway: d.pathway.trim(),
-            college: d.College.trim(),
+            major_abbr: d.major_path.trim(),
+            college: d.college.trim(),
             count: d.count.trim(),
             iqr_min: d.iqr_min.trim(),
             q1: d.q1.trim(),
@@ -239,7 +237,7 @@ function addStudents() {
         }
     }, function (error, data) {
         for (var index in data) {
-            var major = data[index]["major_abbr"] + "-" + data[index]["pathway"];
+            var major = data[index]["major_abbr"].replace("_", "-");
 
             if (!_majorLookup[major]) {
                 _majorLookup[major] = data[index];
