@@ -221,10 +221,9 @@ function displayMajorStatusIcon(code) {
 }
 
 function displayMajorStatusText(code) {
-    var parts = code.split('-');
     var msg = "";
-    if (_statusLookup.hasOwnProperty(parts[0]))
-        msg = _statusLookup[parts[0]]["status"];
+    if (_statusLookup.hasOwnProperty(code))
+        msg = _statusLookup[code]["status"];
     return msg;
 }
 
