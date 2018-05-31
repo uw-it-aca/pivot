@@ -204,10 +204,9 @@ function displayMajorStatusURL(code) {
 }
 
 function displayMajorStatusIcon(code) {
-    var parts = code.split('-');
     var msg = "";
-    if (_statusLookup.hasOwnProperty(parts[0])) {
-        var title = _statusLookup[parts[0]]["status"];
+    if (_statusLookup.hasOwnProperty(code)) {
+        var title = _statusLookup[code]["status"];
         var url = images_paths[title];
         // Compile the Handlebar template
         var source = $("#display-major-status-icon").html();
