@@ -189,8 +189,8 @@ function getMajorStatus() {
 function displayMajorStatusURL(code) {
     var parts = code.split('-');
     var major_abbr = parts[0];
-    if (myplan_alias[major_abbr]) {
-	   major_abbr = myplan_alias[major_abbr];
+    if (myplan_alias[code]) {
+	   major_abbr = myplan_alias[code];
     }
     var url = "https://myplan.uw.edu/program/#/programs/UG-" + major_abbr + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
