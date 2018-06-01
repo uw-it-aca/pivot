@@ -393,6 +393,7 @@ function displayResults() {
         }
         update_results_on_load = true;
     }
+
 }
 
 
@@ -419,6 +420,7 @@ function showCurrentSelections() {
         }));
         $(appendTo + " li:last").data("code", $(this).text());
     });
+
     //start timer to make suggestions box disappear after 3sec
     clearTimeout(_timer);
     // _timer = setTimeout(hideSearchSuggestions, 3000);
@@ -514,6 +516,15 @@ function updateEvents() {
         } else {
             clear_results();
         }
+
+        //update the search bar with number of selected majors
+        var num_majors = $(".chosen_major").length;
+        if (num_majors != 1) {
+            $("#search").val(num_majors + " majors selected");
+        } else {
+            $("#search").val(num_majors + " major selected");
+        }
+        
     });
 
     //for the benefit of mobile devices trying to read a long suggestion list
