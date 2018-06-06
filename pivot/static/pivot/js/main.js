@@ -189,8 +189,8 @@ function getMajorStatus() {
 function displayMajorStatusURL(code) {
     var parts = code.split('-');
     var major_abbr = parts[0];
-    if (myplan_alias[major_abbr]) {
-	   major_abbr = myplan_alias[major_abbr];
+    if (myplan_alias[code]) {
+	   major_abbr = myplan_alias[code];
     }
     var url = "https://myplan.uw.edu/program/#/programs/UG-" + major_abbr + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
@@ -204,10 +204,9 @@ function displayMajorStatusURL(code) {
 }
 
 function displayMajorStatusIcon(code) {
-    var parts = code.split('-');
     var msg = "";
-    if (_statusLookup.hasOwnProperty(parts[0])) {
-        var title = _statusLookup[parts[0]]["status"];
+    if (_statusLookup.hasOwnProperty(code)) {
+        var title = _statusLookup[code]["status"];
         var url = images_paths[title];
         // Compile the Handlebar template
         var source = $("#display-major-status-icon").html();
@@ -221,10 +220,9 @@ function displayMajorStatusIcon(code) {
 }
 
 function displayMajorStatusText(code) {
-    var parts = code.split('-');
     var msg = "";
-    if (_statusLookup.hasOwnProperty(parts[0]))
-        msg = _statusLookup[parts[0]]["status"];
+    if (_statusLookup.hasOwnProperty(code))
+        msg = _statusLookup[code]["status"];
     return msg;
 }
 
