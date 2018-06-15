@@ -26,7 +26,8 @@ function checkStoredData() {
 /**** DISPLAY DATA FOR SELECTED MAJOR(S) ****/
 
 //Main function that draws/redraws the data table whenever a major is been selected
-function createMajorCard(majors, gpa = null) {
+function createMajorCard(majors, gpa) {
+    gpa = (typeof gpa !== 'undefined') ? gpa : null;
     storeSelections(majors, gpa); //Store user's selections
     $(".sample-data").css("display","none"); //Hide the placeholder how-to image
 
@@ -161,13 +162,18 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     // Setting the domain to start from 1.4999 instead of 1.5 so the tick at 1.5 will show
     var x = d3.scale.linear().domain([1.4999, 4.0]).range([0, width]);
     var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
-
+    // height for the xAxis
+    var xHeight = height - 1; 
+    
+    // Getting the full major name to use as an identifier for the boxplot
+    var name = majorId.replace("_", " ");
+    var majorName = _completeMajorMap[name]["major_full_nm"];
     //draw the boxplot
-    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
+    svg.selectAll(".box").data(majorData).enter().append("a").attr("class","boxPopover btn").attr("id",majorName).attr("tabindex","0").attr("role","button").attr("data-toggle","popover").append("g").attr("class","boxP").attr("transform", function(d) {return "translate(0," + y(median) + ")";}).call(chart.height(y.rangeBand() - 10));
 
 
     //draw the axes
-    svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis).selectAll("text")
+    svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + xHeight + ")").call(xAxis).selectAll("text")
 .style("text-anchor", "end");
     $("#" + majorId + " .card-heading, #"+majorId+" .median-box").height($("#" + majorId + " .data-display").height());
 
@@ -230,16 +236,33 @@ function addPopover(id, med, count) {
         count: count
             }),
         container: "#" + id
-    });
+    })
+    .data('bs.popover')
+    .tip()
+    .addClass("bp"); // ID for the actual boxplot popover
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusin", function() {
         $(this).popover("show");
-        $("#" + id + " .popover").css("top", $("#" + id + " .boxP").offset().top - $("#" + id + " .popover").height());
+        var boxEl = document.querySelector("#" + id + " .boxP");
+        // Try using offset.top; won't work on Safari so use getPageTopLeft instead
+        var top = $("#" + id + " .boxP").offset().top || getPageTopLeft(boxEl).top;
+        var calc_top = top - $("#" + id + " .bp").height();
+        $("#" + id + " .bp").css("top", calc_top);
     });
 
     document.querySelector("#" + id + " .boxPopover").addEventListener("focusout", function() {
       $(this).popover("hide");
     });
+}
+
+// Safari doesn't support offset.top so we use this as a workaround
+function getPageTopLeft(el) {
+    var rect = el.getBoundingClientRect();
+    var docEl = document.documentElement;
+    return {
+        left: rect.left + (window.pageXOffset || docEl.scrollLeft || 0),
+        top: rect.top + (window.pageYOffset || docEl.scrollTop || 0)
+    };
 }
 
 //Gets the data associated with the selected majors
@@ -266,7 +289,6 @@ function resizeCharts() {
 // Returns a function to compute the interquartile range.
 function iqr(k) {
   return function(d, i) {
-    console.trace("in the iqr function");
     var q1 = d.quartiles[0],
         q3 = d.quartiles[2],
         iqr = (q3 - q1) * k,
@@ -360,6 +382,7 @@ function displayResults() {
             }
         }
     }
+
     //start timer to make suggestions box disappear after 1sec
     clearTimeout(_timer);
     // _timer = setTimeout(hideSearchSuggestions, 3000);
@@ -370,7 +393,10 @@ function displayResults() {
         }
         update_results_on_load = true;
     }
+
 }
+
+
 
 //Shows any currently selected majors
 function showCurrentSelections() {
@@ -392,9 +418,9 @@ function showCurrentSelections() {
             status: "checked",
             data: _completeMajorMap[$(this).text()]["major_full_nm"]
         }));
-        console.log("append " + $(this).text() + " to " + appendTo);
         $(appendTo + " li:last").data("code", $(this).text());
     });
+
     //start timer to make suggestions box disappear after 3sec
     clearTimeout(_timer);
     // _timer = setTimeout(hideSearchSuggestions, 3000);
@@ -432,7 +458,6 @@ function noResults() {
 
 function protectedResult(protected_list) {
     $(".sample-data").css("display","none");
-    $("#suggestions").css("display","none");
     $(".protected-result-warning").css("display","inline");
 
     var source = $("#protected-result-warning").html();
@@ -456,15 +481,15 @@ function updateEvents() {
     );
 
     //Update selected majors when user clicks on suggested major
-    $("#suggestions li, #suggestions a").click(function (e) {
+    $("#suggestions li.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
-            $(this).children("input:checkbox").prop("checked", !$(this).children("input:checkbox").prop("checked"));
+            $(this).find("input:checkbox").prop("checked", !$(this).find("input:checkbox").prop("checked"));
         }
         var list = [];
-        var code = $(this).parent("li").data("code");
+        var code = $(this).data("code");
 
-        if ($(this).children("input:checkbox").prop("checked")) {
+        if ($(this).find("input:checkbox").prop("checked")) {
             $(".selected").prepend(template({
                 chosen: code
             }));
@@ -491,6 +516,15 @@ function updateEvents() {
         } else {
             clear_results();
         }
+
+        //update the search bar with number of selected majors
+        var num_majors = $(".chosen_major").length;
+        if (num_majors != 1) {
+            $("#search").val(num_majors + " majors selected");
+        } else {
+            $("#search").val(num_majors + " major selected");
+        }
+        
     });
 
     //for the benefit of mobile devices trying to read a long suggestion list
@@ -520,11 +554,9 @@ $("html").keydown(function (e) {
 
 //hides search results and clears input
 function hideSearchSuggestions() {
-    console.log("hide me!");
     $("#suggestions").css("display","none");
-       $("#search").val("");
-       $("#search").blur();
-       $("#search").attr("aria-expanded", "false");
+    $("#search").blur();
+    $("#search").attr("aria-expanded", "false");
 }
 
 //Search major list for text in input field

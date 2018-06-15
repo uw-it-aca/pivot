@@ -1,9 +1,8 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "create-major-card" %}
 
-<div class='major-card row' id='{{ id }}' aria-live="assertive">
+<div class='major-card row' id='{{ id }}' aria-live="polite">
     <div class='card-heading col-xs-12 col-md-4 major-height'>
-	    <h3 class="sr-only">{{{ major_status_url }}}</h3>
         <p class='college-heading'>{{ college }} - {{ campus }}</p>
         <h4 class='major-heading row'>{{{ major_status_url }}}
 			<!-- TODO: Fill in data-content here for popover if major_status_text is defined-->

@@ -818,6 +818,11 @@ p.course-table-row {
     margin-right:10px;
 }
 
+.suggested_major > label {
+    font-weight: normal;
+    margin-bottom: 0;
+}
+
 #suggestions {
     position: absolute;
     z-index: 1000;
@@ -841,10 +846,20 @@ p.course-table-row {
 
 #suggestions .divider {
     height: 1px;
-    margin: 9px 0;
+    margin: 9px;
     overflow: hidden;
     background-color: #e5e5e5;
 }
+
+#suggestions #numResultsStyle {
+    margin: 0px;
+}
+
+.suggested_major:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 .clear-btn {
 	margin-left: 0px;
 }

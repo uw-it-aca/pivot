@@ -3,10 +3,6 @@ var DataMap = {
         var data = WSData.data_map_data(),
             parsed_csv = d3.csv.parse(data);
 
-        //
-        //$(parsed_csv).each(idx, data){
-        //
-        //}
         d3.csv.parse(data, function(d) {
             return {
                 is_course: d.is_course.trim(),
@@ -27,8 +23,6 @@ var DataMap = {
                     _campusNameLookup[data[index]["id"]] = data[index]["name"]
                 }
             }
-            console.log(_campusNameLookup);
-            //getCompleteMajorMap();
         });
     },
 }

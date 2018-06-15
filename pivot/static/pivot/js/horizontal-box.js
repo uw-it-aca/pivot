@@ -15,24 +15,18 @@ d3.box = function() {
   // For each small multiple…
   function box(g) {
     g.each(function(data, i) {
-      //d = d.map(value).sort(d3.ascending);
-	  //var boxIndex = data[0];
-	  //var boxIndex = 1;
-      // console.log(boxIndex); 
-	  //console.log(d); 
-	  
       var g = d3.select(this);
 
       // Compute quartiles. Must return exactly 3 elements.
       var quartileData = [data["q1"], data["median"], data["q3"]];
 
       // Compute whiskers. Must return exactly 2 elements, or null.
-
       var whiskerData = [data["iqr_min"], data["iqr_max"]];
+
       // Compute outliers. If no whiskers are specified, all data are "outliers".
       // We compute the outliers as indices, so that we can join across transitions!
 
-     // Compute the new y-scale.
+      // Compute the new y-scale.
       var y1 = d3.scale.linear()
           .domain([1.5, 4])
           .range([0, width]);

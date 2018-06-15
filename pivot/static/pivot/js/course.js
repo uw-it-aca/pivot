@@ -26,10 +26,10 @@ function updateEvents() {
     );
 
 
-    $("#suggestions li, #suggestions a").click(function (e) {
+    $("#suggestions li.suggested_major").click(function (e) {
         e.preventDefault();
         var list = [];
-        var code = $(this).parent("li").data("code");
+        var code = $(this).data("code");
         console.log("code=" + code);
         if (code != undefined) {
             var selected = false;
@@ -161,7 +161,6 @@ function showCurrentSelections() {
 //Hide the search suggestions box
 function closeSuggestions() {
    $("#suggestions").css("display","none");
-   $("#search").val("");
    $("#search").blur();
 }
 
