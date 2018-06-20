@@ -15,10 +15,12 @@ var all_data_loaded = false;
 var _searchResultsChecked = false;
 
 /**** SETUP ****/
-if (window.location.search == "?slow") {
-    window.setTimeout(function() { getDataNameMap(); }, 5000);
-} else {
-    getDataNameMap();
+if (window.location.pathname != "/about/") {
+    if (window.location.search == "?slow") {
+        window.setTimeout(function() { getDataNameMap(); }, 5000);
+    } else {
+        getDataNameMap();
+    }
 }
 
 // initializes app
