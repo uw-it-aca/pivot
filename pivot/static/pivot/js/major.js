@@ -447,12 +447,12 @@ function noResults() {
     var template = Handlebars.compile(source);
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
-    $(".no-results-warning").css("display","inline");
     if (multipleSelected())
         $(".no-results-warning");
     $(".no-results-warning").html(template({
         search: $("input#search").val()
     }));
+    $(".no-results-warning").css("display","block");
     //$("#loadingModal").modal('hide');
 }
 
