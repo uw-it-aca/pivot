@@ -228,6 +228,7 @@ function multipleResults() {
     $(".no-results-warning").html(template({search: search_key}));
 }
 
+//Displays a message when a protected major is selected
 function protectedResult(maj) {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
@@ -273,7 +274,8 @@ function listCoursesForMajor(maj) {
 
     // If the course has a -1 in it, that means that this major is protected
     // (does not have more than 5 students), so display an alert
-    if(Object.keys(courses).some(function(k){ return ~k.indexOf("-1") })){
+    var studentCounts = Object.values(courses).map(value => value["student_count"]);
+    if(studentCounts.some(function(k){ return ~k.indexOf("-1") })){
        protectedResult(maj);
        return;
     }
