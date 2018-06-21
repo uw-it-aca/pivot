@@ -45,9 +45,9 @@ function initOnboardingDialog() {
         if (isPermForgotten == false || isPermForgotten == "false") {
             // focus the close button once the modal is shown
             $("#onboard-modal").on("shown.bs.modal", function () {
-	            $("#close-modal-btn-top").focus();
+                $("#close-modal-btn-top").focus();
             });
-	        $("#onboard-modal").modal("show");
+            $("#onboard-modal").modal("show");
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
