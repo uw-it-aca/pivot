@@ -1,0 +1,23 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "major-prepare-results" %}
+
+<fieldset id="numSuggestions">
+    <span class="dropdown-header" id="numResults" aria-live="assertive"></span>
+    <span role="separator" class="divider" id="numResultsStyle"></span>
+</fieldset>
+<fieldset id="selectedCollege">
+    <legend class="dropdown-header" tabindex="0">{{ selected_campus }}</legend>
+</fieldset>
+<fieldset id="currentCampus">
+    <legend class="dropdown-header" tabindex="0">{{ current_campus }} campus</legend>
+</fieldset>
+<fieldset id="bothellCampus">
+    <legend class="dropdown-header" tabindex="0">Bothell campus</legend>
+</fieldset>
+<fieldset id="seattleCampus">
+    <legend class="dropdown-header" tabindex="0">Seattle campus</legend>
+</fieldset>
+<fieldset id="tacomaCampus">
+    <legend class="dropdown-header" tabindex="0">Tacoma campus</legend>
+</fieldset>
+{% endtplhandlebars %}

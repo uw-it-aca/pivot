@@ -818,7 +818,7 @@ p.course-table-row {
     margin-right:10px;
 }
 
-.suggested_major > label {
+label.suggested_major {
     font-weight: normal;
     margin-bottom: 0;
 }
@@ -845,8 +845,10 @@ p.course-table-row {
 }
 
 #suggestions .divider {
+    display: block;
     height: 1px;
     margin: 9px;
+    margin-bottom: 0;
     overflow: hidden;
     background-color: #e5e5e5;
 }
@@ -912,10 +914,12 @@ p.course-table-row {
 }
 
 /* Search: options */
-ul {
+ul, fieldset {
 	list-style: none;
 	padding-left: 10px;
     padding-right: 10px;
+    margin-top: 0;
+    margin-bottom: 10px;
 }
 
 /*  course GPA table */
@@ -1031,10 +1035,16 @@ ul {
 
 /* Search suggestion list header spacing */
 .dropdown-header {
+    display: inline;
+    margin-bottom: 0;
+    border-bottom: 0;
 	padding:5px 20px 10px 0px;
 
 }
 
+h3.dropdown-header {
+    margin-left: 10px;
+}
 
 /* Collge list header -- TO-DO: add to college dropdown js */
 .college-list {
