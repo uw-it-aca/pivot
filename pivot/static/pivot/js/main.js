@@ -15,7 +15,7 @@ var all_data_loaded = false;
 var _searchResultsChecked = false;
 
 /**** SETUP ****/
-if (window.location.pathname != "/about/") {
+if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
     if (window.location.search == "?slow") {
         window.setTimeout(function() { getDataNameMap(); }, 5000);
     } else {
@@ -43,8 +43,11 @@ function initOnboardingDialog() {
         isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
-	     $("#onboard-modal").modal("show");
-	     $("#close-modal-btn-top").focus();
+            // focus the close button once the modal is shown
+            $("#onboard-modal").on("shown.bs.modal", function () {
+                $("#close-modal-btn-top").focus();
+            });
+            $("#onboard-modal").modal("show");
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
