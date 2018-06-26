@@ -448,6 +448,9 @@ function finishResults() {
     // Handle current campus
     if ($("#currentCampus .suggested_major").length == 0) {
         $("#currentCampus").remove();
+        if ($("#currentCampusHeader")[0]) {
+            $("#currentCampusHeader").remove();
+        } 
     } else {
         $("#currentCampus").append(template_divider({}));
     }
@@ -455,6 +458,9 @@ function finishResults() {
     // Handle bothell campus
     if ($("#bothellCampus .suggested_major").length == 0) {
         $("#bothellCampus").remove();
+        if ($("#bothellCampusHeader")[0]) {
+            $("#bothellCampusHeader").remove();
+        } 
     } else {
         $("#bothellCampus").append(template_divider({}));
     }
@@ -462,6 +468,9 @@ function finishResults() {
     // Handle seattle campus
     if ($("#seattleCampus .suggested_major").length == 0) {
         $("#seattleCampus").remove();
+        if ($("#seattleCampusHeader")[0]) {
+            $("#seattleCampusHeader").remove();
+        } 
     } else {
         $("#seattleCampus").append(template_divider({}));
     }
@@ -469,6 +478,9 @@ function finishResults() {
     // Handle tacoma campus
     if ($("#tacomaCampus .suggested_major").length == 0) {
         $("#tacomaCampus").remove();
+        if ($("#tacomaCampusHeader")[0]) {
+            $("#tacomaCampusHeader").remove();
+        } 
     } else {
         $("#tacomaCampus").append(template_divider({}));
     }

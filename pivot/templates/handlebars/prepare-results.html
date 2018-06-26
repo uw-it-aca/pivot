@@ -6,19 +6,19 @@
     <li role="separator" class="divider" id="numResultsStyle"></li>
 </ul>
 <h3 class="dropdown-header" id="selectedCollegeHeader" tabindex="0">{{ selected_campus }}</h3>
-<ul id="selectedCollege">
+<ul id="selectedCollege" aria-labelledby="selectedCollegeHeader">
 </ul>
-<h3 class="dropdown-header" tabindex="0">{{ current_campus }} campus</h3>
-<ul id="currentCampus">
+<h3 class="dropdown-header" tabindex="0" id="currentCampusHeader">{{ current_campus }} campus</h3>
+<ul id="currentCampus" aria-labelledby="currentCampusHeader">
 </ul>
-<h3 class="dropdown-header" tabindex="0">Bothell campus</h3>
-<ul id="bothellCampus">
+<h3 class="dropdown-header" tabindex="0" id="bothellCampusHeader">Bothell campus</h3>
+<ul id="bothellCampus" aria-labelledby="bothellCampusHeader">
 </ul>
-<ul id="seattleCampus">
-<h3 class="dropdown-header" tabindex="0">Seattle campus</h3>
+<h3 class="dropdown-header" tabindex="0" id="seattleCampusHeader">Seattle campus</h3>
+<ul id="seattleCampus" aria-labelledby="seattleCampusHeader">
 </ul>
-<h3 class="dropdown-header" tabindex="0">Tacoma campus</h3>
-<ul id="tacomaCampus">
+<h3 class="dropdown-header" tabindex="0" id="tacomaCampusHeader">Tacoma campus</h3>
+<ul id="tacomaCampus" aria-labelledby="tacomaCampusHeader">
 </ul>
 {% endtplhandlebars %}
 
