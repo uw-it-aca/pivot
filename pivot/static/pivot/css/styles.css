@@ -1031,7 +1031,9 @@ ul {
 
 /* Search suggestion list header spacing */
 .dropdown-header {
-	padding:5px 20px 10px 0px;
+	padding: 10px;
+	line-height: 1.5em;
+	font-weight: 600;
 
 }
 
@@ -1039,7 +1041,9 @@ ul {
 /* Collge list header -- TO-DO: add to college dropdown js */
 .college-list {
 	padding-left: 10px;
-	font-weight: 600;
+	font-weight: 400;
+	line-height: 2em;
+	font-size: 14px;
 
 }
 
@@ -1083,7 +1087,7 @@ ul {
 body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
 /* collge drop-down for narrow width */
-#college-dropdown .dropdown-menu>li>a {
+#college-dropdown .dropdown-menu>li {
 	white-space: normal;
 	min-width: 260px;
 }
