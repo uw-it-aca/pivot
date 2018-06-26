@@ -1035,11 +1035,9 @@ ul, fieldset {
 
 /* Search suggestion list header spacing */
 .dropdown-header {
-    display: inline;
-    margin-bottom: 0;
-    border-bottom: 0;
-	padding:5px 20px 10px 0px;
-    font-weight: normal;
+	padding: 10px;
+	line-height: 1.5em;
+	font-weight: 600;
 }
 
 h3.dropdown-header {
@@ -1049,8 +1047,9 @@ h3.dropdown-header {
 /* Collge list header -- TO-DO: add to college dropdown js */
 .college-list {
 	padding-left: 10px;
-	font-weight: 600;
-
+	font-weight: 400;
+	line-height: 2em;
+	font-size: 14px;
 }
 
   /* ==========================================================================
@@ -1093,7 +1092,7 @@ h3.dropdown-header {
 body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
 /* collge drop-down for narrow width */
-#college-dropdown .dropdown-menu>li>a {
+#college-dropdown .dropdown-menu>li {
 	white-space: normal;
 	min-width: 260px;
 }
