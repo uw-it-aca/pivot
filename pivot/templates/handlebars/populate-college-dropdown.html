@@ -11,7 +11,7 @@
     {{ /if }}
 
     <li class="dropdown-header">Colleges in {{ this.campus }} campus:
-		<ul style="padding-left: 0px;"> <!-- campus as nested list-->
+		<ul style="padding-left: 0px;" class="dropdown-menu"> <!-- campus as nested list-->
     {{ #each this.colleges }}
         <!--Add colleges here-->
         <li class="college-list" role="option"><a href="#" class="{{ ../this.campus }}">{{ this }}</a></li>
