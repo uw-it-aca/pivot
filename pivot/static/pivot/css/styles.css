@@ -1039,7 +1039,7 @@ ul, fieldset {
     margin-bottom: 0;
     border-bottom: 0;
 	padding:5px 20px 10px 0px;
-
+    font-weight: normal;
 }
 
 h3.dropdown-header {
