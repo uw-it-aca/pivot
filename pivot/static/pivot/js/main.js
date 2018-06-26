@@ -327,7 +327,7 @@ function init_search_events() {
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
     //close college dropdown menu if it is currently open
-    if ($(".dropdown-menu").css("display") != "none") {
+    if ($("#college-dropdown>.dropdown-menu").css("display") != "none") {
         $("#dropdownMenu").dropdown("toggle");
     }
     if (window.location.pathname == "/major-gpa/") {
@@ -479,14 +479,14 @@ function populateCollegeDropdown() {
         });
     }
 
-    $("#college-dropdown .dropdown-menu").append(template({
+    $("#college-dropdown>.dropdown-menu").append(template({
         campus_college: campus_college
     }));
 
     //Show selection in button
-    $("#college-dropdown .dropdown-menu li a").click(function(){
+    $("#college-dropdown>.dropdown-menu li a").click(function(){
         // Remove the previously selected dropdown option
-        var prev_selected = $("#college-dropdown .dropdown-menu .active");
+        var prev_selected = $("#college-dropdown>.dropdown-menu .active");
         prev_selected.removeClass("active");
         prev_selected.removeAttr("aria-selected");
 
@@ -567,13 +567,13 @@ function clearCollegeSelection() {
     $("#dropdownMenu").html(template({college_selection: "All"}));
     $("#dropdownMenu").val("All");
     // Remove the previously selected dropdown option
-    var prev_selected = $("#college-dropdown .dropdown-menu .active");
+    var prev_selected = $("#college-dropdown>.dropdown-menu .active");
     prev_selected.removeClass("active");
     prev_selected.removeAttr("aria-selected");
 
     // Visually select the first option (All)
-    $("#college-dropdown .dropdown-menu li").first().addClass("active");
-    $("#college-dropdown .dropdown-menu li").first().attr("aria-selected","true");
+    $("#college-dropdown>.dropdown-menu li").first().addClass("active");
+    $("#college-dropdown>.dropdown-menu li").first().attr("aria-selected","true");
 }
 
 // Adding the popover for the capacity description links
