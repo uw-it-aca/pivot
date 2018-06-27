@@ -340,7 +340,7 @@ function initKeyboardNav() {
             //We want the element immediately after the next input to be selected
             //if theres a br before this input, select that, otherwise, select the input
             //if an input isn't selected, the legend must be since thats the only other focusable
-            var selected = $(selectedLabel.prev("br")[0] || selectedLabel[0] ||  selectedLegend[0]);
+            var selected = $(selectedLabel.prev("br")[0] || selectedLabel[0] || selectedLegend[0]);
             //Previous input or legend in the same fieldset   
             var prevLegend = selected.prev("legend");
             var prevInput = selected.prev("label").find("input");
