@@ -440,9 +440,6 @@ function displayResults() {
         }
     }
 
-    //start timer to make suggestions box disappear after 1sec
-    //clearTimeout(_timer);
-    // _timer = setTimeout(hideSearchSuggestions, 3000);
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -478,9 +475,6 @@ function showCurrentSelections() {
         $(appendTo + " label:last").data("code", $(this).text());
     });
 
-    //start timer to make suggestions box disappear after 3sec
-    clearTimeout(_timer);
-    // _timer = setTimeout(hideSearchSuggestions, 3000);
 }
 
 //Checks if multiple majors have been selected
@@ -562,9 +556,6 @@ function updateEvents() {
             list.push($(this).text());
         });
 
-        //start timer to make suggestions box disappear after 3sec
-        clearTimeout(_timer);
-        // _timer = setTimeout(hideSearchSuggestions, 3000);
 
         // Draw data table(s) if list is not empty otherwise clear
         // the table
@@ -583,19 +574,7 @@ function updateEvents() {
         }
         
     });
-
-    //for the benefit of mobile devices trying to read a long suggestion list
-    window.addEventListener("scroll", function() {
-        if ($("#suggestions").css("display") == "block") {
-            //start timer to make suggestions box disappear after 3sec
-            clearTimeout(_timer);
-            // _timer = setTimeout(hideSearchSuggestions, 3000);
-        }
-    });
 }
-
-//detect if mobile,
-//window.addEventListener('scroll', function() { alert("Scrolled"); });
 
 //hides search results and clears input when user clicks outside the results
 $("html").click(function (e) {
