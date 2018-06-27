@@ -31,7 +31,7 @@ function initKeyboardNav() {
 
     $("#suggestions").keydown(function (e) {
         var curSelected = $(":focus");
-        if (e.which == 40) { //down arrow
+        if (e.which == 40 || e.which == 39) { //down or right arrow
             var toSelect = $(
                 curSelected.next("li")[0] || 
                 curSelected.next("ul").find("li").first()[0] ||
@@ -40,7 +40,7 @@ function initKeyboardNav() {
             if (toSelect) {
                 toSelect.focus();
             }
-        } else if (e.which == 38) { //up arrow
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow
             var toSelect = $(
                 curSelected.prev("li")[0] || 
                 curSelected.prev("ul").find("li").first()[0] ||

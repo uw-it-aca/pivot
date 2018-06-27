@@ -321,7 +321,7 @@ function initKeyboardNav() {
         var selectedLabel = allSelected.filter("label");
         var selectedLegend = allSelected.filter("fieldset").find("legend");
 
-        if (e.which == 40) { //down arrow
+        if (e.which == 40 || e.which == 39) { //down or right arrow
             //We want the element immediately before the next input
             //Since there's a br between labels, we should select that if we're on a label
             //if we're on legend, don't select the br because there isn't one
@@ -336,7 +336,7 @@ function initKeyboardNav() {
             if (next) {
                 $(next).focus();
             }
-        } else if (e.which == 38) { //up arrow
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow
             //We want the element immediately after the next input to be selected
             //if theres a br before this input, select that, otherwise, select the input
             //if an input isn't selected, the legend must be since thats the only other focusable
