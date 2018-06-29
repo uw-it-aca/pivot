@@ -303,6 +303,63 @@ function iqr(k) {
 
 /***SEARCH***/
 
+function initKeyboardNav() {
+    $("#search").keydown(function (e) {
+        if (e.which == 40) {
+            var toBeFocused = $("#suggestions").find("legend").first()
+        } else if (e.which == 38) {
+            var toBeFocused =  $("#suggestions").find("input").last();
+        }
+
+        if (toBeFocused) {
+            toBeFocused.focus();
+        }
+    });
+
+    $("#suggestions").keydown(function (e) {
+        var allSelected = $("*").has(":focus");
+        var selectedLabel = allSelected.filter("label");
+        var selectedLegend = allSelected.filter("fieldset").find("legend");
+
+        if (e.which == 40 || e.which == 39) { //down or right arrow
+            //We want the element immediately before the next input
+            //Since there's a br between labels, we should select that if we're on a label
+            //if we're on legend, don't select the br because there isn't one
+            var selected = $(selectedLabel.next()[0] || selectedLegend[0]);
+            //Next input in the same fieldset
+            var nextInput = selected.next("label").find("input");
+            //legend of the next fieldset
+            var nextFieldset = selected.parent("fieldset").next().find("legend");
+            //if there is a next input in the same fieldset, use it. 
+            //otherwise use the legend of the next fieldset
+            var next = nextInput[0] || nextFieldset[0];
+            if (next) {
+                $(next).focus();
+            }
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow
+            //We want the element immediately after the next input to be selected
+            //if theres a br before this input, select that, otherwise, select the input
+            //if an input isn't selected, the legend must be since thats the only other focusable
+            var selected = $(selectedLabel.prev("br")[0] || selectedLabel[0] || selectedLegend[0]);
+            //Previous input or legend in the same fieldset   
+            var prevLegend = selected.prev("legend");
+            var prevInput = selected.prev("label").find("input");
+            //Last input in the previous fieldset
+            var prevFieldset = selected.parent("fieldset").prev().find("input").last();
+            //if the previous element is the legend, select it
+            //otherwise if there is a previous input in the same fieldset, use it. 
+            //otherwise use the last input in the previous one
+            var prev = prevLegend[0] || prevInput[0] || prevFieldset[0];
+            if (prev) {
+                $(prev).focus();
+            }
+        } else if (e.which == 32 || e.which == 13) { //select with space key
+            e.preventDefault();
+            $(":focus").trigger("click");
+        }
+    });
+}
+
 //Displays majors matching search term
 function displayResults() {
     // Compile the Handlebars template for displaying results
@@ -356,7 +413,7 @@ function displayResults() {
                 status: checked,
                 data: _completeMajorMap[maj]["major_full_nm"].replace(new RegExp("\\b" + search_val, "ig"), "<b>" + substring + "</b>")
             }));
-            $(appendTo + " li:last").data("code", maj);
+            $(appendTo + " label:last").data("code", maj);
             count++;
         }
         //else if nothing has been entered but a college is selected, load all majors in college & any previous selections
@@ -377,15 +434,12 @@ function displayResults() {
                     status: checked,
                     data: _completeMajorMap[maj]["major_full_nm"]
                 }));
-                $(appendTo + " li:last").data("code", maj);
+                $(appendTo + " label:last").data("code", maj);
                 count++;
             }
         }
     }
 
-    //start timer to make suggestions box disappear after 1sec
-    clearTimeout(_timer);
-    // _timer = setTimeout(hideSearchSuggestions, 3000);
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -418,12 +472,9 @@ function showCurrentSelections() {
             status: "checked",
             data: _completeMajorMap[$(this).text()]["major_full_nm"]
         }));
-        $(appendTo + " li:last").data("code", $(this).text());
+        $(appendTo + " label:last").data("code", $(this).text());
     });
 
-    //start timer to make suggestions box disappear after 3sec
-    clearTimeout(_timer);
-    // _timer = setTimeout(hideSearchSuggestions, 3000);
 }
 
 //Checks if multiple majors have been selected
@@ -481,7 +532,7 @@ function updateEvents() {
     );
 
     //Update selected majors when user clicks on suggested major
-    $("#suggestions li.suggested_major").click(function (e) {
+    $("#suggestions label.suggested_major").click(function (e) {
         if (!$(e.target).is("input:checkbox")) {
             e.preventDefault();
             $(this).find("input:checkbox").prop("checked", !$(this).find("input:checkbox").prop("checked"));
@@ -505,9 +556,6 @@ function updateEvents() {
             list.push($(this).text());
         });
 
-        //start timer to make suggestions box disappear after 3sec
-        clearTimeout(_timer);
-        // _timer = setTimeout(hideSearchSuggestions, 3000);
 
         // Draw data table(s) if list is not empty otherwise clear
         // the table
@@ -526,19 +574,7 @@ function updateEvents() {
         }
         
     });
-
-    //for the benefit of mobile devices trying to read a long suggestion list
-    window.addEventListener("scroll", function() {
-        if ($("#suggestions").css("display") == "block") {
-            //start timer to make suggestions box disappear after 3sec
-            clearTimeout(_timer);
-            // _timer = setTimeout(hideSearchSuggestions, 3000);
-        }
-    });
 }
-
-//detect if mobile,
-//window.addEventListener('scroll', function() { alert("Scrolled"); });
 
 //hides search results and clears input when user clicks outside the results
 $("html").click(function (e) {
@@ -579,7 +615,7 @@ function goSearch() {
     if (search != "" && selectedCol == "All") {
         //Only if user has not made new selections
         if (!_searchResultsChecked) {
-            $("#suggestions li.suggested_major").each(function() {
+            $("#suggestions label.suggested_major").each(function() {
                 // Only add this to new majors if it isn't already checked
                 if(!$(this).find("input").is(":checked")) {
                     newMajors += template({
@@ -593,12 +629,12 @@ function goSearch() {
     //else if any text in search field and dropdown != All, show matching majors from that college - if no matching majors in that college: error message should make that clear... matching items in ul#selectedCollege
     else if (search != "" && selectedCol != "All") {
         //Add error message if nothing found
-        if ($("#selectedCollege li.suggested_major").length == 0) {
+        if ($("#selectedCollege label.suggested_major").length == 0) {
             results = true; //not technically true but used to override generic error
         } else {
             //Only if user has not made new selections
             if (!_searchResultsChecked) {
-                $("#selectedCollege li.suggested_major").each(function() {
+                $("#selectedCollege label.suggested_major").each(function() {
                     newMajors += template({
                         chosen: $(this).data("code")
                     });

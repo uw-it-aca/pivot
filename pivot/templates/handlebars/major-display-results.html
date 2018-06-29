@@ -1,11 +1,10 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "major-display-results" %}
 
-<li class='suggested_major' tabindex="-1">
-    <label tabindex="-1">
-        <input type='checkbox' {{ status }} tabindex="0" />
-        &nbsp;{{{ data }}}
-    </label>
-</li>
+<label class="suggested_major" tabindex="-1">
+    <input type='checkbox' {{ status }} tabindex="0" />
+    &nbsp;{{{ data }}}
+</label>
+<br>
 
 {% endtplhandlebars %}
