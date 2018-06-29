@@ -315,6 +315,8 @@ function init_search_events() {
     });
 
     initKeyboardNav();
+}
+
 
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
