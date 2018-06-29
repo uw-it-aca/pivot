@@ -14,6 +14,48 @@ function checkStoredData() {
 }
 
 /***SEARCH***/
+
+
+function initKeyboardNav() {
+    $("#search").keydown(function (e) {
+        if (e.which == 40) {
+            var toBeFocused = $("#suggestions").find("h3").first()
+        } else if (e.which == 38) {
+            var toBeFocused =  $("#suggestions").find("li").last();
+        }
+
+        if (toBeFocused) {
+            toBeFocused.focus();
+        }
+    });
+
+    $("#suggestions").keydown(function (e) {
+        var curSelected = $(":focus");
+        if (e.which == 40 || e.which == 39) { //down or right arrow
+            var toSelect = $(
+                curSelected.next("li")[0] || 
+                curSelected.next("ul").find("li").first()[0] ||
+                curSelected.parent("ul").next("h3")[0]
+            );
+            if (toSelect) {
+                toSelect.focus();
+            }
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow
+            var toSelect = $(
+                curSelected.prev("li")[0] || 
+                curSelected.prev("ul").find("li").first()[0] ||
+                curSelected.parent("ul").prev("h3")[0]
+            );
+            if (toSelect) {
+                toSelect.focus();
+            }
+        } else if (e.which == 32 || e.which == 13) { //select with space key
+            e.preventDefault();
+            curSelected.trigger("click");
+        }
+    });
+}
+
 //Item selection
 function updateEvents() {
     $("#suggestions li").hover(
@@ -228,6 +270,7 @@ function multipleResults() {
     $(".no-results-warning").html(template({search: search_key}));
 }
 
+//Displays a message when a protected major is selected
 function protectedResult(maj) {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
@@ -273,7 +316,8 @@ function listCoursesForMajor(maj) {
 
     // If the course has a -1 in it, that means that this major is protected
     // (does not have more than 5 students), so display an alert
-    if(Object.keys(courses).some(function(k){ return ~k.indexOf("-1") })){
+    var studentCounts = Object.values(courses).map(value => value["student_count"]);
+    if(studentCounts.some(function(k){ return ~k.indexOf("-1") })){
        protectedResult(maj);
        return;
     }

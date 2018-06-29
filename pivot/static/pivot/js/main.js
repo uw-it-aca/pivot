@@ -15,10 +15,12 @@ var all_data_loaded = false;
 var _searchResultsChecked = false;
 
 /**** SETUP ****/
-if (window.location.search == "?slow") {
-    window.setTimeout(function() { getDataNameMap(); }, 5000);
-} else {
-    getDataNameMap();
+if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
+    if (window.location.search == "?slow") {
+        window.setTimeout(function() { getDataNameMap(); }, 5000);
+    } else {
+        getDataNameMap();
+    }
 }
 
 // initializes app
@@ -41,8 +43,11 @@ function initOnboardingDialog() {
         isPermForgotten = isPermForgotten == null ? false : isPermForgotten;
         // if the modal has not been permanently forgotten, show it
         if (isPermForgotten == false || isPermForgotten == "false") {
-	     $("#onboard-modal").modal("show");
-	     $("#close-modal-btn-top").focus();
+            // focus the close button once the modal is shown
+            $("#onboard-modal").on("shown.bs.modal", function () {
+                $("#close-modal-btn-top").focus();
+            });
+            $("#onboard-modal").modal("show");
         } else {
             // set temp forgotten to represent forgotten state to
             // prevent execution of multiple if conditions
@@ -297,9 +302,9 @@ function init_search_events() {
     //Keyboard navigation for search input field
     $("#search").keydown(function(e) {
         //suggestions will be checkboxes on the major page but lis on courses
-        var inputs = $("#suggestions li.suggested_major input");
+        var inputs = $("#suggestions .suggested_major input");
         //if the input exists, use it, otherwise use the li
-        var suggestedMajor = inputs.length ? inputs : $("#suggestions li.suggested_major");
+        var suggestedMajor = inputs.length ? inputs : $("#suggestions .suggested_major");
         if (e.which == 40) { //down arrow key - go to first suggestion
             suggestedMajor.first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
@@ -309,68 +314,7 @@ function init_search_events() {
         }
     });
 
-    //Keyboard navigation for search suggestions/results box
-    $("#suggestions").keydown(function(e) {
-        clearTimeout(_timer); //cancel timer checking for inactivity
-        var major;
-
-        var curSelected = $("li.suggested_major").has(":focus").addBack(":focus");
-
-        if (e.which == 40) { //down arrow key
-            e.preventDefault();
-            if (!curSelected.next().is(".divider")) {
-                if (!curSelected.is("#suggestions ul:last-child li.suggested_major:last-child")) {
-                    major = curSelected.next().find("input");
-                    if (!major.length) {
-                        major = curSelected.next();
-                    }
-                } else {
-                    //focus the input if it exists, the li if it doesn't
-                    major = $("suggestions li.suggested_major").first().find("input");
-                    if (!major.length) {
-                        major = $("#suggestions li.suggested_major").first();
-                    }
-                }
-            } else {
-                major = curSelected.parent("ul").next().children("li.suggested_major").first().find("input");
-                if(!major.length){
-                    major = curSelected.parent("ul").next().children("li.suggested_major").first();
-                }
-            }
-            major.focus();
-        } else if (e.which == 38) { //up arrow key
-            e.preventDefault();
-            if (!curSelected.prev().is(".dropdown-header")) {
-                major = curSelected.prev().find("input");
-
-                if (!major.length) {
-                    major = curSelected.prev();
-                }
-            } else {
-                if (!curSelected.is("#suggestions ul:first-child li.suggested_major:first-child")) {
-                    major = curSelected.parent("ul").prev().children("li.suggested_major").last().find("input");
-
-                    if (!major.length) {
-                        major = curSelected.parent("ul").prev().children("li.suggested_major").last();
-                    }
-                } else { 
-                    major = $("#suggestions li.suggested_major").last().find("input");
-
-                    if (!major.length) {
-                        major = $("#suggestions li.suggested_major").last();
-                    }
-                }
-            }
-            major.focus();
-        } else if (e.which == 32 || e.which == 13) { //select with space key
-            e.preventDefault();
-            //curSelected.find("input").trigger("click");
-            curSelected.trigger("click");
-        }
-    });
-
-}
-
+    initKeyboardNav();
 
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
@@ -378,7 +322,11 @@ function prepareResults(e) {
     if ($(".dropdown-menu").css("display") != "none") {
         $("#dropdownMenu").dropdown("toggle");
     }
-    var source = $("#prepare-results").html();
+    if (window.location.pathname == "/major-gpa/") {
+        var source = $("#major-prepare-results").html();
+    } else {
+        var source = $("#prepare-results").html();
+    }
     var template = Handlebars.compile(source);
     $("#suggestions").html(template({
         selected_campus: $("#dropdownMenu").val(),
@@ -421,12 +369,15 @@ function finishResults() {
 
     if ($("#dropdownMenu").val() == "All")
         $("#selectedCollege").remove();
+        if ($("#selectedCollegeHeader")[0]) {
+            $("#selectedCollegeHeader").remove();
+        }
     else {
-        if (all_data_loaded && $("#selectedCollege li").length == 1 && $("#dropdownMenu").val() != "All") {
+        if (all_data_loaded && $("#selectedCollege .suggested_major").length == 1 && $("#dropdownMenu").val() != "All") {
             $("#selectedCollege").append(template({
                 message: "No matching major in this college"
             }));
-        } else if ($("#selectedCollege li").length == 1 && $("#dropdownMenu").val() != "All") {
+        } else if ($("#selectedCollege .suggested_major").length == 1 && $("#dropdownMenu").val() != "All") {
             $("#selectedCollege").append(template({
                 message: "Loading..."
             }));
@@ -435,29 +386,41 @@ function finishResults() {
     }
 
     // Handle current campus
-    if ($("#currentCampus li").length == 0) {
+    if ($("#currentCampus .suggested_major").length == 0) {
         $("#currentCampus").remove();
+        if ($("#currentCampusHeader")[0]) {
+            $("#currentCampusHeader").remove();
+        } 
     } else {
         $("#currentCampus").append(template_divider({}));
     }
 
     // Handle bothell campus
-    if ($("#bothellCampus li").length == 0) {
+    if ($("#bothellCampus .suggested_major").length == 0) {
         $("#bothellCampus").remove();
+        if ($("#bothellCampusHeader")[0]) {
+            $("#bothellCampusHeader").remove();
+        } 
     } else {
         $("#bothellCampus").append(template_divider({}));
     }
 
     // Handle seattle campus
-    if ($("#seattleCampus li").length == 0) {
+    if ($("#seattleCampus .suggested_major").length == 0) {
         $("#seattleCampus").remove();
+        if ($("#seattleCampusHeader")[0]) {
+            $("#seattleCampusHeader").remove();
+        } 
     } else {
         $("#seattleCampus").append(template_divider({}));
     }
 
     // Handle tacoma campus
-    if ($("#tacomaCampus li").length == 0) {
+    if ($("#tacomaCampus .suggested_major").length == 0) {
         $("#tacomaCampus").remove();
+        if ($("#tacomaCampusHeader")[0]) {
+            $("#tacomaCampusHeader").remove();
+        } 
     } else {
         $("#tacomaCampus").append(template_divider({}));
     }

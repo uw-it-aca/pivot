@@ -63,6 +63,7 @@ class DataFileView(View):
             for row in csv_reader:
                 for index in check_index:
                     row[index] = row[index].replace("&", "_AND_")
+                    row[index] = row[index].replace(":", "_")
                 cw.writerow(row)
             return si.getvalue().strip('\r\n')
 
