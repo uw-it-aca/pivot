@@ -312,6 +312,69 @@ function init_search_events() {
     });
 
     initKeyboardNav();
+/*
+    //Keyboard navigation for search suggestions/results box
+    $("#suggestions").keydown(function(e) {
+        clearTimeout(_timer); //cancel timer checking for inactivity
+        var major;
+
+        var curSelected = $("label.suggested_major").has(":focus").addBack(":focus");
+
+        if (e.which == 40) { //down arrow key
+            e.preventDefault();
+            if (!curSelected.next().is(".divider")) {
+                if (!curSelected.is("#suggestions fieldset:last-child label.suggested_major:last-child")) {
+                    major = curSelected.next().find("input");
+                    if (!major.length) {
+                        major = curSelected.next();
+                    }
+                } else {
+                    //focus the input if it exists, the label if it doesn't
+                    major = $("suggestions label.suggested_major").first().find("input");
+                    if (!major.length) {
+                        major = $("#suggestions label.suggested_major").first();
+                    }
+                }
+            } else {
+                major = curSelected.parent("fieldset").next().children("label.suggested_major").first().find("input");
+                if(!major.length){
+                    major = curSelected.parent("fieldset").next().children("label.suggested_major").first();
+                }
+            }
+            major.focus();
+        } else if (e.which == 38) { //up arrow key
+            e.preventDefault();
+            if (!curSelected.prev().is(".dropdown-header")) {
+                major = curSelected.prev().find("input");
+
+                if (!major.length) {
+                    major = curSelected.prev();
+                }
+            } else {
+                if (!curSelected.is("#suggestions fieldset:first-child label.suggested_major:first-child")) {
+                    major = curSelected.parent("fieldset").prev().children("label.suggested_major").last().find("input");
+
+                    if (!major.length) {
+                        major = curSelected.parent("fieldset").prev().children("label.suggested_major").last();
+                    }
+                } else { 
+                    major = $("#suggestions label.suggested_major").last().find("input");
+
+                    if (!major.length) {
+                        major = $("#suggestions label.suggested_major").last();
+                    }
+                }
+            }
+            major.focus();
+        } else if (e.which == 32 || e.which == 13) { //select with space key
+            e.preventDefault();
+            //curSelected.find("input").trigger("click");
+            curSelected.trigger("click");
+        }
+    });
+*/
+}
+
 
 //Create the areas of the search suggestions box - one area for the currently selected college (if any) and one for each campus
 function prepareResults(e) {
