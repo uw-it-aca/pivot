@@ -1,4 +1,4 @@
-
+@import (reference) '../../vendor/css/bootstrap.less';
 
 /* ==========================================================================
    MAIN STYLE
@@ -1039,8 +1039,12 @@ ul, fieldset {
 	font-weight: 600;
 }
 
-.dropdown-menu>li>ul {
-    &:extend(.dropdown-menu all);
+.dropdown-menu>li>ul>li {
+    &:extend(.dropdown-menu>li all);
+}
+
+.dropdown-menu>li>ul>.active>a {
+    &:extend(.dropdown-menu>.active>a all);
 }
 
 /* Collge list header -- TO-DO: add to college dropdown js */

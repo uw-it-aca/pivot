@@ -302,7 +302,50 @@ function init_search_events() {
         window.setTimeout(function() {
             $("#college-dropdown>ul>li[aria-selected]>a").focus();
         }, 100);
+    });
 
+    //disable bootstrap default keyboard navingation
+    $(document).off("keydown.dropdown.data-api");
+
+    //arrow key navigation for dropdown menu
+    $(".dropdown-menu").keydown(function (e) {
+        if (e.which == 40) { //down arrow key { 
+            var allFocused = $("*").has(":focus").addBack(":focus");
+            var curFocused = $(
+                allFocused.filter(".college-list")[0] || //college focused?
+                allFocused.filter(".dropdown-header")[0] || //campus focused?
+                allFocused.filter(".dropdown-menu>li")[0] //All focused?
+            );
+            //first college in selected campus
+            var firstChild = curFocused.find(".college-list").first().find("a")[0];
+            //next college
+            var nextCollege = curFocused.next(".college-list").find("a")[0];
+            //next campus
+            var nextCampus = 
+                curFocused.parents(".dropdown-header").next(".divider").next(".dropdown-header")[0] ||
+                curFocused.next(".divider").next(".dropdown-header")[0];
+            var toBeFocused = $(firstChild || nextCollege || nextCampus); 
+            toBeFocused.focus();
+        } else if (e.which == 38) { //up arrow key { 
+            var allFocused = $("*").has(":focus").addBack(":focus");
+            var curFocused = $(
+                allFocused.filter(".college-list")[0] || //college focused?
+                allFocused.filter(".dropdown-header")[0] || //campus focused?
+                allFocused.filter(".dropdown-menu>li")[0] //All focused?
+            );
+            //last college in selected campus
+            var lastChild = curFocused.find(".college-list").last().find("a")[0];
+            //prev college
+            var prevCollege = curFocused.prev(".college-list").find("a")[0];
+            //prev campus
+            var prevCampus = 
+                curFocused.parents(".dropdown-header").prev(".divider").prev(".dropdown-header")[0] ||
+                curFocused.prev(".divider").prev(".dropdown-header")[0];
+            var toBeFocused = $(lastChild || prevCollege || prevCampus); 
+            toBeFocused.focus();
+        } else if (e.which == 32 || e.which == 13) { //select with space/enter
+           $(":focus").trigger("click"); 
+        }
     });
 
     //Keyboard navigation for search input field
