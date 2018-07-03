@@ -1028,27 +1028,53 @@ ul, fieldset {
 }
 
 /* Override Bootstrap positioning */
-#college-dropdown .dropdown-menu {
+#college-dropdown .pivot-dropdown-menu {
     top:42px;
 }
 
 /* Search suggestion list header spacing */
-.dropdown-header {
+.pivot-dropdown-header {
 	padding: 10px;
 	line-height: 1.5em;
 	font-weight: 600;
 }
 
-.dropdown-menu>li>ul {
-    &:extend(.dropdown-menu all);
+.pivot-dropdown-nested {
+    margin: 0 -10px;
+    padding-right: 0;
 }
 
-/* Collge list header -- TO-DO: add to college dropdown js */
 .college-list {
-	padding-left: 10px;
+
+    padding-left: 0;    
 	font-weight: 400;
 	line-height: 2em;
 	font-size: 14px;
+
+    a {
+        display: block;
+        padding: 3px 20px;
+        clear: both;
+        font-weight: 400;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: nowrap; 
+
+        &:hover {
+            background-color: #e8e8e8;
+            background-image: linear-gradient(to bottom,#f5f5f5 0,#e8e8e8 100%);
+            background-repeat: repeat-x;
+        }
+    }
+
+    &.active>a {
+        background-color: #2e6da4;
+        background-image: linear-gradient(to bottom,#337ab7 0,#2e6da4 100%);
+        background-repeat: repeat-x;
+        color: #fff;
+        text-decoration: none;
+        outline: 0;
+    }
 }
 
   /* ==========================================================================
@@ -1091,7 +1117,7 @@ ul, fieldset {
     body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
     /* collge drop-down for narrow width */
-    #college-dropdown .dropdown-menu>li {
+    #college-dropdown .pivot-dropdown-menu>li {
 	    white-space: normal;
 	    min-width: 260px;
     }
