@@ -281,6 +281,12 @@ function init_search_events() {
     //When user clicks or tabs in to search field...
     $("#search").on("focus", function() {
         _searchResultsChecked = false;
+        //test if the text is an error messae
+        var search_val = $("#search").val();
+        var placeholder = /[0-9]+\smajor[s]*\sselected/.test(search_val);
+        if (placeholder) {
+            $("#search").val("");
+        }
         prepareResults();
     });
 
