@@ -79,7 +79,7 @@ class DataFileByQuarterView(DataFileView):
 
     end_term = term.get_current_term()
     # last two digits of year
-    end_year = end_term.year[2:]
+    end_year = end_term.year % 100
     # first two letters of quarter
     end_quarter = end_term.quarter[:2]
     num_qtrs = 8
