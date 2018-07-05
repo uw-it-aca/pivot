@@ -9,14 +9,16 @@ except ImportError:
 try:
     from urllib.parse import urljoin
     from urllib.request import urlopen
+    from urllib.error import URLError
 except ImportError:
     # for Python 2.7 compatibility
     from urlparse import urljoin
     from urllib2 import urlopen
+    from urllib2 import URLError
 
 from django.shortcuts import render
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
 from uw_sws import term
 
@@ -73,38 +75,42 @@ class DataFileByQuarterView(DataFileView):
     """ Base class for views that take a time period queries
     """
 
-    base_file_name = ""
-
-    end_term = term.get_current_term()
-    # last two digits of year
-    end_year = end_term.year % 100
-    # first two letters of quarter
-    end_quarter = end_term.quarter[:2]
-    num_qtrs = 8
+    base_file_name = None
 
     def get(self, request):
-        if request.GET["end_yr"]:
-            end_year = request.GET["end_yr"]
-        if request.GET["end_qtr"]:
-            end_quarter = request.GET["end_qtr"]
-        if request.GET["num_qtrs"]:
-            num_qtrs = request.GET["num_qtrs"]
+        previous_term = term.get_previous_term()
+        end_year = request.GET.get("end_yr", str(previous_term.year % 100))
+        if len(end_year) > 2:
+            return HttpResponseBadRequest()
 
-        file_name = end_quarter + end_year + "_" + num_qtrs \
-            + "qtrs_" + base_file_name
-        super.get()
+        end_quarter = request.GET.get("end_qtr", previous_term.quarter[:2])
+        if end_quarter not in ["au", "wi", "sp", "su"]:
+            return HttpResponseBadRequest()
+
+        num_qtrs = request.GET.get("num_qtrs", "8")
+        if str(int(num_qtrs)) != num_qtrs:
+            return HttpResponseBadRequest()
+
+        self.file_name = end_quarter + end_year + "_" + num_qtrs \
+            + "qtrs_" + self.base_file_name
+
+        try:
+            return super(DataFileByQuarterView, self).get(request)
+        except URLError:
+            # TODO: Replace with HTTP 416 error
+            return HttpResponseBadRequest()
 
 
-class MajorCourse(DataFileView):
-    file_name = "Majors_and_Courses.csv"
+class MajorCourse(DataFileByQuarterView):
+    base_file_name = "Majors_and_Courses.csv"
 
 
 class DataMap(DataFileView):
     file_name = "Data_Map.csv"
 
 
-class StudentData(DataFileView):
-    file_name = "Student_Data_All_Majors.csv"
+class StudentData(DataFileByQuarterView):
+    base_file_name = "Student_Data_All_Majors.csv"
 
 
 class StatusLookup(DataFileView):
