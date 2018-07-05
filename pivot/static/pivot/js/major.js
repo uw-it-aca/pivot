@@ -731,6 +731,9 @@ function clear_results() {
     storeSelections(null, null);
 }
 
+/**** SELECT YEAR ****/
+
+
 /**** MISC ****/
 //redraw data table if window is resized
 d3.select(window).on('resize', resizeCharts);
