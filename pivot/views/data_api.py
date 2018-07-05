@@ -18,6 +18,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse
 from django.conf import settings
+from uw_sws import term
 
 
 class DataFileView(View):
@@ -66,6 +67,32 @@ class DataFileView(View):
                     row[index] = row[index].replace(":", "_")
                 cw.writerow(row)
             return si.getvalue().strip('\r\n')
+
+
+class DataFileByQuarterView(DataFileView):
+    """ Base class for views that take a time period queries
+    """
+
+    base_file_name = ""
+
+    end_term = term.get_current_term()
+    # last two digits of year
+    end_year = end_term.year[2:]
+    # first two letters of quarter
+    end_quarter = end_term.quarter[:2]
+    num_qtrs = 8
+
+    def get(self, request):
+        if request.GET["end_yr"]:
+            end_year = request.GET["end_yr"]
+        if request.GET["end_qtr"]:
+            end_quarter = request.GET["end_qtr"]
+        if request.GET["num_qtrs"]:
+            num_qtrs = request.GET["num_qtrs"]
+
+        file_name = end_quarter + end_year + "_" + num_qtrs \
+            + "qtrs_" + base_file_name
+        super.get()
 
 
 class MajorCourse(DataFileView):
