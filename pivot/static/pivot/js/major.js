@@ -97,6 +97,7 @@ function createMajorCard(majors, gpa) {
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
+        showYearSelectModule();
     } else {
         // There were no majors we could display
         $(".results-section").css("display","none");
@@ -732,7 +733,14 @@ function clear_results() {
 }
 
 /**** SELECT YEAR ****/
+//Adds the "Compare your GPA" module
+function showYearSelectModule() {
+    // Compile show-compare-module Handlebars template
+    var source =  $("#show-year-select-module").html();
+    var template = Handlebars.compile(source);
 
+    $(".yourgpa-box").prepend(template());
+}
 
 /**** MISC ****/
 //redraw data table if window is resized
