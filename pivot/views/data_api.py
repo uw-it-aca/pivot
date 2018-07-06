@@ -81,24 +81,33 @@ class DataFileByQuarterView(DataFileView):
         previous_term = term.get_previous_term()
         end_year = request.GET.get("end_yr", str(previous_term.year % 100))
         if len(end_year) > 2:
-            return HttpResponseBadRequest()
+            return HttpResponseBadRequest("Year must be in a 2 digit format")
 
         end_quarter = request.GET.get("end_qtr", previous_term.quarter[:2])
         if end_quarter not in ["au", "wi", "sp", "su"]:
-            return HttpResponseBadRequest()
+            return HttpResponseBadRequest("Quarter must be one of 'au',"
+                                          + " 'sp', 'wi', or 'su'")
 
         num_qtrs = request.GET.get("num_qtrs", "8")
-        if str(int(num_qtrs)) != num_qtrs:
-            return HttpResponseBadRequest()
 
-        self.file_name = end_quarter + end_year + "_" + num_qtrs \
+        try:
+            int(num_qtrs)
+        except ValueError:
+            return HttpResponseBadRequest("Number of quarters must be"
+                                          + " an integer")
+
+        if int(num_qtrs) < 1:
+            return HttpResponseBadRequest("Number of quarters must be"
+                                          + " at least 1")
+
+        self.file_name = end_quarter + end_year + "_" + num_qtrs\
             + "qtrs_" + self.base_file_name
 
         try:
             return super(DataFileByQuarterView, self).get(request)
         except URLError:
-            # TODO: Replace with HTTP 416 error
-            return HttpResponseBadRequest()
+            return HttpResponse("There is no data for the"
+                                + " requested time period", status=416)
 
 
 class MajorCourse(DataFileByQuarterView):
