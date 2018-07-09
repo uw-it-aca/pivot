@@ -146,7 +146,7 @@ a.skip-to-main:focus {
 }
 
 
-}/* CLEAN UP: WHERE'S THE OPENING?*/
+/* CLEAN UP: WHERE'S THE OPENING?*/
 
 /* Remove bold from the form */
 label{
@@ -1028,45 +1028,68 @@ ul, fieldset {
 }
 
 /* Override Bootstrap positioning */
-#college-dropdown .dropdown-menu {
+#college-dropdown .pivot-dropdown-menu {
     top:42px;
 }
 
-
 /* Search suggestion list header spacing */
-.dropdown-header {
-    display: inline;
-    margin-bottom: 0;
-    border-bottom: 0;
-	padding:5px 20px 10px 0px;
-    font-weight: normal;
-}
-
-h3.dropdown-header {
-    margin-left: 10px;
-}
-
-/* Collge list header -- TO-DO: add to college dropdown js */
-.college-list {
-	padding-left: 10px;
+.pivot-dropdown-header {
+	padding: 10px;
+	line-height: 1.5em;
 	font-weight: 600;
+}
 
+.pivot-dropdown-nested {
+    margin: 0 -10px;
+    padding-right: 0;
+}
+
+.college-list {
+    padding-left: 0;    
+    font-weight: 400;
+    line-height: 2em;
+    font-size: 14px;
+
+    a {
+        display: block;
+        padding: 3px 20px;
+        clear: both;
+        font-weight: 400;
+        line-height: 1.42857143;
+        color: #333;
+        white-space: nowrap; 
+
+        &:hover {
+            background-color: #e8e8e8;
+            background-image: linear-gradient(to bottom,#f5f5f5 0,#e8e8e8 100%);
+            background-repeat: repeat-x;
+        }
+    }
+
+    &.active>a {
+        background-color: #2e6da4;
+        background-image: linear-gradient(to bottom,#337ab7 0,#2e6da4 100%);
+        background-repeat: repeat-x;
+        color: #fff;
+        text-decoration: none;
+        outline: 0;
+    }
 }
 
   /* ==========================================================================
    Med SCREEN
    ========================================================================== */
- @media (max-width: 992px) {
-	 .bar-legend {
-	font-size: 1em;
-	margin-bottom: 10px;
-	margin-left: -15px;
-	padding: 20px;
-	width: 160px;
-}
-.major-height { /* major row height*/
-	max-height: 120px ;
-}
+@media (max-width: 992px) {
+	.bar-legend {
+	    font-size: 1em;
+	    margin-bottom: 10px;
+    	margin-left: -15px;
+	    padding: 20px;
+	    width: 160px;
+    }
+    .major-height { /* major row height*/
+	    max-height: 120px ;
+    }
 }/* end of med screen style */
  /* ==========================================================================
    SMALL SCREEN
@@ -1076,70 +1099,70 @@ h3.dropdown-header {
 @media (max-width: 768px) {
 
 	.login {
-	float: right;
-    margin: auto;
-    padding-top: 35px;
-    padding-bottom: 5px;
-    color: #aaa;
-    font-family: open sans, sans-serif;
-    font-weight: 300;
-    font-size: .9em;
+	    float: right;
+        margin: auto;
+        padding-top: 35px;
+        padding-bottom: 5px;
+        color: #aaa;
+        font-family: open sans, sans-serif;
+        font-weight: 300;
+        font-size: .9em;
 	}
 
-/* .btn-GPS-primary {
-  margin: 10px 15px 10px 0px;  /* Remove the left margin for align left
-  }*/
+/*  .btn-GPS-primary {
+        margin: 10px 15px 10px 0px;  /* Remove the left margin for align left
+    }*/
 
-body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
+    body { cursor: pointer; } /*Makes popovers dismissible on iOS*/
 
-/* collge drop-down for narrow width */
-#college-dropdown .dropdown-menu>li>a {
-	white-space: normal;
-	min-width: 260px;
-}
+    /* collge drop-down for narrow width */
+    #college-dropdown .pivot-dropdown-menu>li {
+	    white-space: normal;
+	    min-width: 260px;
+    }
 
-  /* Selelected: Active & hover  */
-.underline > li.active > a, .underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
-	background-color: #b46100;	 /* orange */
-	border-left:5px solid #b46100;
-	color:white;
-	border-bottom: 0px;
+    /* Selelected: Active & hover  */
+    .underline > li.active > a, .underline > li.active > a:hover, .underline > li > a:hover, .navbar-nav>li>a:focus, .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>.active>a:hover  {
+	    background-color: #b46100;	 /* orange */
+	    border-left:5px solid #b46100;
+	    color:white;
+	    border-bottom: 0px;
 	}
-/*.underline > li.active > a {
-	background-color: #4b2e83;
-	border-left:5px solid #cc721e;
-	color: white;
+/*  .underline > li.active > a {
+	    background-color: #4b2e83;
+	    border-left:5px solid #cc721e;
+	    color: white;
 	}*/
 
-/* Active+hover & focus: Change the background to orange */
- .underline > li.active > a:focus,  .underline > li > a:focus, .navbar-default .navbar-nav>li>a:focus {
-	/* background-color: #b46100; */
-	border-left:5px solid #b46100;
-	color:white;
+    /* Active+hover & focus: Change the background to orange */
+    .underline > li.active > a:focus,  .underline > li > a:focus, .navbar-default .navbar-nav>li>a:focus {
+	    /* background-color: #b46100; */
+	    border-left:5px solid #b46100;
+	    color:white;
 	}
- /* Move the  your GPA form to left */
-.yourgpa-form {
-	float: left;
-}
+    /* Move the  your GPA form to left */
+    .yourgpa-form {
+	    float: left;
+    }
 
-.form-control {
-	display: inline;
-	width: 110px;
-    font-size:16px;
-}
-/* Setting left for mobile */
-.yourgpa {
-	padding-left: 15px;
-}
-/* Setting left for mobile */
-.bar-legend {
-	font-size: 1em;
-	margin-bottom: 10px;
-	margin-left: -15px;
-	padding: 10px;
-	width: 160px;
-}
-.major-height { /* major name row height*/
-	max-height: 120px ;
-}
+    .form-control {
+	    display: inline;
+	    width: 110px;
+        font-size:16px;
+    }
+    /* Setting left for mobile */
+    .yourgpa {
+	    padding-left: 15px;
+    }
+    /* Setting left for mobile */
+    .bar-legend {
+	    font-size: 1em;
+	    margin-bottom: 10px;
+	    margin-left: -15px;
+	    padding: 10px;
+	    width: 160px;
+    }
+    .major-height { /* major name row height*/
+	    max-height: 120px ;
+    }
 }/* end of small screen style */

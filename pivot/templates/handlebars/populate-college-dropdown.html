@@ -10,12 +10,14 @@
         <li class="divider"><hr class="sr-only" /></li>
     {{ /if }}
 
-    <span class="dropdown-header college-list">Colleges in {{ this.campus }} campus:</span>
-
+    <li class="dropdown-header pivot-dropdown-header" tabindex="0">Colleges in {{ this.campus }} campus:
+		<ul style="padding-left: 0px;" class="pivot-dropdown-nested"> <!-- campus as nested list-->
     {{ #each this.colleges }}
         <!--Add colleges here-->
-        <li role="option"><a href="#" class="{{ ../this.campus }}">{{ this }}</a></li>
+        <li class="college-list" role="option"><a href="#" class="{{ ../this.campus }}">{{ this }}</a></li>
     {{ /each }}
+		</ul>
+    </li>
 {{ /each }}
 
 {% endtplhandlebars %}
