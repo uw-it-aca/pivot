@@ -97,7 +97,11 @@ function createMajorCard(majors, gpa) {
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
-        showYearSelectModule();
+        var yearTabId = (
+            new URLSearchParams(window.location.search).get("num_qtrs")
+            || "8"
+        ) + "qtrs" ;
+        showYearSelectModule(yearTabId);
     } else {
         // There were no majors we could display
         $(".results-section").css("display","none");
@@ -733,13 +737,40 @@ function clear_results() {
 }
 
 /**** SELECT YEAR ****/
-//Adds the "Compare your GPA" module
-function showYearSelectModule() {
-    // Compile show-compare-module Handlebars template
+//Adds the year select module
+function showYearSelectModule(yearId) {
+    // Compile show-year-select-module Handlebars template
     var source =  $("#show-year-select-module").html();
     var template = Handlebars.compile(source);
 
     $(".yourgpa-box").prepend(template());
+    $(".pivot-year-selector>li.active").removeClass("active");
+    $("#"+ yearId).addClass("active");
+
+    $(".pivot-year-selector>li").click(function () {
+        $(".pivot-year-selector>li.active").removeClass("active");
+        $(this).addClass("active");
+        
+        var num_qtrs = $(this).attr("data-num-qtrs");
+        var queryStr = "?num_qtrs=" + num_qtrs;
+        try { 
+            getCompleteMajorMap(queryStr);
+        } catch (error) {
+            getDataNameMap();
+        }
+
+        createMajorCard(getSelectedMajorList(), $("input#compare").val());
+    });
+}
+
+function getSelectedMajorList() {
+    //create major list from existing, pass gpa
+    var list = [];
+    $(".chosen_major").each(function() {
+        list.push($(this).text());
+    });    
+
+    return list;
 }
 
 /**** MISC ****/

@@ -16,10 +16,10 @@ var _searchResultsChecked = false;
 
 /**** SETUP ****/
 if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
-    if (window.location.search == "?slow") {
-        window.setTimeout(function() { getDataNameMap(); }, 5000);
+    if (window.location.search.includes("?slow")) {
+        window.setTimeout(function() { getDataNameMap(iwindow.location.search); }, 5000);
     } else {
-        getDataNameMap();
+        getDataNameMap(window.location.search);
     }
 }
 
@@ -81,8 +81,9 @@ function initOnboardingDialog() {
 /**** READ DATA FROM CSV ****/
 
 //Reads file that maps data from course file to major file
-function getDataNameMap() {
-    d3.csv("/api/v1/data_map/", function(d) {
+function getDataNameMap(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/data_map/" + queryStr, function(d) {
         return {
             is_course: d.is_course.trim(),
             is_major: d.is_major.trim(),
@@ -102,13 +103,14 @@ function getDataNameMap() {
                 _campusNameLookup[data[index]["id"]] = data[index]["name"]
             }
         }
-        getCompleteMajorMap();
+        getCompleteMajorMap(queryStr);
     });
 }
 
 //Reads major and course data file
-function getCompleteMajorMap() {
-    d3.csv("/api/v1/major_course/", function(d) {
+function getCompleteMajorMap(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/major_course/" + queryStr, function(d) {
         return {
             major_abbr: d.major_path.trim(),
             course_number: d.course_num.trim(),
@@ -166,14 +168,15 @@ function getCompleteMajorMap() {
                 _completeMajorMap[major]["courses"][cID]["percentiles"][5] = data[index]["course_gpa_50pct"];
             }
         }
-        getMajorStatus();
-        addStudents();
+        getMajorStatus(queryStr);
+        addStudents(queryStr);
     });
 }
 
 //Reads seattle major status file
-function getMajorStatus() {
-    d3.csv("/api/v1/status_lookup/", function (d) {
+function getMajorStatus(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/status_lookup/" + queryStr, function (d) {
         return {
             code: d.code.trim(),
             name: _majorNameLookup[d.code.trim()],
@@ -232,8 +235,9 @@ function displayMajorStatusText(code) {
 }
 
 //Reads student data file
-function addStudents() {
-    d3.csv("/api/v1/student_data/", function (d) {
+function addStudents(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/student_data/" + queryStr, function (d) {
         return {
             major_abbr: d.major_path.trim(),
             college: d.college.trim(),
