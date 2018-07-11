@@ -88,9 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# Prevent accidental data commits
-.csv
-
 # virtualenv
 bin/
 include/
@@ -104,7 +101,7 @@ manage.py
 project/
 
 # pivot data
-data/
+data/*.csv
 
 # DS_Store
 .DS_Store
