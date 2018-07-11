@@ -88,5 +88,5 @@ course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$
 head(course.rank[i,], 30)
 sum(i == T)
 
-write.csv(student.data.all.majors, file = "transformed data/two year window/Student_Data_All_Majors_2yr.csv", row.names = F)
-write.csv(course.rank, file = "transformed data/two year window/Majors_and_Courses_2yr.csv", row.names = F)
+write.csv(student.data.all.majors, file = "transformed data/two year window/wi16_8qtrs_student_data_all_majors.csv", row.names = F)
+write.csv(course.rank, file = "transformed data/two year window/wi16_8qtrs_course_rank.csv", row.names = F)

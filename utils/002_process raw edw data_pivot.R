@@ -4,12 +4,12 @@ gc()
 
 library(tidyverse)
 
-# To access local files/vars that are not part of repo, move up one level from project directory
-# if running 001 then 002 concurrently, this is included to 'reset' 002 in the event that 001 > 002 aren't being
-# run in the same session. Then proceed up a level to the local directory.
+# File for processing EDW data to create pivot files
+# To access local files/vars that are not part of repo, move up one level from project directory.
+# This is included to 'reset' 002 in the event that 001 > 002 aren't being
+# run in the same session.
 setwd(rstudioapi::getActiveProject())
 setwd("..")
-
 
 # in case there are multiple raw data files, load the most recently created
 f <- list.files("raw data/", pattern = "raw", full.names = T)
@@ -20,6 +20,13 @@ options(tibble.print_max = 800)
 
 # custom function to created quoted character vectors from unquoted text
 Cs <- function(...) {as.character(sys.call())[-1]}
+
+# re-wrote to use base r instead of stringr
+df.trimws <- function(df){
+  i <- sapply(df, is.character)
+  df[i] <- lapply(df[i], trimws)
+  return(df)
+}
 
 # reconcile major codes ---------------------------------------------------
 
@@ -34,16 +41,10 @@ major.college$MajorCode[1:4]
 # campus will be lost from code in SDB/AI sources   --ok
 # remove trailing spaces in SDB/AI sources
 
-# trailing spaces (would be good to wrap this in a function that takes a data.frame as the argument at some point? [although that would introduce a dependency on stringr*])
-# * but who wouldn't have stringr lib installed anyway? inconceivable!
-i <- sapply(major.college, is.character)
-major.college[i] <- lapply(major.college[i], str_trim)
-i <- sapply(pre.maj.gpa, is.character)
-pre.maj.gpa[i] <- lapply(pre.maj.gpa[i], str_trim)
-i <- sapply(pre.maj.courses, is.character)
-pre.maj.courses[i] <- lapply(pre.maj.courses[i], str_trim)
-i <- sapply(course.names, is.character)
-course.names[i] <- lapply(course.names[i], str_trim)
+major.college <- df.trimws(major.college)
+pre.maj.gpa <- df.trimws(pre.maj.gpa)
+pre.maj.courses <- df.trimws(pre.maj.courses)
+course.names <- df.trimws(course.names)
 
 # splitting up strings to create common major key
 # I'll do it for all to err on side of caution
@@ -100,12 +101,20 @@ course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi$"
 # Update grades in courses and filter -------------------------------------
 
 # ref: https://www.washington.edu/students/gencat/front/Grading_Sys.html
+# I'm using the tops of the ranges
 pre.maj.courses$course.grade <- recode(pre.maj.courses$course.grade,
-                                       "A" = "40",
-                                       "B" = "31",
-                                       "C" = "21",
-                                       "D" = "11",
-                                       "E" = "00")
+                                       "A"  = "40",
+                                       "A-" = "38",
+                                       "B+" = "34",
+                                       "B"  = "31",
+                                       "B-" = "28",
+                                       "C+" = "24",
+                                       "C"  = "21",
+                                       "C-" = "18",
+                                       "D+" = "14",
+                                       "D"  = "11",
+                                       "D-" = "08",
+                                       "E"  = "00")
 pre.maj.courses <- pre.maj.courses %>%
   mutate(grade = as.numeric(course.grade) / 10) %>%
   filter(is.na(grade) == F)
@@ -297,10 +306,10 @@ head(course.rank[i,], 30)
 # write files -------------------------------------------------------------
 
 outdir <- paste0(getwd(), "/transformed data/")
-write.csv(status.lookup, paste0(outdir, "Status_Lookup.csv"), row.names = F)
+write.csv(status.lookup, paste0(outdir, "status_lookup.csv"), row.names = F)
 # write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
-write.csv(student.data.all.majors, paste0(outdir, "Student_Data_All_Majors.csv"), row.names = F)
-write.csv(data.map, paste0(outdir, "Data_Map.csv"), row.names = F)
-write.csv(course.rank, paste0(outdir, "Majors_and_Courses.csv"), row.names = F)
+write.csv(student.data.all.majors, paste0(outdir, "wi13_20qtrs_student_data_all_majors.csv"), row.names = F)
+write.csv(data.map, paste0(outdir, "data_map.csv"), row.names = F)
+write.csv(course.rank, paste0(outdir, "wi13_20qtrs_course_rank.csv"), row.names = F)
 
 save(list = Cs(active.majors, pre.maj.courses, med.ann, pre.maj.gpa, course.names, major.college), file = "intermediate data/intermediate cleaned files.RData")

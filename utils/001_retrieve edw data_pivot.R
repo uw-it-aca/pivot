@@ -23,6 +23,10 @@ setwd("..")
 
 source("scripts/config.R")
 
+
+# define 5yr (20 quarter) upper boundary via config file, then calc 5 or 2 year cutoffs
+last.major.yrq5 <- max.yrq - 50
+
 # create connections to enterprise data server
 aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
@@ -70,7 +74,8 @@ tb <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment"))
 
 maj.first.yrq <- tb %>%
   filter(ProgramAcademicCareerLevelCode == "UG",
-         ProgramEntryAcademicQtrKeyId >= 20124,
+         ProgramEntryAcademicQtrKeyId >= last.major.yrq5,
+         ProgramEntryAcademicQtrKeyId <= max.yrq,
          PreMajorInd == "N",
          VisitingMajorInd == "N",
          Student_ClassCode < 5,
@@ -106,22 +111,22 @@ pre.maj.gpa <- filter(pre.maj.gpa, !is.na(cgpa))
 table(pre.maj.gpa$yrq >= pre.maj.gpa$yrq.decl)      # should be 100% false
 
 # for curiousity's sake:
-d <- pre.maj.gpa %>%
-  ungroup() %>%
-  select(yrq.decl, yrq) %>%
-  mutate(yra = yrq.decl %/% 10,
-         qa = yrq.decl %% 10,
-         yrb = yrq %/% 10,
-         qb = yrq %% 10,
-         yd = (yra - yrb) * 4,
-         qd = qa - qb,
-         tot = yd + qd)
-cbind(table(d$tot))
-table(cut(d$tot, 5))
+# d <- pre.maj.gpa %>%
+#   ungroup() %>%
+#   select(yrq.decl, yrq) %>%
+#   mutate(yra = yrq.decl %/% 10,
+#          qa = yrq.decl %% 10,
+#          yrb = yrq %/% 10,
+#          qb = yrq %% 10,
+#          yd = (yra - yrb) * 4,
+#          qd = qa - qb,
+#          tot = yd + qd)
+# cbind(table(d$tot))
+# table(cut(d$tot, 5))
 
 
 # Transcripts from pre-declared-major quarters ----------------------
-rm(x, y, tb)
+rm(x, tb)
 
 # dplyr syntax doesn't have a good way to filter from w/in the query so use this list of students and join
 # and the database uses YYYY and Q separately by default
@@ -153,7 +158,7 @@ pre.maj.courses <- left_join(pre.maj.gpa, x, by = "sys.key") %>% select(-yrq, -c
 
 
 # course names ------------------------------------------------------------
-rm(x, y, tb)
+rm(x, tb)
 
 tb <- tbl(aicon, in_schema("sec", "IV_CourseSections"))
 # nb: campus in this table is associated with the course, not the degree - the transcript file
@@ -170,7 +175,7 @@ course.names <- tb %>%
 
 # integrity checks so far (wip) --------------------------------------------
 
-rm(x, y, tb)
+rm(x, tb)
 
 # tabulate students per major
 t <- table(pre.maj.gpa$maj.code)
@@ -212,6 +217,9 @@ active.majors[active.majors$maj.path %in% i,]
 # check that same num/set of student ids are in both gpa and courses
 length(unique(pre.maj.gpa$sys.key))
 length(unique(pre.maj.courses$sys.key))
+
+
+
 
 
 # Write data ---------------------------------------------------------------
