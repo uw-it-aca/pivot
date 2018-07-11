@@ -111,3 +111,4 @@ data/
 
 # vim
 *.swp
+.Rproj.user
