@@ -111,4 +111,6 @@ data/
 
 # vim
 *.swp
+
+#R Studio
 .Rproj.user
