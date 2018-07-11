@@ -51,13 +51,20 @@ function createMajorCard(majors, gpa) {
     var valid_majors = 0;
     var protected_list = [];
 
+    //see if there's data, and dispaly an error if there isn't
+    var major = filterByMajors([majors[0]]);
+    if (!major[0]) {
+        var source = $("#create-no-data-card").html();
+        var template = Handlebars.compile(source);
+        $("#boxplots").append(template());
+        //get the results div to display
+        valid_majors++;
+        //if there's no data, then none of the majors are valid
+        majors = [];
+    }
+
     //For each selected major...
     for (var l in majors) {
-
-        var major = filterByMajors([majors[l]]);
-        if (!major[0]) {
-            continue;
-        }
         var med = major[0]["median"];
         if (med == -1) {
             // If the median GPA is -1... that means that this major is protected
