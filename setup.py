@@ -14,7 +14,9 @@ setup(
     install_requires=[
         'Django<2.0',
         'django-compressor',
-        'django-templatetag-handlebars'
+        'django-templatetag-handlebars',
+        'UW-Restclients-SWS',
+        'UW-Restclients-Core'
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
