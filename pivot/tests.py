@@ -148,7 +148,7 @@ class CsvDataApiTest(TestCase):
     # TODO: Now override with CSV_URL, instead
     def _major_course(self):
         url = '/api/v1/major_course/'
-        file_name = 'Majors_and_Courses.csv'
+        file_name = 'wi13_8qtrs_Majors_and_Courses.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
 
         with open(path, 'r') as csvfile:
@@ -200,7 +200,7 @@ class CsvDataApiTest(TestCase):
 
     def _student_data(self):
         url = '/api/v1/student_data/'
-        file_name = 'Student_Data_All_Majors.csv'
+        file_name = 'wi13_8qtrs_Student_Data_All_Majors.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
