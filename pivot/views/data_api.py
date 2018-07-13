@@ -80,15 +80,27 @@ class DataFileByQuarterView(DataFileView):
     base_file_name = None
 
     def get(self, request):
-        previous_term = term.get_previous_term()
-        end_year = request.GET.get("end_yr", str(previous_term.year % 100))
+        previous_term = None
+        end_year = request.GET.get("end_yr")
+
+        if end_year is None:
+            if previous_term is None:
+                previous_term = term.get_previous_term()
+            end_year = previous_term.year % 100
+
         if len(end_year) > 2:
             return HttpResponseBadRequest("Year must be in a 2 digit format")
 
-        end_quarter = request.GET.get("end_qtr", previous_term.quarter[:2])
+        end_quarter = request.GET.get("end_qtr")
+
+        if end_quarter is None:
+            if previous_term is None:
+                previous_term = term.get_previous_term()
+            end_quarter = previous_term.quarter[:2]
+
         if end_quarter not in ["au", "wi", "sp", "su"]:
             return HttpResponseBadRequest("Quarter must be one of 'au',"
-                                          + " 'sp', 'wi', or 'su'")
+                                          + " 'wi', 'sp', or 'su'")
 
         num_qtrs = request.GET.get("num_qtrs", "8")
 
