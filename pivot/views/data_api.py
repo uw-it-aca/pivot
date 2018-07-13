@@ -20,7 +20,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
-from uw_sws import term
+from uw_sws.term import get_term_before, get_previous_term
 
 
 class DataFileView(View):
@@ -78,23 +78,23 @@ class DataFileByQuarterView(DataFileView):
     base_file_name = None
 
     def get(self, request):
-        previous_term = None
+        end_term = None
         end_year = request.GET.get("end_yr")
 
         if end_year is None:
-            if previous_term is None:
-                previous_term = term.get_previous_term()
-            end_year = previous_term.year % 100
+            if end_term is None:
+                end_term = get_term_before(get_previous_term())
+            end_year = end_term.year % 100
 
-        if len(end_year) > 2:
+        if end_year > 99:
             return HttpResponseBadRequest("Year must be in a 2 digit format")
 
         end_quarter = request.GET.get("end_qtr")
 
         if end_quarter is None:
-            if previous_term is None:
-                previous_term = term.get_previous_term()
-            end_quarter = previous_term.quarter[:2]
+            if end_term is None:
+                end_term = get_term_before(get_previous_term())
+            end_quarter = end_term.quarter[:2]
 
         if end_quarter not in ["au", "wi", "sp", "su"]:
             return HttpResponseBadRequest("Quarter must be one of 'au',"
@@ -112,7 +112,7 @@ class DataFileByQuarterView(DataFileView):
             return HttpResponseBadRequest("Number of quarters must be"
                                           + " at least 1")
 
-        self.file_name = end_quarter + end_year + "_" + num_qtrs\
+        self.file_name = end_quarter + str(end_year) + "_" + num_qtrs\
             + "qtrs_" + self.base_file_name
 
         try:
