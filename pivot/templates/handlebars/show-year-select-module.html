@@ -4,16 +4,14 @@
 
 <ul class="nav nav-tabs col-xs-6 pivot-year-selector">
     <li role="presentation" id="8qtrs" data-num-qtrs="8" class="active">
-        <a href=".?num_qtrs=8">
-            <strong>Last 2 Years</strong> <br>
-            {% range_to_qtrs 8 %}
-        </a>
+        {% autoescape off %}
+            {% year_select_tab 8 %}
+        {% endautoescape %}
     </li>
     <li role="presentation" id="20qtrs" data-num-qtrs="20">
-        <a href=".?num_qtrs=20">
-            <strong>Last 5 Years</strong> <br>
-            {% range_to_qtrs 20 %}
-        </a>
+        {% autoescape off %}
+            {% year_select_tab 20 %}
+        {% endautoescape %}
     </li>
 </ul>
 {% endtplhandlebars %}
