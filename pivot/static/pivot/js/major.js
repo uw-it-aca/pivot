@@ -65,6 +65,7 @@ function createMajorCard(majors, gpa) {
 
     //For each selected major...
     for (var l in majors) {
+        var major = filterByMajors([majors[l]]);
         var med = major[0]["median"];
         if (med == -1) {
             // If the median GPA is -1... that means that this major is protected
