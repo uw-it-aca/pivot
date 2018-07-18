@@ -33,6 +33,7 @@ sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstu
 
 # Active majors >> programs.csv (Kuali dump) -------------------------------------
 
+# In future, i'll need to export these from Kuali and then
 tb <- read_csv("raw data/programs-kuali.csv")
 active.majors <- tb %>%
   filter(program_status == "active",
@@ -173,6 +174,16 @@ course.names <- tb %>%
   collect()
 
 
+# fetch majors from sdb ---------------------------------------------------
+# req'd for checking start date for majors in the event that 2/5 years of data aren't available
+rm(tb, x)
+tb <- tbl(sdbcon, in_schema("sec", "sr_major_code"))
+tb <- tb %>% collect()
+tb$syrq <- (tb$major_first_yr*10) + tb$major_first_qtr
+tb$eyrq <- (tb$major_last_yr*10) + tb$major_last_qtr
+maj.age <- tb
+
+
 # integrity checks so far (wip) --------------------------------------------
 
 rm(x, tb)
@@ -224,7 +235,7 @@ length(unique(pre.maj.courses$sys.key))
 
 # Write data ---------------------------------------------------------------
 
-save(active.majors, major.college, pre.maj.courses, pre.maj.gpa, course.names, file = paste0("raw data/raw data_", Sys.Date()))
+save(active.majors, major.college, pre.maj.courses, pre.maj.gpa, course.names, maj.age, file = paste0("raw data/raw data_", Sys.Date()))
 
 
 # Disconnect/close --------------------------------------------------------

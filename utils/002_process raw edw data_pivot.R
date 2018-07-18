@@ -16,6 +16,8 @@ f <- list.files("raw data/", pattern = "raw", full.names = T)
 f <- f[which.max(file.mtime(f))]
 load(f); rm(f)
 
+source("scripts/config.R")
+
 options(tibble.print_max = 800)
 
 # custom function to created quoted character vectors from unquoted text
@@ -61,7 +63,6 @@ pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path
 # for course code (try: split on \\_[\\D])
 course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
 pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
-
 
 # course names: filter dupes, fix case in course long names -------------------------------------------
 
@@ -288,9 +289,26 @@ active.no.stu <- active.majors %>%
 student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
 
 
-# status lookup -----------------------------------------------------------
+# status lookup + age -----------------------------------------------------------
 
 status.lookup <- active.majors %>% select(Code = mkey, Name = maj.name, Status = admission.type)
+
+# Add age to status lookup
+maj.age$mkey <- paste(trimws(maj.age$major_abbr), maj.age$major_pathway, sep = "_")
+maj.age <- maj.age %>% group_by(mkey) %>% add_tally() %>% filter(any(eyrq == 99994)) %>% ungroup()
+maj.age <- maj.age %>% group_by(mkey) %>% transmute(st = min(syrq), end = max(eyrq)) %>% ungroup()
+
+qtr.diff <- function(x, y){
+  (((x %/% 10) - (y %/% 10)) * 4) + ((x %% 10) - (y %% 10))
+}
+
+maj.age$quarters.of.data <- qtr.diff(max.yrq, maj.age$st)
+maj.age <- maj.age %>% select(mkey, quarters.of.data) %>% mutate(quarters.of.data = if_else(quarters.of.data > 20, 20, quarters.of.data))
+
+# check:
+status.lookup[!(status.lookup$Code %in% maj.age$mkey),]
+# These may have been updated since the last time, e.g. ECFS O is no longer accepting students
+status.lookup <- status.lookup %>% left_join(maj.age, by = c("Code" = "mkey")) %>% distinct()
 
 
 # Course.major.rankings ---------------------------------------------------
