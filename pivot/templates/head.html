@@ -18,6 +18,18 @@
 <script src="https://use.fontawesome.com/c89804655d.js"></script>
 <script src="{% static "pivot/js/horizontal-box.js" %}"></script>
 
+{% if google_analytics %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '{{ google_analytics }}');
+        ga('set', 'anonymizeIp', true);
+    </script>
+{% endif %}
 
 <!-- static paths -->
 <script>
