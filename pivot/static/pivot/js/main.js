@@ -420,17 +420,17 @@ function finishResults() {
     var source_divider = $("#finish-results-divider").html();
     var template_divider = Handlebars.compile(source_divider);
 
-    if ($("#dropdownMenu").val() == "All")
+    if ($("#dropdownMenu").val() == "All") {
         $("#selectedCollege").remove();
         if ($("#selectedCollegeHeader")[0]) {
             $("#selectedCollegeHeader").remove();
         }
-    else {
-        if (all_data_loaded && $("#selectedCollege .suggested_major").length == 1 && $("#dropdownMenu").val() != "All") {
+    } else {
+        if (all_data_loaded && $("#selectedCollege .suggested_major").length < 1 && $("#dropdownMenu").val() != "All") {
             $("#selectedCollege").append(template({
                 message: "No matching major in this college"
             }));
-        } else if ($("#selectedCollege .suggested_major").length == 1 && $("#dropdownMenu").val() != "All") {
+        } else if ($("#selectedCollege .suggested_major").length < 1 && $("#dropdownMenu").val() != "All") {
             $("#selectedCollege").append(template({
                 message: "Loading..."
             }));
