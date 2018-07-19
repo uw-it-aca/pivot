@@ -314,9 +314,18 @@ function listCoursesForMajor(maj) {
     // Compile the dynamic table data and pass it as a variable to outer template.
     var courses = _completeMajorMap[maj]["courses"];
 
+    //shim Object.values for IE
+    Object.values = Object.values || function (obj) {
+        return Object.keys(obj).map(function (key) {
+            return obj[key];
+        });
+    };
+
     // If the course has a -1 in it, that means that this major is protected
     // (does not have more than 5 students), so display an alert
-    var studentCounts = Object.values(courses).map(value => value["student_count"]);
+    var studentCounts = Object.values(courses).map(function (value) { 
+        return value["student_count"];
+    });
     if(studentCounts.some(function(k){ return ~k.indexOf("-1") })){
        protectedResult(maj);
        return;
