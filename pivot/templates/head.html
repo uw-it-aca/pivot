@@ -25,9 +25,8 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
-
+        gtag('config', '{{ google_analytics }}', { 'anonymize_ip': true });
         gtag('config', '{{ google_analytics }}');
-        ga('set', 'anonymizeIp', true);
     </script>
 {% endif %}
 
