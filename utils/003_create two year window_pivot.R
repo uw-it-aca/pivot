@@ -89,4 +89,4 @@ head(course.rank[i,], 30)
 sum(i == T)
 
 write.csv(student.data.all.majors, file = "transformed data/two year window/wi16_8qtrs_student_data_all_majors.csv", row.names = F)
-write.csv(course.rank, file = "transformed data/two year window/wi16_8qtrs_course_rank.csv", row.names = F)
+write.csv(course.rank, file = "transformed data/two year window/wi16_8qtrs_majors_and_courses.csv", row.names = F)
