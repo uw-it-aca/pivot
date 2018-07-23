@@ -249,7 +249,8 @@ course.map <- course.map %>%
          is_major,
          is_campus,
          name = course.lname,
-         id = ckey.num)
+         id = ckey.num,
+         key = ckey)
 major.map <- active.majors %>%
   ungroup() %>%
   mutate(is_course = 0,
@@ -259,7 +260,8 @@ major.map <- active.majors %>%
          is_major,
          is_campus,
          name = maj.name,
-         id = mkey.num)
+         id = mkey.num,
+         key = mkey)
 campus.map <- data.frame(is_course = 0,
                          is_major = 0,
                          is_campus = 1,
@@ -267,6 +269,7 @@ campus.map <- data.frame(is_course = 0,
                                   "Bothell",
                                   "Tacoma"),
                          id = c(0,1,2),
+                         key = c('0','2','3'),
                          stringsAsFactors = F)
 
 data.map <- bind_rows(course.map, major.map, campus.map)
