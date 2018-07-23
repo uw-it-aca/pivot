@@ -328,6 +328,6 @@ write.csv(status.lookup, paste0(outdir, "status_lookup.csv"), row.names = F)
 # write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
 write.csv(student.data.all.majors, paste0(outdir, "wi13_20qtrs_student_data_all_majors.csv"), row.names = F)
 write.csv(data.map, paste0(outdir, "data_map.csv"), row.names = F)
-write.csv(course.rank, paste0(outdir, "wi13_20qtrs_course_rank.csv"), row.names = F)
+write.csv(course.rank, paste0(outdir, "wi13_20qtrs_majors_and_courses.csv"), row.names = F)
 
 save(list = Cs(active.majors, pre.maj.courses, med.ann, pre.maj.gpa, course.names, major.college), file = "intermediate data/intermediate cleaned files.RData")
