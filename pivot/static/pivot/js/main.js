@@ -192,8 +192,8 @@ function getMajorStatus() {
 
 //Generates HTML to show major name, url and status (for major and course pages)
 function displayMajorStatusURL(code) {
-    var parts = code.split('-');
-    var major_abbr = parts[0];
+    var parts = code.split(/-(?=(\d))/);
+    var major_abbr = parts[0].replace('-', ' ');
     if (myplan_alias[code]) {
 	   major_abbr = myplan_alias[code];
     }
