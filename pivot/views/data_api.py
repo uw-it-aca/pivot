@@ -74,7 +74,7 @@ class MajorCourse(DataFileView):
 
 
 class DataMap(DataFileView):
-    file_name = "data_map.csv"
+    file_name = "Data_Map.csv"
 
 
 class StudentData(DataFileView):
