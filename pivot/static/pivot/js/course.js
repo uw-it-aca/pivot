@@ -340,12 +340,15 @@ function listCoursesForMajor(maj) {
             var popularity = Math.round((courses[c]["student_count"] / _completeMajorMap[maj]["students_in_major"]) * 100) + "%";
             var col = "q" + colorBucket(courses[c]["percentiles"][5])+ "-9";
             var percentile = round(parseFloat(courses[c]["percentiles"][5]), 2);
+            // replace all spaces not before a number with a dash
+            // add a space before the number
+            var name_ref = c.replace(/\s(?!(\d))/, "-").replace(/(\d+)/, '_$1');
             // Create a dict of all single line data and push it to the list
             var collection = {
                 popularity: popularity,
                 dept_abbrev: courses[c]["dept_abbrev"],
                 course_number: courses[c]["course_number"],
-                course_long_name: courses[c]["course_long_name"],
+                course_long_name: _courseNameLookup[name_ref],
                 col: col,
                 percentile: percentile
             };

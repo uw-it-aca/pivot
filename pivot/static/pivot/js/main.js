@@ -88,7 +88,7 @@ function getDataNameMap() {
             is_major: d.is_major.trim(),
             is_campus: d.is_campus.trim(),
             name: d.name.trim(),
-            id: d.id.trim(),
+            id: d.key.trim(),
         };
     }, function(error, data) {
         for (var index in data) {
@@ -115,8 +115,8 @@ function getCompleteMajorMap() {
             student_count: d.student_count.trim(),
             students_in_major: d.students_in_major.trim(),
             course_gpa_50pct: d.course_gpa_50pct.trim(),
-            CourseLongName: _courseNameLookup[d.course_long_name.trim()],
-            major_full_nm: _majorNameLookup[d.major_full_nm.trim()],
+            CourseLongName: _courseNameLookup[d.course_num.trim()],
+            major_full_nm: _majorNameLookup[d.major_path.trim()],
             CoursePopularityRank: d.course_popularity_rank.trim(),
             Campus: _campusNameLookup[d.campus.trim()]
         };
@@ -147,7 +147,7 @@ function getCompleteMajorMap() {
             }
             else {
                 _completeMajorMap[major] = {
-                    id:id,
+                    id:course_number,
                     students_in_major: data[index]["students_in_major"],
                     major_full_nm: data[index]["major_full_nm"],
                     campus: data[index]["Campus"],
@@ -192,8 +192,8 @@ function getMajorStatus() {
 
 //Generates HTML to show major name, url and status (for major and course pages)
 function displayMajorStatusURL(code) {
-    var parts = code.split('-');
-    var major_abbr = parts[0];
+    var parts = code.split(/-(?=(\d))/);
+    var major_abbr = parts[0].replace('-', ' ');
     if (myplan_alias[code]) {
 	   major_abbr = myplan_alias[code];
     }
