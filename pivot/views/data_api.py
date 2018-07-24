@@ -44,7 +44,7 @@ class DataFileView(View):
         header = data.split(b"\n", 1)[0].split(b",")
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
-        scrub = [b'"major_path"', b'"code"', b'"key"', b'"course_num"']
+        scrub = [b'"major_path"', b'"code"', b'"key"']
         check_index = []
         for s in scrub:
             if s in header:
