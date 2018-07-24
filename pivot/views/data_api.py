@@ -44,7 +44,7 @@ class DataFileView(View):
         header = data.split(b"\n", 1)[0].split(b",")
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
-        scrub = [b'"major_path"', b'"code"']
+        scrub = [b'"major_path"', b'"code"', b'"key"', b'"course_num"']
         check_index = []
         for s in scrub:
             if s in header:
@@ -62,6 +62,7 @@ class DataFileView(View):
         else:
             for row in csv_reader:
                 for index in check_index:
+                    row[index] = row[index].replace(" ", "-")
                     row[index] = row[index].replace("&", "_AND_")
                     row[index] = row[index].replace(":", "_")
                 cw.writerow(row)
@@ -73,7 +74,7 @@ class MajorCourse(DataFileView):
 
 
 class DataMap(DataFileView):
-    file_name = "Data_Map.csv"
+    file_name = "data_map.csv"
 
 
 class StudentData(DataFileView):
