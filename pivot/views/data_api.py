@@ -125,7 +125,7 @@ class DataFileByQuarterView(DataFileView):
 
 
 class MajorCourse(DataFileByQuarterView):
-    base_file_name = "Majors_and_Courses.csv"
+    base_file_name = "majors_and_courses.csv"
 
 
 class DataMap(DataFileView):
@@ -133,7 +133,7 @@ class DataMap(DataFileView):
 
 
 class StudentData(DataFileByQuarterView):
-    base_file_name = "Student_Data_All_Majors.csv"
+    base_file_name = "student_data_all_majors.csv"
 
 
 class StatusLookup(DataFileView):
