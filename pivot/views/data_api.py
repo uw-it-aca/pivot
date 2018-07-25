@@ -129,7 +129,7 @@ class MajorCourse(DataFileByQuarterView):
 
 
 class DataMap(DataFileView):
-    file_name = "Data_Map.csv"
+    file_name = "data_map.csv"
 
 
 class StudentData(DataFileByQuarterView):
@@ -137,4 +137,4 @@ class StudentData(DataFileByQuarterView):
 
 
 class StatusLookup(DataFileView):
-    file_name = "Status_Lookup.csv"
+    file_name = "status_lookup.csv"
