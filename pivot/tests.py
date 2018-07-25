@@ -25,8 +25,8 @@ TEST_CSV_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
                                    'csvfiles/scrub/pre_scrub/',)
 
 TEST_CSV_POST_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
-                                   'test_resources',
-                                   'csvfiles/scrub/post_scrub/',)
+                                        'test_resources',
+                                        'csvfiles/scrub/post_scrub/',)
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
 
 # To be used on scrub tests (make sure &'s are replaced with _AND_)
