@@ -22,7 +22,11 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
                              'csvfiles/',)
 TEST_CSV_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
                                    'test_resources',
-                                   'csvfiles/scrub/',)
+                                   'csvfiles/scrub/pre_scrub/',)
+
+TEST_CSV_POST_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
+                                        'test_resources',
+                                        'csvfiles/scrub/post_scrub/',)
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
 
 # To be used on scrub tests (make sure &'s are replaced with _AND_)
@@ -30,7 +34,7 @@ scrubbed_major = b'PB_AND_J_10'
 
 
 class CsvDataApiTest(TestCase):
-    """ Tests the api/v1 CSV apis.
+    """ Tests the api/v1 CSV apis
     """
     def setUp(self):
         self.user = User.objects.create(username='testuser')
@@ -75,14 +79,22 @@ class CsvDataApiTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_major_course(self):
         url = '/api/v1/major_course/'
+
+        file_name = 'Majors_and_Courses.csv'
+        path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
+
+        with open(path, 'r') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            file_data = self.csv_to_string(csv_reader)
+            file_data = file_data.encode('utf-8')
+
         login_successful = self.client.login(username='testuser',
                                              password='password')
         self.assertTrue(login_successful)
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        data = [line.split(b",") for line in response.content.splitlines()]
-        for i in range(1, len(data)):
-            self.assertEqual(data[i][0], scrubbed_major)
+        response_data = response.content
+        self.assertTrue(file_data == response_data)
 
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_status_lookup(self):
@@ -90,10 +102,19 @@ class CsvDataApiTest(TestCase):
         login_successful = self.client.login(username='testuser',
                                              password='password')
         self.assertTrue(login_successful)
+
+        file_name = 'Status_Lookup.csv'
+        path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
+
+        with open(path, 'r') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            file_data = self.csv_to_string(csv_reader)
+            file_data = file_data.encode('utf-8')
+
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        data = [line.split(b",") for line in response.content.splitlines()]
-        self.assertEqual(data[1][0], scrubbed_major)
+        response_data = response.content
+        self.assertTrue(response_data == file_data)
 
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_student_data(self):
@@ -101,10 +122,19 @@ class CsvDataApiTest(TestCase):
         login_successful = self.client.login(username='testuser',
                                              password='password')
         self.assertTrue(login_successful)
+
+        file_name = 'Student_Data_All_Majors.csv'
+        path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
+
+        with open(path, 'r') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            file_data = self.csv_to_string(csv_reader)
+            file_data = file_data.encode('utf-8')
+
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
-        data = [line.split(b",") for line in response.content.splitlines()]
-        self.assertEqual(data[1][0], scrubbed_major)
+        response_data = response.content
+        self.assertTrue(response_data == file_data)
 
     # Helper method, takes in csv_reader and returns
     # a string (to help with eliminating unnecessary ""'s')
