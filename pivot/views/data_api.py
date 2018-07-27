@@ -40,20 +40,21 @@ class DataFileView(View):
         except Exception as err:
             data = "Error {}: {}".format(err.errno, err.reason)
 
-        # csv_data = [line.split(b",") for line in data.splitlines()][0]
-        header = data.split(b"\n", 1)[0].split(b",")
-        # Columns we have to scrub out an & (note double quotes are included)
-        # because thats how it is formatted in the csv files...
-        scrub = [b'"major_path"', b'"code"', b'"key"']
-        check_index = []
-        for s in scrub:
-            if s in header:
-                check_index.append(header.index(s))
-
         si = StringIO()
         cw = csv.writer(si)
         # csv.reader has to take in string not bytes...
         csv_reader = csv.reader(data.decode("utf-8").splitlines())
+
+        # csv_data = [line.split(b",") for line in data.splitlines()][0]
+        header = [str.lower() for str in csv_reader.next()]
+        cw.writerow(header)
+        # Columns we have to scrub out an & (note double quotes are included)
+        # because thats how it is formatted in the csv files...
+        scrub = ['major_path', 'code', 'key']
+        check_index = []
+        for s in scrub:
+            if s in header:
+                check_index.append(header.index(s))
 
         if len(check_index) == 0:
             for row in csv_reader:
