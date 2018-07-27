@@ -30,6 +30,8 @@ df.trimws <- function(df){
   return(df)
 }
 
+prefix <- "wi13_20qtrs"
+
 # reconcile major codes ---------------------------------------------------
 
 # kuali example:
@@ -249,7 +251,7 @@ course.map <- course.map %>%
          is_major,
          is_campus,
          name = course.lname,
-         id = ckey.num,
+         # id = ckey.num,
          key = ckey)
 major.map <- active.majors %>%
   ungroup() %>%
@@ -260,7 +262,7 @@ major.map <- active.majors %>%
          is_major,
          is_campus,
          name = maj.name,
-         id = mkey.num,
+         # id = mkey.num,
          key = mkey)
 campus.map <- data.frame(is_course = 0,
                          is_major = 0,
@@ -268,8 +270,8 @@ campus.map <- data.frame(is_course = 0,
                          name = c("Seattle",
                                   "Bothell",
                                   "Tacoma"),
-                         id = c(0,1,2),
-                         key = c('0','2','3'),
+                         # id = c(0,1,2),
+                         key = c('0','1','2'),
                          stringsAsFactors = F)
 
 data.map <- bind_rows(course.map, major.map, campus.map)
@@ -278,7 +280,7 @@ rm(campus.map, course.map, major.map)
 
 # create student.data.all.majors (med.tot) ------------------------------------------
 
-student.data.all.majors <- med.tot %>% select(major_path = mkey, College = FinCollegeReportingName, count, iqr_min, q1, median, q3, iqr_max)
+student.data.all.majors <- med.tot %>% select(major_path = mkey, college = FinCollegeReportingName, count, iqr_min, q1, median, q3, iqr_max)
 # edit rows with count < 5
 cols <- Cs(count, iqr_min, q1, median, q3, iqr_max)
 student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], function(x) ifelse(student.data.all.majors$count < 5, -1, x))
@@ -286,7 +288,7 @@ student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], functio
 # add majors that are active but have no students
 active.no.stu <- active.majors %>%
   filter(!(mkey %in% med.tot$mkey)) %>%
-           select(major_path = mkey, College = FinCollegeReportingName) %>%
+           select(major_path = mkey, college = FinCollegeReportingName) %>%
   mutate(count = -1, iqr_min = -1, q1 = -1, median = -1, q3 = -1, iqr_max = -1)
 
 student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
@@ -294,7 +296,8 @@ student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
 
 # status lookup + age -----------------------------------------------------------
 
-status.lookup <- active.majors %>% select(Code = mkey, Name = maj.name, Status = admission.type)
+# status lookup does not need to replicate names from data.map (but it's useful for error checking)
+status.lookup <- active.majors %>% select(code = mkey, name = maj.name, status = admission.type)
 
 # Add age to status lookup
 maj.age$mkey <- paste(trimws(maj.age$major_abbr), maj.age$major_pathway, sep = "_")
@@ -305,32 +308,40 @@ qtr.diff <- function(x, y){
   (((x %/% 10) - (y %/% 10)) * 4) + ((x %% 10) - (y %% 10))
 }
 
-maj.age$quarters.of.data <- qtr.diff(max.yrq, maj.age$st)
-maj.age <- maj.age %>% select(mkey, quarters.of.data) %>% mutate(quarters.of.data = if_else(quarters.of.data > 20, 20, quarters.of.data))
+maj.age$quarters_of_data <- qtr.diff(max.yrq, maj.age$st)
+maj.age <- maj.age %>% select(mkey, quarters_of_data) %>% mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
 
 # check:
-status.lookup[!(status.lookup$Code %in% maj.age$mkey),]
+status.lookup[!(status.lookup$code %in% maj.age$mkey),]
 # These may have been updated since the last time, e.g. ECFS O is no longer accepting students
-status.lookup <- status.lookup %>% left_join(maj.age, by = c("Code" = "mkey")) %>% distinct()
-
+status.lookup <- status.lookup %>% left_join(maj.age, by = c("code" = "mkey")) %>% distinct() %>% select(-name)
 
 # Course.major.rankings ---------------------------------------------------
 
+# no long using "Major full name" or "course long name" columns in the majors_and_course.csv
 course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, student_count = n.course,
-                                      students_in_major = count, course_gpa_50pct = mgrade, CourseLongName = ckey.num,
-                                      major_full_nm = mkey.num, CoursePopularityRank = pop, Campus = MajorCampus)
+                                      students_in_major = count, course_gpa_50pct = mgrade,
+                                      course_popularity_rank = pop, campus = MajorCampus)
 i <- course.rank$students_in_major < 5
 cols <- Cs(student_count, students_in_major, course_gpa_50pct)
 course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$students_in_major < 5, -1, x))
 head(course.rank[i,], 30)
 
+
+# double check names ---------------------------------------------
+names(status.lookup)
+names(student.data.all.majors)
+names(data.map)
+names(course.rank)
+
 # write files -------------------------------------------------------------
 
 outdir <- paste0(getwd(), "/transformed data/")
 write.csv(status.lookup, paste0(outdir, "status_lookup.csv"), row.names = F)
-# write.csv(mj.annual, paste0(outdir, "Student Data - All Majors by Year.csv"), row.names = F)
-write.csv(student.data.all.majors, paste0(outdir, "wi13_20qtrs_student_data_all_majors.csv"), row.names = F)
 write.csv(data.map, paste0(outdir, "data_map.csv"), row.names = F)
-write.csv(course.rank, paste0(outdir, "wi13_20qtrs_majors_and_courses.csv"), row.names = F)
+
+# these need prefixes
+write.csv(student.data.all.majors, paste0(outdir, prefix, "_student_data_all_majors.csv"), row.names = F)
+write.csv(course.rank, paste0(outdir, prefix, "_majors_and_courses.csv"), row.names = F)
 
 save(list = Cs(active.majors, pre.maj.courses, med.ann, pre.maj.gpa, course.names, major.college), file = "intermediate data/intermediate cleaned files.RData")
