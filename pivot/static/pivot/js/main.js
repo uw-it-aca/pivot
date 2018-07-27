@@ -264,6 +264,11 @@ function addStudents() {
         populateCollegeDropdown();
         all_data_loaded = true;
 
+        if (window.location.pathname == '/major-gpa/' && getParameterByName("major") != null) {
+            var majorParam = getParameterByName("major");
+            sessionStorage.setItem("majors", '["' + majorParam +'"]');
+        }
+
         checkStoredData();
         init_search_events();
 
@@ -558,7 +563,7 @@ function populateCollegeDropdown() {
     });
 
     //If this is the course page and a code is provided, load the data without searching
-    if (getParameterByName("code") != null) {
+    if (window.location.pathname == '/course-gpa/' && getParameterByName("code") != null) {
         listCoursesForMajor(getParameterByName("code").replace("_", " "));
         //TODO: need to update placeholders
     }
