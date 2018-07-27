@@ -30,6 +30,9 @@ df.trimws <- function(df){
   return(df)
 }
 
+# use max available yrq from transcripts rather than current
+max.yrq <- max(pre.maj.courses$tran.yrq)
+
 prefix <- "wi13_20qtrs"
 
 # reconcile major codes ---------------------------------------------------
