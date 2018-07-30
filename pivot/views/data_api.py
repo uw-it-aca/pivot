@@ -46,7 +46,7 @@ class DataFileView(View):
         csv_reader = csv.reader(data.decode("utf-8").splitlines())
 
         # csv_data = [line.split(b",") for line in data.splitlines()][0]
-        header = [str.lower() for str in csv_reader.next()]
+        header = [str.lower() for str in next(csv_reader)]
         cw.writerow(header)
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
