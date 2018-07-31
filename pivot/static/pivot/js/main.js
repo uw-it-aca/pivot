@@ -264,8 +264,8 @@ function addStudents() {
         populateCollegeDropdown();
         all_data_loaded = true;
 
-        if (window.location.pathname == '/major-gpa/' && getParameterByName("major") != null) {
-            var majorParam = getParameterByName("major");
+        if (window.location.pathname == '/major-gpa/' && getParameterByName("code") != null) {
+            var majorParam = getParameterByName("code");
             sessionStorage.setItem("majors", '["' + majorParam +'"]');
         }
 
