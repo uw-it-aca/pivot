@@ -345,7 +345,8 @@ function init_search_events() {
             var toBeFocused = $(lastChild || prevCollege || prevCampus); 
             toBeFocused.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space/enter
-           $(":focus").trigger("click"); 
+           $(":focus").trigger("click");
+           $("#dropdownMenu").dropdown('toggle');
         } 
 
     });
@@ -550,10 +551,6 @@ function populateCollegeDropdown() {
         }
         $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
-        if (window.location.href.indexOf("course-gpa") > -1) {
-            // creates a user like click
-            setTimeout(prepareResults, 10);
-        }
         $( "#dropdownMenu" ).focus();
     });
 
