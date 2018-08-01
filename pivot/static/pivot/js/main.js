@@ -179,15 +179,17 @@ function getMajorStatus(queryStr) {
     d3.csv("/api/v1/status_lookup/" + queryStr, function (d) {
         return {
             code: d.code.trim(),
-            name: d.name.trim(),
-            status: d.status.trim()
+            name: _majorNameLookup[d.code.trim()],
+            status: d.status.trim(),
+            num_qtrs: d.quarters_of_data.trim()
         }
     }, function (error, data) {
         for (var index in data) {
             var code = data[index]["code"].replace(/_/g, "-");
             _statusLookup[code] = {
                 "status": data[index]["status"],
-                "name": data[index]["name"]
+                "name": data[index]["name"],
+                "num_qtrs": data[index]["num_qtrs"],
             }
         }
     });
