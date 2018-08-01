@@ -176,7 +176,7 @@ function getMajorStatus() {
     d3.csv("/api/v1/status_lookup/", function (d) {
         return {
             code: d.code.trim(),
-            name: d.name.trim(),
+            name: _majorNameLookup[d.code.trim()],
             status: d.status.trim()
         }
     }, function (error, data) {
