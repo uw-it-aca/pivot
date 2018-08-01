@@ -24,6 +24,11 @@
     {{ /if }}
     <!--end of check-->
 
+    {{ #if insufficient_data }}
+    <div class='data-heading'><p>
+        <div class="alert alert-info" role="alert">Note: This major's data is limited to {{ num_qtrs }} quarters.</div>
+    </div>
+    {{ /if }}
 </div>
 <div class='course-link col-xs-12'>
     <a href='/course-gpa/?code={{ major_id }}' title="View most commonly taken courses in {{major_name}}"><span class="glyphicon glyphicon-menu-right link-arrow" aria-hidden="true"></span> View most commonly taken courses among students who declared<strong> {{major_name}}</strong></a>

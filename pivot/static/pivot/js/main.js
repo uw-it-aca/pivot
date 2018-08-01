@@ -180,14 +180,16 @@ function getMajorStatus(queryStr) {
         return {
             code: d.code.trim(),
             name: _majorNameLookup[d.code.trim()],
-            status: d.status.trim()
+            status: d.status.trim(),
+            num_qtrs: d.quarters_of_data.trim()
         }
     }, function (error, data) {
         for (var index in data) {
             var code = data[index]["code"].replace(/_/g, "-");
             _statusLookup[code] = {
                 "status": data[index]["status"],
-                "name": data[index]["name"]
+                "name": data[index]["name"],
+                "num_qtrs": data[index]["num_qtrs"],
             }
         }
     });

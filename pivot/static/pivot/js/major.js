@@ -56,7 +56,9 @@ function createMajorCard(majors, gpa) {
     if (!major[0]) {
         var source = $("#create-no-data-card").html();
         var template = Handlebars.compile(source);
-        $("#boxplots").append(template());
+        $("#boxplots").append(template({
+            reason: "No data available for the requested time period. Please select a different one."
+        }));
         //get the results div to display
         valid_majors++;
         //if there's no data, then none of the majors are valid
@@ -65,6 +67,16 @@ function createMajorCard(majors, gpa) {
 
     //For each selected major...
     for (var l in majors) {
+        if (!_completeMajorMap[majors[l]]) {
+            var source = $("#create-no-data-card").html();
+            var template = Handlebars.compile(source);
+            $("#boxplots").append(template({
+                reason: "The data does not contain any information about this major."
+            }));
+            //get the results div to display
+            valid_majors++
+        }
+
         var major = filterByMajors([majors[l]]);
         var med = major[0]["median"];
         if (med == -1) {
@@ -128,11 +140,14 @@ function createBoxForMajor(i, median, majorId) {
     var template = Handlebars.compile(source);
     //Create the data boxes, only show titles for first box
     var yes_or_no = i>=1 ? 0 : 1;
+    var request_qtrs = getParameterByName("num_qtrs") || 8;
     $("#" + majorId).append(template({
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
+        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"],
+        num_qtrs: _statusLookup[majorId].num_qtrs,
+        insufficient_data: parseInt(_statusLookup[majorId].num_qtrs) < parseInt(request_qtrs)
     }));
 
     //Create the inline help popovers, only needed for major in first row
