@@ -83,7 +83,7 @@ class CsvDataApiTest(TestCase):
     def test_scrub_major_course(self):
         url = '/api/v1/major_course/'
 
-        file_name = 'au12_8qtrs_Majors_and_Courses.csv'
+        file_name = 'au12_8qtrs_majors_and_courses.csv'
         path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
 
         with open(path, 'r') as csvfile:
@@ -106,7 +106,7 @@ class CsvDataApiTest(TestCase):
                                              password='password')
         self.assertTrue(login_successful)
 
-        file_name = 'Status_Lookup.csv'
+        file_name = 'status_lookup.csv'
         path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
 
         with open(path, 'r') as csvfile:
@@ -126,7 +126,7 @@ class CsvDataApiTest(TestCase):
                                              password='password')
         self.assertTrue(login_successful)
 
-        file_name = 'au12_8qtrs_Student_Data_All_Majors.csv'
+        file_name = 'au12_8qtrs_student_data_all_majors.csv'
         path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
 
         with open(path, 'r') as csvfile:
@@ -151,7 +151,7 @@ class CsvDataApiTest(TestCase):
     # TODO: Now override with CSV_URL, instead
     def _major_course(self):
         url = '/api/v1/major_course/'
-        file_name = 'au12_8qtrs_Majors_and_Courses.csv'
+        file_name = 'au12_8qtrs_majors_and_courses.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
 
         with open(path, 'r') as csvfile:
@@ -169,7 +169,7 @@ class CsvDataApiTest(TestCase):
 
     def _data_map(self):
         url = '/api/v1/data_map/'
-        file_name = 'Data_Map.csv'
+        file_name = 'data_map.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
@@ -186,7 +186,7 @@ class CsvDataApiTest(TestCase):
 
     def _status_lookup(self):
         url = '/api/v1/status_lookup/'
-        file_name = 'Status_Lookup.csv'
+        file_name = 'status_lookup.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
@@ -203,7 +203,7 @@ class CsvDataApiTest(TestCase):
 
     def _student_data(self):
         url = '/api/v1/student_data/'
-        file_name = 'au12_8qtrs_Student_Data_All_Majors.csv'
+        file_name = 'au12_8qtrs_student_data_all_majors.csv'
         path = os.path.join(TEST_CSV_PATH, file_name)
         with open(path, 'r') as csvfile:
             csv_reader = csv.reader(csvfile)
