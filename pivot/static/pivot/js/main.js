@@ -346,7 +346,6 @@ function init_search_events() {
             toBeFocused.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space/enter
            $(":focus").trigger("click");
-           $("#dropdownMenu").dropdown('toggle');
         } 
 
     });
@@ -551,6 +550,7 @@ function populateCollegeDropdown() {
         }
         $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
+        setTimeout(prepareResults, 10);
         $( "#dropdownMenu" ).focus();
     });
 
