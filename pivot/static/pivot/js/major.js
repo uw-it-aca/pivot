@@ -420,7 +420,7 @@ function displayResults() {
         else if (search_val.length == 0 ) {
             //if major is in selected college,
             var appendTo = "";
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus")) {
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus")) {
                 appendTo = "#selectedCollege";
             } else if (prevSelected) {
                 appendTo = "#" + _completeMajorMap[maj]["campus"].toLowerCase() + "Campus";
