@@ -14,10 +14,13 @@ var update_results_on_load = false;
 var all_data_loaded = false;
 var _searchResultsChecked = false;
 
+//a list of listeners waiting for the response
+var statusLookupListener = [];
+
 /**** SETUP ****/
 if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
-    if (window.location.search.includes("?slow")) {
-        window.setTimeout(function() { getDataNameMap(iwindow.location.search); }, 5000);
+    if (!~window.location.search.indexOf("?slow")) {
+        window.setTimeout(function() { getDataNameMap(window.location.search); }, 5000);
     } else {
         getDataNameMap(window.location.search);
     }
@@ -192,6 +195,12 @@ function getMajorStatus(queryStr) {
                 "num_qtrs": data[index]["num_qtrs"],
             }
         }
+        //call any listeners that were waiting on this request
+        if (statusLookupListener.length > 0) {
+            statusLookupListener.map(function (listener) {
+                listener();
+            });
+        };
     });
 }
 

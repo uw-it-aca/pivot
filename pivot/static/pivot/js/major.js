@@ -103,10 +103,29 @@ function createMajorCard(majors, gpa) {
         $("#" + id).data("code", majors[l]);
 
         //Add the initial content for the major
-        createBoxForMajor(l, med, id);
+        //if the statuslookup array has been populated, proceed
+        //if it hasn't, add the rest of the code as a listener for its completion
+        //so that we can proceed once it's done
+        if (!$.isEmptyObject(_statusLookup)) {
+            createBoxForMajor(l, med, id);
+            createBoxplot(l, gpa, id, med, major);
+        } else {
+            //This IIFE creates a scope so that each listener has its own 
+            //closure from which it can reference values
+            (function () {
+                var localL = l;
+                var localMed = med;
+                var localId = id;
+                var localGpa = gpa;
+                var localmajor = major;
+                statusLookupListener.push(function () {
+                    createBoxForMajor(localL, localMed, localId);
+                    createBoxplot(localL, localGpa, localId, localMed, localMajor);
+                });
+            })();
+        }
 
         //Add the boxplot
-        createBoxplot(l, gpa, id, med, major);
         //D3 - vars to pass = gpa, id, med, major
 
     }
