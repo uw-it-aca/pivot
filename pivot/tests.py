@@ -29,6 +29,31 @@ TEST_CSV_POST_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
                                         'csvfiles/scrub/post_scrub/',)
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
 
+# Format: (query_str, expected status code)
+ENDPOINT_TEST_CASES = [
+    ("?end_qtr=mn", 400),
+    ("?end_yr=1342", 400),
+    ("?end_yr=letters", 400),
+    ("?num_qtrs=-1", 400),
+    ("?num_qtrs=letters", 400),
+    ("?end_qtr=au&end_yr=12&num_qtrs=8", 200),
+    ("?end_qtr=au&end_yr=12", 200),
+    ("?end_qtr=au&num_qtrs=8", 200),
+    ("?end_yr=12&num_qtrs=8", 200),
+    ("?num_qtrs=8", 200),
+    ("?end_qtr=au", 200),
+    ("?end_yr=12", 200),
+    ("?end_qtr=sp&end_yr=12&num_qtrs=8", 416),
+    ("?end_qtr=au&end_yr=13&num_qtrs=8", 416),
+    ("?end_qtr=au&end_yr=12&num_qtrs=27", 416),
+    ("?end_qtr=au&end_yr=12", 200),
+    ("?end_qtr=au&num_qtrs=8", 200),
+    ("?end_yr=12&num_qtrs=8", 200),
+    ("?num_qtrs=8", 200),
+    ("?end_qtr=au", 200),
+    ("?end_yr=12", 200),
+]
+
 # To be used on scrub tests (make sure &'s are replaced with _AND_)
 scrubbed_major = b'PB_AND_J_10'
 
@@ -75,6 +100,22 @@ class CsvDataApiTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_URL)
     def test_student_data_url(self):
         self._student_data()
+
+    def test_major_course_query_parameters(self):
+        for test_case in ENDPOINT_TEST_CASES:
+            url = '/api/v1/major_course/' + test_case[0]
+            login_successful = self.client.login(username='testuser',
+                                                 password='password')
+            response = self.client.get(url)
+            self.assertTrue(response.status_code == test_case[1])
+
+    def test_student_data_query_parameters(self):
+        for test_case in ENDPOINT_TEST_CASES:
+            url = '/api/v1/student_data/' + test_case[0]
+            login_successful = self.client.login(username='testuser',
+                                                 password='password')
+            response = self.client.get(url)
+            self.assertTrue(response.status_code == test_case[1])
 
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_major_course(self):
