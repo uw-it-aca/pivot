@@ -104,6 +104,7 @@ class CsvDataApiTest(TestCase):
     def test_student_data_url(self):
         self._student_data()
 
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
     def test_major_course_query_parameters(self):
         for test_case in ENDPOINT_TEST_CASES:
             url = '/api/v1/major_course/' + test_case[0]
@@ -112,6 +113,7 @@ class CsvDataApiTest(TestCase):
             response = self.client.get(url)
             self.assertTrue(response.status_code == test_case[1])
 
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
     def test_student_data_query_parameters(self):
         for test_case in ENDPOINT_TEST_CASES:
             url = '/api/v1/student_data/' + test_case[0]
