@@ -18,13 +18,16 @@ from django.test.utils import override_settings
 import pivot
 
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
+                             'test',
                              'test_resources',
                              'csvfiles/',)
 TEST_CSV_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
+                                   'test',
                                    'test_resources',
                                    'csvfiles/scrub/pre_scrub/',)
 
 TEST_CSV_POST_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
+                                        'test',
                                         'test_resources',
                                         'csvfiles/scrub/post_scrub/',)
 TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
