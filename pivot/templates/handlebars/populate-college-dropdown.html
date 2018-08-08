@@ -1,7 +1,7 @@
 {% load templatetag_handlebars %}
 {% tplhandlebars "populate-college-dropdown" %}
 
-<li role="option" id="college-opt1" aria-selected="true" class="active"><a href="#">All Colleges</a></li>
+<li role="option" id="college-opt1" aria-selected="true" class="active college-list">All Colleges</li>
 <li class="divider"><hr class="sr-only" /></li>
 <!--Campus name followed by colleges-->
 {{ #each campus_college }}
@@ -14,7 +14,7 @@
 		<ul style="padding-left: 0px;" class="pivot-dropdown-nested"> <!-- campus as nested list-->
     {{ #each this.colleges }}
         <!--Add colleges here-->
-        <li class="college-list" role="option"><a href="#" class="{{ ../this.campus }}">{{ this }}</a></li>
+        <li class="college-list {{ ../this.campus }}" role="option" tabindex="0">{{ this }}</li>
     {{ /each }}
 		</ul>
     </li>

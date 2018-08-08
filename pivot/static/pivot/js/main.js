@@ -305,7 +305,7 @@ function init_search_events() {
 
         // Set focus on the selected item
         window.setTimeout(function() {
-            $("#college-dropdown>ul>li[aria-selected]>a").focus();
+            $("#college-dropdown>ul>li[aria-selected]").focus();
         }, 100);
 
     });
@@ -323,9 +323,9 @@ function init_search_events() {
                 allFocused.filter(".dropdown-menu>li")[0] //All focused?
             );
             //first college in selected campus
-            var firstChild = curFocused.find(".college-list").first().find("a")[0];
+            var firstChild = curFocused.find(".college-list").first()[0];
             //next college
-            var nextCollege = curFocused.next(".college-list").find("a")[0];
+            var nextCollege = curFocused.next(".college-list")[0];
             //next campus
             var nextCampus = 
                 curFocused.parents(".dropdown-header").next(".divider").next(".dropdown-header")[0] ||
@@ -340,9 +340,9 @@ function init_search_events() {
                 allFocused.filter(".dropdown-menu>li")[0] //All focused?
             );
             //last college in selected campus
-            var lastChild = curFocused.find(".college-list").last().find("a")[0];
+            var lastChild = curFocused.find(".college-list").last()[0];
             //prev college
-            var prevCollege = curFocused.prev(".college-list").find("a")[0];
+            var prevCollege = curFocused.prev(".college-list")[0];
             //prev campus
             var prevCampus = 
                 curFocused.parents(".dropdown-header").prev(".divider").prev(".dropdown-header")[0] ||
@@ -361,7 +361,7 @@ function init_search_events() {
         var inputs = $("#suggestions .suggested_major input");
         //if the input exists, use it, otherwise use the li
         var suggestedMajor = inputs.length ? inputs : $("#suggestions .suggested_major");
-        if (e.which == 40) { //down arrow key - go to first suggestion
+        if (e.which == 40 || e.which == 39) { //down arrow key - go to first suggestion
             suggestedMajor.first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
             suggestedMajor.last().focus();
@@ -534,15 +534,15 @@ function populateCollegeDropdown() {
     }));
 
     //Show selection in button
-    $("#college-dropdown .dropdown-menu li a").click(function(){
+    $("#college-dropdown .dropdown-menu li.college-list").click(function(){
         // Remove the previously selected dropdown option
         var prev_selected = $("#college-dropdown .dropdown-menu .active");
         prev_selected.removeClass("active");
         prev_selected.removeAttr("aria-selected");
 
         // Visually select the clicked on option
-        $(this).parent().addClass("active");
-        $(this).parent().attr("aria-selected","true");
+        $(this).addClass("active");
+        $(this).attr("aria-selected","true");
 
         var selection_source = $("#populate-college-dropdown-college-selection").html();
         var selection_template = Handlebars.compile(selection_source);
@@ -553,7 +553,8 @@ function populateCollegeDropdown() {
         } else {
             $("#dropdownMenu").val($(this).text());
         }
-        $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
+        var campus = $(this.classList).filter(["Seattle", "Bothell", "Tacoma"])[0];
+        $("#dropdownMenu").attr("data-campus", campus);
         toggleGo();
         setTimeout(prepareResults, 10);
         $( "#dropdownMenu" ).focus();
