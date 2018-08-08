@@ -356,7 +356,7 @@ function init_search_events() {
         var inputs = $("#suggestions .suggested_major input");
         //if the input exists, use it, otherwise use the li
         var suggestedMajor = inputs.length ? inputs : $("#suggestions .suggested_major");
-        if (e.which == 40) { //down arrow key - go to first suggestion
+        if (e.which == 40 || e.which == 39) { //down arrow key - go to first suggestion
             suggestedMajor.first().focus();
         } else if (e.which == 38) //up arrow key - go to last suggestion
             suggestedMajor.last().focus();
