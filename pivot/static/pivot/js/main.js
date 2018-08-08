@@ -176,7 +176,7 @@ function getMajorStatus() {
     d3.csv("/api/v1/status_lookup/", function (d) {
         return {
             code: d.code.trim(),
-            name: d.name.trim(),
+            name: _majorNameLookup[d.code.trim()],
             status: d.status.trim()
         }
     }, function (error, data) {
@@ -264,6 +264,11 @@ function addStudents() {
         populateCollegeDropdown();
         all_data_loaded = true;
 
+        if (window.location.pathname == '/major-gpa/' && getParameterByName("code") != null) {
+            var majorParam = getParameterByName("code");
+            sessionStorage.setItem("majors", '["' + majorParam +'"]');
+        }
+
         checkStoredData();
         init_search_events();
 
@@ -345,7 +350,7 @@ function init_search_events() {
             var toBeFocused = $(lastChild || prevCollege || prevCampus); 
             toBeFocused.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space/enter
-           $(":focus").trigger("click"); 
+           $(":focus").trigger("click");
         } 
 
     });
@@ -550,15 +555,12 @@ function populateCollegeDropdown() {
         }
         $("#dropdownMenu").attr("data-campus", $(this).attr("class"));
         toggleGo();
-        if (window.location.href.indexOf("course-gpa") > -1) {
-            // creates a user like click
-            setTimeout(prepareResults, 10);
-        }
+        setTimeout(prepareResults, 10);
         $( "#dropdownMenu" ).focus();
     });
 
     //If this is the course page and a code is provided, load the data without searching
-    if (getParameterByName("code") != null) {
+    if (window.location.pathname == '/course-gpa/' && getParameterByName("code") != null) {
         listCoursesForMajor(getParameterByName("code").replace("_", " "));
         //TODO: need to update placeholders
     }
