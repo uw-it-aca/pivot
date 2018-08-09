@@ -2,7 +2,10 @@
 <!-- stylesheets -->
 <link rel="stylesheet" href="{% static "vendor/css/bootstrap.min.css" %}">
 <link rel="stylesheet" href="{% static "vendor/css/bootstrap-theme.min.css" %}">
-<link rel="stylesheet" href="{% static "pivot/css/styles.css" %}"/>
+{% load compress %}
+{% compress css %}
+<link rel="stylesheet" type="text/less" href="{% static "pivot/css/styles.less" %}"/>
+{% endcompress %}
 
 <!-- javascript -->
 <script src="{% static "vendor/js/jquery-3.1.1.min.js" %}"></script>
@@ -15,6 +18,16 @@
 <script src="https://use.fontawesome.com/c89804655d.js"></script>
 <script src="{% static "pivot/js/horizontal-box.js" %}"></script>
 
+{% if google_analytics %}
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ google_analytics }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ google_analytics }}', { 'anonymize_ip': true });
+    </script>
+{% endif %}
 
 <!-- static paths -->
 <script>

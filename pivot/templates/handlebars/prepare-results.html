@@ -2,22 +2,23 @@
 {% tplhandlebars "prepare-results" %}
 
 <ul id="numSuggestions">
-    <span class="dropdown-header" id="numResults" aria-live="assertive"></span>
+    <span class="dropdown-header" id="numResults" aria-live="assertive">&nbsp;</span>
     <li role="separator" class="divider" id="numResultsStyle"></li>
 </ul>
-<ul id="selectedCollege">
-    <span class="dropdown-header">{{ selected_campus }}</span>
+<h3 class="dropdown-header" id="selectedCollegeHeader" tabindex="0">{{ selected_campus }}</h3>
+<ul id="selectedCollege" aria-labelledby="selectedCollegeHeader">
 </ul>
-<ul id="currentCampus">
-    <span class="dropdown-header">{{ current_campus }} campus</span>
+<h3 class="dropdown-header" tabindex="0" id="currentCampusHeader">{{ current_campus }} campus</h3>
+<ul id="currentCampus" aria-labelledby="currentCampusHeader">
 </ul>
-<ul id="bothellCampus">
-    <span class="dropdown-header">Bothell campus</span>
+<h3 class="dropdown-header" tabindex="0" id="bothellCampusHeader">Bothell campus</h3>
+<ul id="bothellCampus" aria-labelledby="bothellCampusHeader">
 </ul>
-<ul id="seattleCampus">
-    <span class="dropdown-header">Seattle campus</span>
+<h3 class="dropdown-header" tabindex="0" id="seattleCampusHeader">Seattle campus</h3>
+<ul id="seattleCampus" aria-labelledby="seattleCampusHeader">
 </ul>
-<ul id="tacomaCampus">
-    <span class="dropdown-header">Tacoma campus</span>
+<h3 class="dropdown-header" tabindex="0" id="tacomaCampusHeader">Tacoma campus</h3>
+<ul id="tacomaCampus" aria-labelledby="tacomaCampusHeader">
 </ul>
 {% endtplhandlebars %}
+

@@ -14,6 +14,48 @@ function checkStoredData() {
 }
 
 /***SEARCH***/
+
+
+function initKeyboardNav() {
+    $("#search").keydown(function (e) {
+        if (e.which == 40) {
+            var toBeFocused = $("#suggestions").find("h3").first()
+        } else if (e.which == 38) {
+            var toBeFocused =  $("#suggestions").find("li").last();
+        }
+
+        if (toBeFocused) {
+            toBeFocused.focus();
+        }
+    });
+
+    $("#suggestions").keydown(function (e) {
+        var curSelected = $(":focus");
+        if (e.which == 40 || e.which == 39) { //down or right arrow
+            var toSelect = $(
+                curSelected.next("li")[0] || 
+                curSelected.next("ul").find("li").first()[0] ||
+                curSelected.parent("ul").next("h3")[0]
+            );
+            if (toSelect) {
+                toSelect.focus();
+            }
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow
+            var toSelect = $(
+                curSelected.prev("li")[0] || 
+                curSelected.prev("ul").find("li").first()[0] ||
+                curSelected.parent("ul").prev("h3")[0]
+            );
+            if (toSelect) {
+                toSelect.focus();
+            }
+        } else if (e.which == 32 || e.which == 13) { //select with space key
+            e.preventDefault();
+            curSelected.trigger("click");
+        }
+    });
+}
+
 //Item selection
 function updateEvents() {
     $("#suggestions li").hover(
@@ -228,6 +270,7 @@ function multipleResults() {
     $(".no-results-warning").html(template({search: search_key}));
 }
 
+//Displays a message when a protected major is selected
 function protectedResult(maj) {
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
@@ -271,9 +314,19 @@ function listCoursesForMajor(maj) {
     // Compile the dynamic table data and pass it as a variable to outer template.
     var courses = _completeMajorMap[maj]["courses"];
 
+    //shim Object.values for IE
+    Object.values = Object.values || function (obj) {
+        return Object.keys(obj).map(function (key) {
+            return obj[key];
+        });
+    };
+
     // If the course has a -1 in it, that means that this major is protected
     // (does not have more than 5 students), so display an alert
-    if(Object.keys(courses).some(function(k){ return ~k.indexOf("-1") })){
+    var studentCounts = Object.values(courses).map(function (value) { 
+        return value["student_count"];
+    });
+    if(studentCounts.some(function(k){ return ~k.indexOf("-1") })){
        protectedResult(maj);
        return;
     }
@@ -287,12 +340,15 @@ function listCoursesForMajor(maj) {
             var popularity = Math.round((courses[c]["student_count"] / _completeMajorMap[maj]["students_in_major"]) * 100) + "%";
             var col = "q" + colorBucket(courses[c]["percentiles"][5])+ "-9";
             var percentile = round(parseFloat(courses[c]["percentiles"][5]), 2);
+            // replace all spaces not before a number with a dash
+            // add a space before the number
+            var name_ref = c.replace(/\s(?!(\d))/, "-").replace(/(\d+)/, '_$1');
             // Create a dict of all single line data and push it to the list
             var collection = {
                 popularity: popularity,
                 dept_abbrev: courses[c]["dept_abbrev"],
                 course_number: courses[c]["course_number"],
-                course_long_name: courses[c]["course_long_name"],
+                course_long_name: _courseNameLookup[name_ref],
                 col: col,
                 percentile: percentile
             };

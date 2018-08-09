@@ -16,7 +16,7 @@ downloads/
 eggs/
 .eggs/
 lib/
-lib64/
+lib64
 parts/
 sdist/
 var/
@@ -88,9 +88,6 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# Prevent accidental data commits
-.csv
-
 # virtualenv
 bin/
 include/
@@ -104,10 +101,14 @@ manage.py
 project/
 
 # pivot data
-data/
+data/*.csv
 
 # DS_Store
 .DS_Store
 
 # vim
 *.swp
+
+#R Studio
+.Rproj.user
+Icon
