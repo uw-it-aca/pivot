@@ -51,8 +51,31 @@ function createMajorCard(majors, gpa) {
     var valid_majors = 0;
     var protected_list = [];
 
+    //see if there's data, and dispaly an error if there isn't
+    var major = filterByMajors([majors[0]]);
+    if (!major[0]) {
+        var source = $("#create-no-data-card").html();
+        var template = Handlebars.compile(source);
+        $("#boxplots").append(template({
+            reason: "No data available for the requested time period. Please select a different one."
+        }));
+        //get the results div to display
+        valid_majors++;
+        //if there's no data, then none of the majors are valid
+        majors = [];
+    }
+
     //For each selected major...
     for (var l in majors) {
+        if (!_completeMajorMap[majors[l]]) {
+            var source = $("#create-no-data-card").html();
+            var template = Handlebars.compile(source);
+            $("#boxplots").append(template({
+                reason: "The data does not contain any information about this major."
+            }));
+            //get the results div to display
+            valid_majors++
+        }
 
         var major = filterByMajors([majors[l]]);
         var med = major[0]["median"];
@@ -80,10 +103,29 @@ function createMajorCard(majors, gpa) {
         $("#" + id).data("code", majors[l]);
 
         //Add the initial content for the major
-        createBoxForMajor(l, med, id);
+        //if the statuslookup array has been populated, proceed
+        //if it hasn't, add the rest of the code as a listener for its completion
+        //so that we can proceed once it's done
+        if (!$.isEmptyObject(_statusLookup)) {
+            createBoxForMajor(l, med, id);
+            createBoxplot(l, gpa, id, med, major);
+        } else {
+            //This IIFE creates a scope so that each listener has its own 
+            //closure from which it can reference values
+            (function () {
+                var localL = l;
+                var localMed = med;
+                var localId = id;
+                var localGpa = gpa;
+                var localMajor = major;
+                statusLookupListener.push(function () {
+                    createBoxForMajor(localL, localMed, localId);
+                    createBoxplot(localL, localGpa, localId, localMed, localMajor);
+                });
+            })();
+        }
 
         //Add the boxplot
-        createBoxplot(l, gpa, id, med, major);
         //D3 - vars to pass = gpa, id, med, major
 
     }
@@ -97,6 +139,11 @@ function createMajorCard(majors, gpa) {
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
+        var yearTabId = (
+            new URLSearchParams(window.location.search).get("num_qtrs")
+            || "8"
+        ) + "qtrs" ;
+        showYearSelectModule(yearTabId);
     } else {
         // There were no majors we could display
         $(".results-section").css("display","none");
@@ -112,11 +159,14 @@ function createBoxForMajor(i, median, majorId) {
     var template = Handlebars.compile(source);
     //Create the data boxes, only show titles for first box
     var yes_or_no = i>=1 ? 0 : 1;
+    var request_qtrs = getParameterByName("num_qtrs") || 8;
     $("#" + majorId).append(template({
         i: yes_or_no,
         display_median: display_median,
         major_id: majorId,
-        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"]
+        major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"],
+        num_qtrs: _statusLookup[majorId].num_qtrs,
+        insufficient_data: parseInt(_statusLookup[majorId].num_qtrs) < parseInt(request_qtrs)
     }));
 
     //Create the inline help popovers, only needed for major in first row
@@ -729,6 +779,43 @@ function clear_results() {
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
     storeSelections(null, null);
+}
+
+/**** SELECT YEAR ****/
+//Adds the year select module
+function showYearSelectModule(yearId) {
+    // Compile show-year-select-module Handlebars template
+    var source =  $("#show-year-select-module").html();
+    var template = Handlebars.compile(source);
+
+    $(".yourgpa-box").prepend(template());
+    $(".pivot-year-selector>li.active").removeClass("active");
+    $("#"+ yearId).addClass("active");
+
+    $(".pivot-year-selector>li").click(function () {
+        $(".pivot-year-selector>li.active").removeClass("active");
+        $(this).addClass("active");
+        
+        var num_qtrs = $(this).attr("data-num-qtrs");
+        var queryStr = "?num_qtrs=" + num_qtrs;
+        try { 
+            getCompleteMajorMap(queryStr);
+        } catch (error) {
+            getDataNameMap();
+        }
+
+        createMajorCard(getSelectedMajorList(), $("input#compare").val());
+    });
+}
+
+function getSelectedMajorList() {
+    //create major list from existing, pass gpa
+    var list = [];
+    $(".chosen_major").each(function() {
+        list.push($(this).text());
+    });    
+
+    return list;
 }
 
 /**** MISC ****/
