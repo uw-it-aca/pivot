@@ -1,0 +1,10 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "create-no-data-card" %}
+
+<div class='major-card row' id='no-data' aria-live="polite">
+    <div class='card-heading col-xs-12 col-md-12 major-height'>
+        <p class='major-heading'>{{ reason }}</p>
+    </div>
+</div>
+
+{% endtplhandlebars %}

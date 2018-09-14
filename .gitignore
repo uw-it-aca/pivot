@@ -102,6 +102,7 @@ project/
 
 # pivot data
 data/*.csv
+static/CACHE
 
 # DS_Store
 .DS_Store
