@@ -117,7 +117,7 @@ function createMajorCard(majors, gpa) {
                 var localMed = med;
                 var localId = id;
                 var localGpa = gpa;
-                var localmajor = major;
+                var localMajor = major;
                 statusLookupListener.push(function () {
                     createBoxForMajor(localL, localMed, localId);
                     createBoxplot(localL, localGpa, localId, localMed, localMajor);
