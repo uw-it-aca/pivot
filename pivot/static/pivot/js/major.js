@@ -658,8 +658,8 @@ function goSearch() {
     var results = false;
 
     var search = $("#search").val();
-    var selectedCol = $("#dropdownMenu:first-child").val();
-    var campus = $("#dropdownMenu:first-child").attr("data-campus");
+    var selectedCol = $("#dropdownMenu").val();
+    var campus = $("#dropdownMenu").attr("data-campus");
     var newMajors = "";
     //if any text in the search field and dropdown = All, show all matching majors + any that are currently selected
     if (search != "" && selectedCol == "All") {
