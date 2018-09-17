@@ -12,7 +12,7 @@ def year_select_tab(num_qtrs):
     end_year = str(end_term.year % 100)
     start_year = str((int(end_term.year) - int(num_years)) % 100)
 
-    qtr = end_term.quarter[:2]
+    qtr = end_term.quarter[:2].upper()
 
     return """
         <a href=".?num_qtrs={0}&end_yr={4}&end_qtr={2}">
