@@ -91,12 +91,12 @@ class DataFileByQuarterView(DataFileView):
         if len(str(end_year)) > 2:
             return HttpResponseBadRequest("Year must be in a 2 digit format")
 
-        end_quarter = request.GET.get("end_qtr").lower()
+        end_quarter = request.GET.get("end_qtr")
 
         if end_quarter is None:
             if end_term is None:
                 end_term = get_term_before(get_previous_term())
-            end_quarter = end_term.quarter[:2]
+            end_quarter = end_term.quarter[:2].lower()
 
         if end_quarter not in ["au", "wi", "sp", "su"]:
             return HttpResponseBadRequest("Quarter must be one of 'au',"
