@@ -139,10 +139,7 @@ function createMajorCard(majors, gpa) {
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
-        var yearTabId = (
-            new URLSearchParams(window.location.search).get("num_qtrs")
-            || "8"
-        ) + "qtrs" ;
+        var yearTabId = (getParameterByName("num_qtrs") || "8") + "qtrs" ;
         showYearSelectModule(yearTabId);
     } else {
         // There were no majors we could display
@@ -256,8 +253,8 @@ function overlayGPA(gpa) {
         });
         $(".data-display:first").append('<div class="gpaLabel">Your GPA<br/>' + gpa + '</div>');
         $(".gpaLabel").css("left",(left - $(".gpaLabel").width()/2) + "px");
-        $(".data-display:first .gpaLabel").css({"top":"28px","background-color":"#fff"});
-        $(".myGPA:first").css({"top":"28px","height":($(".data-display:first").height() - 28) + "px"});
+        $(".data-display:first .gpaLabel").css({"top":"28px"});
+        $(".myGPA:first").css({"top":"61px","height":($(".data-display:first").height() - 61) + "px"});
 
     }
 }
@@ -449,7 +446,7 @@ function displayResults() {
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
             //check that college is from appropriate campus
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus"))
                 appendTo = "#selectedCollege";
             else if (_completeMajorMap[maj]["campus"] == _currentCampus)
                 appendTo = "#currentCampus";
@@ -658,8 +655,8 @@ function goSearch() {
     var results = false;
 
     var search = $("#search").val();
-    var selectedCol = $("#dropdownMenu:first-child").val();
-    var campus = $("#dropdownMenu:first-child").attr("data-campus");
+    var selectedCol = $("#dropdownMenu").val();
+    var campus = $("#dropdownMenu").attr("data-campus");
     var newMajors = "";
     //if any text in the search field and dropdown = All, show all matching majors + any that are currently selected
     if (search != "" && selectedCol == "All") {
@@ -788,17 +785,17 @@ function showYearSelectModule(yearId) {
     var source =  $("#show-year-select-module").html();
     var template = Handlebars.compile(source);
 
-    $(".yourgpa-box").prepend(template());
+    $(".yourgpa-box").append(template());
     $(".pivot-year-selector>li.active").removeClass("active");
     $("#"+ yearId).addClass("active");
 
     $(".pivot-year-selector>li").click(function () {
         $(".pivot-year-selector>li.active").removeClass("active");
         $(this).addClass("active");
-        
+
         var num_qtrs = $(this).attr("data-num-qtrs");
         var queryStr = "?num_qtrs=" + num_qtrs;
-        try { 
+        try {
             getCompleteMajorMap(queryStr);
         } catch (error) {
             getDataNameMap();

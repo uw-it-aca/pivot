@@ -21,12 +21,7 @@ var statusLookupListener = [];
 if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
     //indexOf will return a -1 if it doesn't find the string. ~ will take the bitwise not of the
     //result, which will only be falsy if it is -1.
-    if (~window.location.search.indexOf("?slow") || ~window.location.search.indexOf("&slow")) {
-        console.log("REQUESTING SLOW VERSION");
-        window.setTimeout(function() { getDataNameMap(window.location.search); }, 5000);
-    } else {
-        getDataNameMap(window.location.search);
-    }
+    getDataNameMap(window.location.search);
 }
 
 // initializes app
@@ -333,7 +328,7 @@ function init_search_events() {
 
     //arrow key navigation for dropdown menu
     $(".dropdown-menu").keydown(function (e) {
-        if (e.which == 40) { //down arrow key { 
+        if (e.which == 40 || e.which == 39) { //down or right arrow key {
             var allFocused = $("*").has(":focus").addBack(":focus");
             var curFocused = $(
                 allFocused.filter(".college-list")[0] || //college focused?
@@ -350,7 +345,7 @@ function init_search_events() {
                 curFocused.next(".divider").next(".dropdown-header")[0];
             var toBeFocused = $(firstChild || nextCollege || nextCampus); 
             toBeFocused.focus();
-        } else if (e.which == 38) { //up arrow key { 
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow key {
             var allFocused = $("*").has(":focus").addBack(":focus");
             var curFocused = $(
                 allFocused.filter(".college-list")[0] || //college focused?
@@ -365,7 +360,9 @@ function init_search_events() {
             var prevCampus = 
                 curFocused.parents(".dropdown-header").prev(".divider").prev(".dropdown-header")[0] ||
                 curFocused.prev(".divider").prev(".dropdown-header")[0];
-            var toBeFocused = $(lastChild || prevCollege || prevCampus); 
+            //all colleges option
+            var allColleges = $("#college-opt1");
+            var toBeFocused = $(lastChild || prevCollege || prevCampus || allColleges);
             toBeFocused.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space/enter
            $(":focus").trigger("click");
@@ -405,8 +402,8 @@ function prepareResults(e) {
     }
     var template = Handlebars.compile(source);
     $("#suggestions").html(template({
-        selected_campus: $("#dropdownMenu").val(),
-        current_campus: _currentCampus
+        selected_campus: $("#dropdownMenu").val().toUpperCase(),
+        current_campus: _currentCampus.toUpperCase()
     }));
     //If a college is selected from the dropdown menu or text has been entered in the input field
     //if college selected, should show everything in college AND current selections

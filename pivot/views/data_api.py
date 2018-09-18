@@ -98,6 +98,8 @@ class DataFileByQuarterView(DataFileView):
                 end_term = get_term_before(get_previous_term())
             end_quarter = end_term.quarter[:2]
 
+        end_quarter = end_quarter.lower()
+
         if end_quarter not in ["au", "wi", "sp", "su"]:
             return HttpResponseBadRequest("Quarter must be one of 'au',"
                                           + " 'wi', 'sp', or 'su'")
