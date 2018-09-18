@@ -21,6 +21,19 @@ function checkStoredData() {
     } else {
         $(".sample-data").css("display","block");
     }
+
+    // Preserve scroll state across pages
+    // taken from StackOverflow: https://stackoverflow.com/a/24681905
+    if(typeof(Storage) !== 'undefined') {
+        // See if there is a scroll pos and go there.
+        var lastYPos = +localStorage.getItem('scrollYPos');
+        if (lastYPos) {
+            window.scrollTo(0, lastYPos);
+        }
+        $(window).scroll(function () {
+            localStorage.setItem('scrollYPos', window.scrollY);
+        });
+    }
 }
 
 /**** DISPLAY DATA FOR SELECTED MAJOR(S) ****/
