@@ -91,7 +91,7 @@ class DataFileByQuarterView(DataFileView):
         if len(str(end_year)) > 2:
             return HttpResponseBadRequest("Year must be in a 2 digit format")
 
-        end_quarter = request.GET.get("end_qtr")
+        end_quarter = request.GET.get("end_qtr").lower()
 
         if end_quarter is None:
             if end_term is None:
