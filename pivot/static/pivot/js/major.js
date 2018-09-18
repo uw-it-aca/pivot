@@ -785,17 +785,17 @@ function showYearSelectModule(yearId) {
     var source =  $("#show-year-select-module").html();
     var template = Handlebars.compile(source);
 
-    $(".yourgpa-box").prepend(template());
+    $(".yourgpa-box").append(template());
     $(".pivot-year-selector>li.active").removeClass("active");
     $("#"+ yearId).addClass("active");
 
     $(".pivot-year-selector>li").click(function () {
         $(".pivot-year-selector>li.active").removeClass("active");
         $(this).addClass("active");
-        
+
         var num_qtrs = $(this).attr("data-num-qtrs");
         var queryStr = "?num_qtrs=" + num_qtrs;
-        try { 
+        try {
             getCompleteMajorMap(queryStr);
         } catch (error) {
             getDataNameMap();
