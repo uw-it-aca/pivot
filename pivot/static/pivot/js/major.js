@@ -162,7 +162,8 @@ function createBoxForMajor(i, median, majorId) {
         display_median: display_median,
         major_id: majorId,
         major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"],
-        num_qtrs: _statusLookup[majorId].num_qtrs,
+        percent_qtrs: Math.floor(_statusLookup[majorId].num_qtrs * 100 / parseInt(request_qtrs)),
+        total_yrs: Math.floor(parseInt(request_qtrs) / 4),
         insufficient_data: parseInt(_statusLookup[majorId].num_qtrs) < parseInt(request_qtrs)
     }));
 
