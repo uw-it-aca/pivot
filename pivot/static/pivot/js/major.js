@@ -449,7 +449,7 @@ function displayResults() {
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
             var appendTo = "";
             //check that college is from appropriate campus
-            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu:first-child").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu:first-child").attr("data-campus"))
+            if (_completeMajorMap[maj]["college"] == $("#dropdownMenu").val() && _completeMajorMap[maj]["campus"] == $("#dropdownMenu").attr("data-campus"))
                 appendTo = "#selectedCollege";
             else if (_completeMajorMap[maj]["campus"] == _currentCampus)
                 appendTo = "#currentCampus";
