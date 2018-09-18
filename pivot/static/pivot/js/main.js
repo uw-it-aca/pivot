@@ -387,8 +387,8 @@ function prepareResults(e) {
     }
     var template = Handlebars.compile(source);
     $("#suggestions").html(template({
-        selected_campus: $("#dropdownMenu").val(),
-        current_campus: _currentCampus
+        selected_campus: $("#dropdownMenu").val().toUpperCase(),
+        current_campus: _currentCampus.toUpperCase()
     }));
     //If a college is selected from the dropdown menu or text has been entered in the input field
     //if college selected, should show everything in college AND current selections
