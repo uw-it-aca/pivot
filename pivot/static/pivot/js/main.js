@@ -21,12 +21,7 @@ var statusLookupListener = [];
 if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
     //indexOf will return a -1 if it doesn't find the string. ~ will take the bitwise not of the
     //result, which will only be falsy if it is -1.
-    if (~window.location.search.indexOf("?slow") || ~window.location.search.indexOf("&slow")) {
-        console.log("REQUESTING SLOW VERSION");
-        window.setTimeout(function() { getDataNameMap(window.location.search); }, 5000);
-    } else {
-        getDataNameMap(window.location.search);
-    }
+    getDataNameMap(window.location.search);
 }
 
 // initializes app
