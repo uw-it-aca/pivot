@@ -139,10 +139,7 @@ function createMajorCard(majors, gpa) {
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
-        var yearTabId = (
-            new URLSearchParams(window.location.search).get("num_qtrs")
-            || "8"
-        ) + "qtrs" ;
+        var yearTabId = (getParameterByName("num_qtrs") || "8") + "qtrs" ;
         showYearSelectModule(yearTabId);
     } else {
         // There were no majors we could display
