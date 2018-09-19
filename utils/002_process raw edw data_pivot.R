@@ -16,14 +16,14 @@ f <- list.files("raw data/", pattern = "raw", full.names = T)
 f <- f[which.max(file.mtime(f))]
 load(f); rm(f)
 
-source("scripts/config.R")
+# source("scripts/config.R")
 
 options(tibble.print_max = 800)
 
 # custom function to created quoted character vectors from unquoted text
 Cs <- function(...) {as.character(sys.call())[-1]}
 
-# re-wrote to use base r instead of stringr
+# re-written to use base r instead of stringr
 df.trimws <- function(df){
   i <- sapply(df, is.character)
   df[i] <- lapply(df[i], trimws)
@@ -32,20 +32,39 @@ df.trimws <- function(df){
 
 # use max available yrq from transcripts rather than current
 max.yrq <- max(pre.maj.courses$tran.yrq)
+# make file name prefix from max.yrq
+q <- max.yrq %% 10
+y <- (max.yrq %/% 10) - 2005  # subtract 5 years
+q <- c("wi", "sp", "su", "au")[q]
+prefix <- paste0(q, y, "_20qtrs")
+rm(q, y)
 
-prefix <- "wi13_20qtrs"
 
-# reconcile major codes ---------------------------------------------------
+# CM major codes ---------------------------------------------------
 
-# kuali example:
-active.majors$maj.key[1:4]
-# major fin org table (SDB) example:
-major.college$MajorCode[1:4]
+programs <- programs %>%
+  filter(program_status == "active",
+         str_sub(program_code, 1, 2) == "UG",
+         grepl("MAJOR", program_code, ignore.case = F) == T)
+programs <- df.trimws(programs)
 
-# Issue:
-# splitting strings > recombining
-# removing (or adding) padded zeroes                --replace 00 with 0 in one instance in kuali, otherwise concat abbv_path
-# campus will be lost from code in SDB/AI sources   --ok
+x <- data.frame(str_split(creds$credential_code, "-", simplify = T))
+names(x) <- c("cred_abbv", "cred_pathway", "cred_level_code", "cred_degree_type_code")
+creds <- bind_cols(creds, x)
+rm(x)
+
+creds <- creds %>%
+  filter(grepl("true", DoNotPublish, ignore.case = T) == F,
+         credential_status == "active",
+         cred_level_code == 1,
+         cred_degree_type_code <= 8)
+creds <- df.trimws(creds)
+
+active.majors <- inner_join(creds, programs, by = "program_verind_id") %>%
+  distinct(credential_code, .keep_all = T) %>%
+  rename(mkey = credential_code)
+
+
 # remove trailing spaces in SDB/AI sources
 
 major.college <- df.trimws(major.college)
@@ -53,12 +72,11 @@ pre.maj.gpa <- df.trimws(pre.maj.gpa)
 pre.maj.courses <- df.trimws(pre.maj.courses)
 course.names <- df.trimws(course.names)
 
-# splitting up strings to create common major key
-# I'll do it for all to err on side of caution
-active.majors$mkey <- str_sub(active.majors$maj.key, end = str_locate(active.majors$maj.key, "[\\d]-")[,1])
-active.majors$mkey <- str_replace(active.majors$mkey, "-", "_")
-# there's one major with 00 instead of 0; fortunately there is not also a CMS-0
-active.majors$mkey <- str_replace(active.majors$mkey, "00", "0")
+
+
+
+
+
 
 # concat abbv+path, 1 line fewer/cleaner for the rest
 major.college$mkey <- paste(major.college$MajorAbbrCode, major.college$MajorPathwayNum, sep = "_")
@@ -254,11 +272,8 @@ course.map <- course.map %>%
          is_major,
          is_campus,
          name = course.lname,
-<<<<<<< HEAD
          # id = ckey.num,
-=======
          id = ckey.num,
->>>>>>> 347fe1236dac933a93d97fefa1f31cb49c741249
          key = ckey)
 major.map <- active.majors %>%
   ungroup() %>%
@@ -269,11 +284,8 @@ major.map <- active.majors %>%
          is_major,
          is_campus,
          name = maj.name,
-<<<<<<< HEAD
          # id = mkey.num,
-=======
          id = mkey.num,
->>>>>>> 347fe1236dac933a93d97fefa1f31cb49c741249
          key = mkey)
 campus.map <- data.frame(is_course = 0,
                          is_major = 0,
@@ -281,11 +293,8 @@ campus.map <- data.frame(is_course = 0,
                          name = c("Seattle",
                                   "Bothell",
                                   "Tacoma"),
-<<<<<<< HEAD
                          # id = c(0,1,2),
-=======
                          id = c(0,1,2),
->>>>>>> 347fe1236dac933a93d97fefa1f31cb49c741249
                          key = c('0','1','2'),
                          stringsAsFactors = F)
 
