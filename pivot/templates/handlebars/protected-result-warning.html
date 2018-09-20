@@ -3,7 +3,7 @@
 <div class="protected-result-warning alert alert-info" role="alert" aria-atomic="true">
 	{{#if plural}}
 	<!-- List out the majors selected (case on the major.html page) -->
-	<p> <b> Protected Majors:</b> </p>
+	<p> <b> Sorry, GPA data for the following majors is unavailable: </b> </p>
 		<ul>
 		{{#each majors}}
 			<li> -{{ this }}</li>
@@ -12,11 +12,11 @@
 	<br>
 	{{else}}
 	<!-- Simply just put the major along with the title -->
-	<p> <b> Protected Major: {{ majors.[0] }} </b> </p>
+	<p> <b> Sorry, GPA data for {{ majors.[0] }} is unavailable. </b> </p>
 	{{/if}}
 
 <p>
-    To protect students' privacy, we only show data for majors with 5 or more declared students.
+    For reliable statistics and student privacy, we only show data for majors with 5 or more declared students
 </p>
 
 </div>

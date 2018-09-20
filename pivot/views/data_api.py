@@ -9,15 +9,18 @@ except ImportError:
 try:
     from urllib.parse import urljoin
     from urllib.request import urlopen
+    from urllib.error import URLError
 except ImportError:
     # for Python 2.7 compatibility
     from urlparse import urljoin
     from urllib2 import urlopen
+    from urllib2 import URLError
 
 from django.shortcuts import render
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
+from uw_sws.term import get_term_before, get_previous_term
 
 
 class DataFileView(View):
@@ -70,17 +73,70 @@ class DataFileView(View):
             return si.getvalue().strip('\r\n')
 
 
-class MajorCourse(DataFileView):
-    file_name = "Majors_and_Courses.csv"
+class DataFileByQuarterView(DataFileView):
+    """ Base class for views that take a time period queries
+    """
+
+    base_file_name = None
+
+    def get(self, request):
+        end_term = None
+        end_year = request.GET.get("end_yr")
+
+        if end_year is None:
+            if end_term is None:
+                end_term = get_term_before(get_previous_term())
+            end_year = end_term.year % 100
+
+        if len(str(end_year)) > 2:
+            return HttpResponseBadRequest("Year must be in a 2 digit format")
+
+        end_quarter = request.GET.get("end_qtr")
+
+        if end_quarter is None:
+            if end_term is None:
+                end_term = get_term_before(get_previous_term())
+            end_quarter = end_term.quarter[:2]
+
+        end_quarter = end_quarter.lower()
+
+        if end_quarter not in ["au", "wi", "sp", "su"]:
+            return HttpResponseBadRequest("Quarter must be one of 'au',"
+                                          + " 'wi', 'sp', or 'su'")
+
+        num_qtrs = request.GET.get("num_qtrs", "8")
+
+        try:
+            int(num_qtrs)
+        except ValueError:
+            return HttpResponseBadRequest("Number of quarters must be"
+                                          + " an integer")
+
+        if int(num_qtrs) < 1:
+            return HttpResponseBadRequest("Number of quarters must be"
+                                          + " at least 1")
+
+        self.file_name = end_quarter + str(end_year) + "_" + num_qtrs\
+            + "qtrs_" + self.base_file_name
+
+        try:
+            return super(DataFileByQuarterView, self).get(request)
+        except URLError:
+            return HttpResponse("There is no data for the"
+                                + " requested time period", status=416)
+
+
+class MajorCourse(DataFileByQuarterView):
+    base_file_name = "majors_and_courses.csv"
 
 
 class DataMap(DataFileView):
-    file_name = "Data_Map.csv"
+    file_name = "data_map.csv"
 
 
-class StudentData(DataFileView):
-    file_name = "Student_Data_All_Majors.csv"
+class StudentData(DataFileByQuarterView):
+    base_file_name = "student_data_all_majors.csv"
 
 
 class StatusLookup(DataFileView):
-    file_name = "Status_Lookup.csv"
+    file_name = "status_lookup.csv"

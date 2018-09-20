@@ -1,0 +1,17 @@
+{% load templatetag_handlebars %}
+{% load pivot_extras %}
+{% tplhandlebars "show-year-select-module" %}
+
+<ul class="nav nav-tabs col-xs-12 col-md-6 col-md-pull-6 pivot-year-selector">
+    <li role="presentation" id="8qtrs" data-num-qtrs="8" class="active">
+        {% autoescape off %}
+            {% year_select_tab 8 %}
+        {% endautoescape %}
+    </li>
+    <li role="presentation" id="20qtrs" data-num-qtrs="20">
+        {% autoescape off %}
+            {% year_select_tab 20 %}
+        {% endautoescape %}
+    </li>
+</ul>
+{% endtplhandlebars %}

@@ -14,13 +14,14 @@ var update_results_on_load = false;
 var all_data_loaded = false;
 var _searchResultsChecked = false;
 
+//a list of listeners waiting for the response
+var statusLookupListener = [];
+
 /**** SETUP ****/
 if (window.location.pathname != "/about/" && window.location.pathname != "/login/") {
-    if (window.location.search == "?slow") {
-        window.setTimeout(function() { getDataNameMap(); }, 5000);
-    } else {
-        getDataNameMap();
-    }
+    //indexOf will return a -1 if it doesn't find the string. ~ will take the bitwise not of the
+    //result, which will only be falsy if it is -1.
+    getDataNameMap(window.location.search);
 }
 
 // initializes app
@@ -81,8 +82,9 @@ function initOnboardingDialog() {
 /**** READ DATA FROM CSV ****/
 
 //Reads file that maps data from course file to major file
-function getDataNameMap() {
-    d3.csv("/api/v1/data_map/", function(d) {
+function getDataNameMap(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/data_map/" + queryStr, function(d) {
         return {
             is_course: d.is_course.trim(),
             is_major: d.is_major.trim(),
@@ -102,13 +104,14 @@ function getDataNameMap() {
                 _campusNameLookup[data[index]["id"]] = data[index]["name"]
             }
         }
-        getCompleteMajorMap();
+        getCompleteMajorMap(queryStr);
     });
 }
 
 //Reads major and course data file
-function getCompleteMajorMap() {
-    d3.csv("/api/v1/major_course/", function(d) {
+function getCompleteMajorMap(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/major_course/" + queryStr, function(d) {
         return {
             major_abbr: d.major_path.trim(),
             course_number: d.course_num.trim(),
@@ -166,27 +169,36 @@ function getCompleteMajorMap() {
                 _completeMajorMap[major]["courses"][cID]["percentiles"][5] = data[index]["course_gpa_50pct"];
             }
         }
-        getMajorStatus();
-        addStudents();
+        getMajorStatus(queryStr);
+        addStudents(queryStr);
     });
 }
 
 //Reads seattle major status file
-function getMajorStatus() {
-    d3.csv("/api/v1/status_lookup/", function (d) {
+function getMajorStatus(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/status_lookup/" + queryStr, function (d) {
         return {
             code: d.code.trim(),
             name: _majorNameLookup[d.code.trim()],
-            status: d.status.trim()
+            status: d.status.trim(),
+            num_qtrs: d.quarters_of_data.trim()
         }
     }, function (error, data) {
         for (var index in data) {
             var code = data[index]["code"].replace(/_/g, "-");
             _statusLookup[code] = {
                 "status": data[index]["status"],
-                "name": data[index]["name"]
+                "name": data[index]["name"],
+                "num_qtrs": data[index]["num_qtrs"],
             }
         }
+        //call any listeners that were waiting on this request
+        if (statusLookupListener.length > 0) {
+            statusLookupListener.map(function (listener) {
+                listener();
+            });
+        };
     });
 }
 
@@ -232,8 +244,9 @@ function displayMajorStatusText(code) {
 }
 
 //Reads student data file
-function addStudents() {
-    d3.csv("/api/v1/student_data/", function (d) {
+function addStudents(queryStr) {
+    queryStr = queryStr || "";
+    d3.csv("/api/v1/student_data/" + queryStr, function (d) {
         return {
             major_abbr: d.major_path.trim(),
             college: d.college.trim(),
@@ -315,7 +328,7 @@ function init_search_events() {
 
     //arrow key navigation for dropdown menu
     $(".dropdown-menu").keydown(function (e) {
-        if (e.which == 40) { //down arrow key { 
+        if (e.which == 40 || e.which == 39) { //down or right arrow key {
             var allFocused = $("*").has(":focus").addBack(":focus");
             var curFocused = $(
                 allFocused.filter(".college-list")[0] || //college focused?
@@ -332,7 +345,7 @@ function init_search_events() {
                 curFocused.next(".divider").next(".dropdown-header")[0];
             var toBeFocused = $(firstChild || nextCollege || nextCampus); 
             toBeFocused.focus();
-        } else if (e.which == 38) { //up arrow key { 
+        } else if (e.which == 38 || e.which == 37) { //up or left arrow key {
             var allFocused = $("*").has(":focus").addBack(":focus");
             var curFocused = $(
                 allFocused.filter(".college-list")[0] || //college focused?
@@ -347,7 +360,9 @@ function init_search_events() {
             var prevCampus = 
                 curFocused.parents(".dropdown-header").prev(".divider").prev(".dropdown-header")[0] ||
                 curFocused.prev(".divider").prev(".dropdown-header")[0];
-            var toBeFocused = $(lastChild || prevCollege || prevCampus); 
+            //all colleges option
+            var allColleges = $("#college-opt1");
+            var toBeFocused = $(lastChild || prevCollege || prevCampus || allColleges);
             toBeFocused.focus();
         } else if (e.which == 32 || e.which == 13) { //select with space/enter
            $(":focus").trigger("click");
@@ -387,8 +402,8 @@ function prepareResults(e) {
     }
     var template = Handlebars.compile(source);
     $("#suggestions").html(template({
-        selected_campus: $("#dropdownMenu").val(),
-        current_campus: _currentCampus
+        selected_campus: $("#dropdownMenu").val().toUpperCase(),
+        current_campus: _currentCampus.toUpperCase()
     }));
     //If a college is selected from the dropdown menu or text has been entered in the input field
     //if college selected, should show everything in college AND current selections

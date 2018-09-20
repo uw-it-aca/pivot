@@ -125,8 +125,8 @@ a:focus { /* Hyperlink style:*/
 
 a.no-hover:hover, a.no-hover:focus {
     text-decoration: none;
-    border:none;
 }
+
 /* Skip to #main-content button at top */
 a.skip-to-main {
 	position: absolute;
@@ -916,6 +916,27 @@ label.suggested_major {
     font-size: 0.85em;
     font-weight: bold;
     z-index: 999;
+    background-color: transparent;
+}
+
+/*Year select*/
+.pivot-year-selector {
+    height: 100%;
+    margin-top: 5px;
+    border: 0;
+}
+
+.pivot-year-selector > li.active {
+    background-color: inherit;
+    border-bottom: 5px solid #f7b670;
+    padding-bottom: 5px;
+}
+
+.pivot-year-selector > li.active > a ,
+.pivot-year-selector > li.active > a:hover ,
+.pivot-year-selector > li.active > a:focus {
+    border: 0;
+    background-color: inherit;
 }
 
 /* Search: options */
@@ -1095,6 +1116,10 @@ ul, fieldset {
     .major-height { /* major row height*/
 	    max-height: 120px ;
     }
+    /* Move the  your GPA form to left */
+    .yourgpa-form {
+	    float: left;
+    }
 }/* end of med screen style */
  /* ==========================================================================
    SMALL SCREEN
@@ -1145,10 +1170,6 @@ ul, fieldset {
 	    border-left:5px solid #b46100;
 	    color:white;
 	}
-    /* Move the  your GPA form to left */
-    .yourgpa-form {
-	    float: left;
-    }
 
     .form-control {
 	    display: inline;
