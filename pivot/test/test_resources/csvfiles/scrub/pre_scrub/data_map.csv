@@ -1,8 +1,0 @@
-"is_course","is_major","is_campus","name","id","key"
-1,0,0,"Course 1",70,"PB&J_101"
-1,0,0,"Course 2",71,"PB&J_102"
-1,0,0,"Course 3",72,"PB&J_103"
-1,0,0,"Course 4",73,"CT:M_101"
-0,1,0,"Peanut Butter and Jelly Major",113,"PB&J_10"
-0,1,0,"Colon testing Major",114, "CT:M_10"
-0,1,0,"Space testing Major",115, "SP M_10"
