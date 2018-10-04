@@ -12,7 +12,7 @@ setup(
     packages=['pivot'],
     include_package_data=True,
     install_requires=[
-        'Django>1.11.9,<2.0',
+        'Django>1.11.15,<2.0',
         'django-compressor',
         'django-templatetag-handlebars',
         'UW-Restclients-SWS',
