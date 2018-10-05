@@ -47,7 +47,7 @@ ENDPOINT_TEST_CASES = [
     ("?end_qtr=au", 200),
     ("?end_yr=12", 200),
     ("?end_qtr=sp&end_yr=12&num_qtrs=8", 416),
-    ("?end_qtr=au&end_yr=13&num_qtrs=8", 416),
+    ("?end_qtr=au&end_yr=14&num_qtrs=8", 416),
     ("?end_qtr=au&end_yr=12&num_qtrs=27", 416),
     ("?end_qtr=au&end_yr=12", 200),
     ("?end_qtr=au&num_qtrs=8", 200),
