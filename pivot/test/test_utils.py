@@ -12,6 +12,7 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
                              'test_resources',
                              'csvfiles/',)
 
+
 class UtilsTest(TestCase):
     def test_google_analytics_processor(self):
         with self.settings(CSV_ROOT=TEST_CSV_PATH):
