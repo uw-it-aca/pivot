@@ -31,7 +31,7 @@ function checkStoredData() {
             window.scrollTo(0, lastYPos);
         }
         $(window).scroll(function () {
-            localStorage.setItem('scrollYPos', window.scrollY);
+            localStorage.setItem('scrollYPos', window.pageYOffset);
         });
     }
 }
