@@ -18,8 +18,6 @@ except ImportError:
     from urllib2 import URLError
 from django.conf import settings
 
-data_dir = getattr(settings, 'CSV_ROOT', None)
-
 
 def get_latest_term():
     student_data_term_set =\
@@ -36,6 +34,9 @@ def get_latest_term():
 
 
 def get_quarters_for_file(filename):
+    data_dir = getattr(settings, 'CSV_ROOT', None)
+    if data_dir[0:7] == "file://":
+        data_dir = data_dir[7:]
     full_paths = glob.glob(data_dir + "*_*qtrs_" + filename)
     file_names = list(map(lambda s: s.split('/')[-1], full_paths))
     terms = set(map(lambda s: s.split('_')[0], file_names))
@@ -50,10 +51,10 @@ def is_more_recent(new_term, old_term):
         print("Filename is not properly formatted")
 
     if (new_year > old_year):
-        return true
+        return True
 
     if (new_year < old_year):
-        return false
+        return False
 
     QUARTERS = ["wi", "sp", "su", "au"]
 
