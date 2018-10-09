@@ -1,5 +1,5 @@
 from django import template
-from pivot.utils import *
+from pivot.utils import get_latest_term, get_quarters_for_file, is_more_recent
 
 register = template.Library()
 
