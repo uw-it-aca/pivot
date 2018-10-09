@@ -20,7 +20,7 @@ from django.shortcuts import render
 from django.views import View
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.conf import settings
-from uw_sws.term import get_term_before, get_previous_term
+from pivot.utils import get_latest_term
 
 
 class DataFileView(View):
@@ -85,8 +85,8 @@ class DataFileByQuarterView(DataFileView):
 
         if end_year is None:
             if end_term is None:
-                end_term = get_term_before(get_previous_term())
-            end_year = end_term.year % 100
+                end_term = get_latest_term()
+            end_year = end_term[2:]
 
         if len(str(end_year)) > 2:
             return HttpResponseBadRequest("Year must be in a 2 digit format")
@@ -95,8 +95,8 @@ class DataFileByQuarterView(DataFileView):
 
         if end_quarter is None:
             if end_term is None:
-                end_term = get_term_before(get_previous_term())
-            end_quarter = end_term.quarter[:2]
+                end_term = get_latest_term()
+            end_quarter = end_term[:2]
 
         end_quarter = end_quarter.lower()
 
