@@ -23,7 +23,7 @@ options(tibble.print_max = 800)
 # custom function to created quoted character vectors from unquoted text
 Cs <- function(...) {as.character(sys.call())[-1]}
 
-# re-wrote to use base r instead of stringr
+# re-wrote to use base r instead of stringr; or could use dplyr -> mutate_if(...)
 df.trimws <- function(df){
   i <- sapply(df, is.character)
   df[i] <- lapply(df[i], trimws)
@@ -37,14 +37,9 @@ prefix <- "wi13_20qtrs"
 
 # reconcile major codes ---------------------------------------------------
 
-# kuali example:
-active.majors$maj.key[1:4]
-# major fin org table (SDB) example:
-major.college$MajorCode[1:4]
-
 # Issue:
 # splitting strings > recombining
-# removing (or adding) padded zeroes                --replace 00 with 0 in one instance in kuali, otherwise concat abbv_path
+# removing (or adding) padded zeroes
 # campus will be lost from code in SDB/AI sources   --ok
 # remove trailing spaces in SDB/AI sources
 
@@ -53,21 +48,28 @@ pre.maj.gpa <- df.trimws(pre.maj.gpa)
 pre.maj.courses <- df.trimws(pre.maj.courses)
 course.names <- df.trimws(course.names)
 
-# splitting up strings to create common major key
-# I'll do it for all to err on side of caution
-active.majors$mkey <- str_sub(active.majors$maj.key, end = str_locate(active.majors$maj.key, "[\\d]-")[,1])
-active.majors$mkey <- str_replace(active.majors$mkey, "-", "_")
+# Changing this to use the full program + credential code information
+# the format elsewhere is: "campus_abbv_pathway_deg level_deg type; kuali file doesn't have campus
+k <- str_split(active.majors$maj.key, "-", simplify = T)
+k[,2] <- str_pad(k[,2], 2, "left", "0")
+active.majors$prog.code <- apply(k, 1, function(x) paste(x, collapse = "_"))
+
+# active.majors$mkey <- str_sub(active.majors$maj.key, end = str_locate(active.majors$maj.key, "[\\d]-")[,1])
+# active.majors$mkey <- str_replace(active.majors$mkey, "-", "_")
 # there's one major with 00 instead of 0; fortunately there is not also a CMS-0
-active.majors$mkey <- str_replace(active.majors$mkey, "00", "0")
+# active.majors$mkey <- str_replace(active.majors$mkey, "00", "0")
 
-# concat abbv+path, 1 line fewer/cleaner for the rest
-major.college$mkey <- paste(major.college$MajorAbbrCode, major.college$MajorPathwayNum, sep = "_")
-pre.maj.gpa$mkey <- paste(pre.maj.gpa$maj.abbv, pre.maj.gpa$maj.path, sep = "_")
-pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path, sep = "_")
+# concat abbv + path
+major.college$mkey <- str_sub(major.college$MajorCode, 3)
+pre.maj.gpa$mkey <- str_sub(pre.maj.gpa$MajorCode, 3)
+pre.maj.courses$mkey <- str_sub(pre.maj.courses$MajorCode, 3)
 
+# This isn't really necessary if we make a course code for the pre major courses that includes campus
 # for course code (try: split on \\_[\\D])
-course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
-pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
+# course.names$ckey <- str_sub(course.names$CourseCode, start = str_locate(course.names$CourseCode, "\\_\\D")[,2])
+pre.maj.courses$CourseCode <- paste(pre.maj.courses$course.campus,
+                                    pre.maj.courses$course.dept,
+                                    pre.maj.courses$course.num, sep = "_")
 
 # course names: filter dupes, fix case in course long names -------------------------------------------
 
@@ -254,11 +256,7 @@ course.map <- course.map %>%
          is_major,
          is_campus,
          name = course.lname,
-<<<<<<< HEAD
-         # id = ckey.num,
-=======
          id = ckey.num,
->>>>>>> 347fe1236dac933a93d97fefa1f31cb49c741249
          key = ckey)
 major.map <- active.majors %>%
   ungroup() %>%
@@ -269,11 +267,8 @@ major.map <- active.majors %>%
          is_major,
          is_campus,
          name = maj.name,
-<<<<<<< HEAD
          # id = mkey.num,
-=======
          id = mkey.num,
->>>>>>> 347fe1236dac933a93d97fefa1f31cb49c741249
          key = mkey)
 campus.map <- data.frame(is_course = 0,
                          is_major = 0,
@@ -281,11 +276,8 @@ campus.map <- data.frame(is_course = 0,
                          name = c("Seattle",
                                   "Bothell",
                                   "Tacoma"),
-<<<<<<< HEAD
                          # id = c(0,1,2),
-=======
                          id = c(0,1,2),
->>>>>>> 347fe1236dac933a93d97fefa1f31cb49c741249
                          key = c('0','1','2'),
                          stringsAsFactors = F)
 

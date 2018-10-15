@@ -9,8 +9,6 @@ library(tidyverse)
 library(dbplyr)
 library(odbc)
 
-# I'm using tb, x, and y as temporary/intermediate vars which shouldn't scope outside of their sections
-
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
 Cs <- function(...){as.character(sys.call())[-1]}
@@ -23,7 +21,7 @@ setwd("..")
 
 source("scripts/config.R")
 
-
+# @max.yrq is defined in the config.R file
 # define 5yr (20 quarter) upper boundary via config file, then calc 5 or 2 year cutoffs
 last.major.yrq5 <- max.yrq - 50
 
@@ -33,47 +31,37 @@ sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstu
 
 # Active majors >> programs.csv (Kuali dump) -------------------------------------
 
-# In future, i'll need to export these from Kuali and then
-tb <- read_csv("raw data/programs-kuali.csv")
-active.majors <- tb %>%
+# FUTURE: this information will come from CM_*
+active.majors <- read_csv("raw data/programs-kuali.csv")
+active.majors <- active.majors %>%
   filter(program_status == "active",
          grepl("UG-", .$program_code) == T,
          grepl("-MAJOR", .$program_code) == T) %>%
-  select(maj.key = code, title, prog.code = program_code, prog.title = program_title, prog.deptcode = program_SDBDeptCode, admission.type = program_admissionType, prog.status = program_status)
+  select(maj.key = code, title, prog.title = program_title, prog.deptcode = program_SDBDeptCode, admission.type = program_admissionType, prog.status = program_status)
 
-# The kuali data doesn't have campus or college fields
-# so we also need:
 
-# Major to FinOrg ---------------------------------------------------------
-rm(tb)
-
-# Made some post-corrections here after checking in 002 script. There is a mis-match between the EDW data and
+# Connect major to FinOrg ---------------------------------------------------------
+# Made some post-corrections here after checking in 002 script. There is a mis-match between the SDB data and
 # the kuali dump, so I got rid of the active filter
-# however, there are duplicate id's in the EDW b/c a major can belong to multiple orgs
+# however, there are duplicate id's in the SDB b/c a major can belong to multiple orgs
 
-tb <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations"))
-major.college <- tb %>%
+# fix code mapping from this <-> kuali in script 002; don't filter these, let kuali record be the filter/truth about active/inactive
+
+major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) %>%
   filter(VisitingMajorInd == "N", PrimaryOrgUnitInd == "Y", PreMajorInd == "N") %>%         # ActiveMajorInd == "Y",
-  select(MajorCampus, FinCampusReportingName, FinCollegeReportingName, MajorAbbrCode, MajorPathwayNum, MajorCode) %>%
+  select(MajorCode, MajorCampus, MajorAbbrCode, MajorPathwayNum, FinCampusReportingName, FinCollegeReportingName, FinDepartmentReportingName) %>%
   collect()
-# fix code mapping from this <-> kuali in script 002
-# and - don't filter these, let kuali record be the filter/truth about active/inactive
 
 
 # First YRQ of students’ major(s) -----------------------------------------
-rm(tb)
 
-# dbListTables(aicon)
-tb <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment"))
-# this new AIDB should make first yrq easier b/c it calculates it automatically in ProgramEntryInd
-# and resolves pre-majors with another flag
+# AIDB should make first yrq easier b/c it calculates it automatically in ProgramEntryInd and resolves pre-majors with another flag
 
-# re: MajorCode: Code that fully identifies the major.
-# A concatenation of the MajorCampus, MajorAbbrCode, and MajorPathwayNum (each separated by underscores) e.g. '0_BIOL_10'.
-# https://canvas.uw.edu/courses/1061200/pages/studentprogramenrollment
+# Contrary to some documentation, MajorCode does not fully identify a major b/c it lacks the credential, e.g. BIOL_0 is 1 pathway but 2 degree tracks
+# therefore ProgramCode is what we need for building the correct names for the app
+# !BUT! this is not the same as program_code in the CM_* tables
 
-
-maj.first.yrq <- tb %>%
+maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
   filter(ProgramAcademicCareerLevelCode == "UG",
          ProgramEntryAcademicQtrKeyId >= last.major.yrq5,
          ProgramEntryAcademicQtrKeyId <= max.yrq,
@@ -81,67 +69,54 @@ maj.first.yrq <- tb %>%
          VisitingMajorInd == "N",
          Student_ClassCode < 5,
          ProgramEntryInd == "Y",
-         DegreeLevelCode == 1) %>%                # degree level code == 1 is supposed to be Bachelor's
-  select(sys.key = SDBSrcSystemKey,
+         DegreeLevelCode == 1) %>%                # degree level code == 1 is Bachelor's
+  select(system_key = SDBSrcSystemKey,
          yrq.decl = ProgramEntryAcademicQtrKeyId,
-         campus = MajorCampus,
-         maj.abbv = MajorAbbrCode,
-         maj.path = MajorPathwayNum,
-         maj.code = MajorCode,
-         prog.code = ProgramCode) %>%
+         MajorCampus,
+         MajorAbbrCode,
+         MajorPathwayNum,
+         MajorCode,
+         ProgramCode,
+         DegreeLevelCode,
+         DegreeTypeCode) %>%
   collect()
 
 
 # Cumulative GPA when declared major -----------------------------------
-rm(tb)
-
-# Future: if tables are too large for collect() to be efficient then try creating temp tables, i.e. compute(name = 'something useful')
-tb <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes"))
-x <- tb %>% select(sys.key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>% collect()       # forcing the join in the same query is buggy
+# aicon is not an optimal source for this b/c the data is snapshotted early-ish. However, changing to SWS should fix the lag so there is no need to re-write code to
+# use EDW instead of AI
 
 
-# I noticed in doing integrity check (below) that there isn't outcome data for most recent yrq, re-wrote solution to accomodate that
-# join, spreading yrq.decl, group on sys.key+major, keep only rows < yrq.decl, take top row
-pre.maj.gpa <- left_join(maj.first.yrq, x, by = c("sys.key")) %>% group_by(sys.key, maj.code) %>% filter(yrq < yrq.decl) %>% top_n(n = 1, wt = yrq) # %>% filter(!is.na(cgpa))
+# create a temporary table to hold these cumulative GPAs b/c running the join in the same query seems to be buggy here
+temp <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
+  select(system_key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>%
+  collect()
 
-# how many w/ missing cgpa?
-table(is.na(pre.maj.gpa$cgpa))
-# remove:
+# I noticed that there isn't outcome data for the most recent yrq, re-wrote solution to accomodate that.
+# Join with temporary table -> spreading yrq.decl to students -> group on system_key+major and keep only rows < yrq.decl -> take top row
+pre.maj.gpa <- left_join(maj.first.yrq, temp, by = c("system_key")) %>%
+  group_by(system_key, ProgramCode) %>%
+  filter(yrq < yrq.decl) %>%
+  top_n(n = 1, wt = yrq) %>% # %>% filter(!is.na(cgpa))
+  distinct()
+
+# remove missing CGPA's
 pre.maj.gpa <- filter(pre.maj.gpa, !is.na(cgpa))
 
-table(pre.maj.gpa$yrq >= pre.maj.gpa$yrq.decl)      # should be 100% false
-
-# for curiousity's sake:
-# d <- pre.maj.gpa %>%
-#   ungroup() %>%
-#   select(yrq.decl, yrq) %>%
-#   mutate(yra = yrq.decl %/% 10,
-#          qa = yrq.decl %% 10,
-#          yrb = yrq %/% 10,
-#          qb = yrq %% 10,
-#          yd = (yra - yrb) * 4,
-#          qd = qa - qb,
-#          tot = yd + qd)
-# cbind(table(d$tot))
-# table(cut(d$tot, 5))
-
+rm(temp)
 
 # Transcripts from pre-declared-major quarters ----------------------
-rm(x, tb)
 
 # dplyr syntax doesn't have a good way to filter from w/in the query so use this list of students and join
 # and the database uses YYYY and Q separately by default
+temp <- data.frame(system_key = unique(pre.maj.gpa$system_key))
 
-tb <- tbl(sdbcon, in_schema("sec", "transcript_courses_taken"))
-
-students <- data.frame(system_key = unique(pre.maj.gpa$sys.key))
-
-x <- tb %>%
-  inner_join(students, copy = T) %>%
+students <- tbl(sdbcon, in_schema("sec", "transcript_courses_taken")) %>%
+  inner_join(temp, copy = T) %>%
   filter(deductible == 0,
          !(grade %in% c("S", "NS", "CR", "NC", "W", "HW")),
          grade_system == 0) %>%
-  select(sys.key = system_key,
+  select(system_key = system_key,
          tran.yr = tran_yr,
          tran.qtr = tran_qtr,
          course.campus = course_branch,
@@ -151,83 +126,86 @@ x <- tb %>%
          course.grade.sys = grade_system) %>%
   collect()
 
-x$tran.yrq <- (x$tran.yr * 10) + x$tran.qtr
+students$tran.yrq <- (students$tran.yr * 10) + students$tran.qtr
 
 # merge with first.yrq and then filter transcripts where yrq > yrq.decl
 # this should merge with pre major gpa, not maj.first.yrq b/c maj.first.yrq has students with no prior UW gpa to include
-pre.maj.courses <- left_join(pre.maj.gpa, x, by = "sys.key") %>% select(-yrq, -cgpa) %>% group_by(sys.key, maj.code) %>% arrange(sys.key, maj.code, tran.yrq) %>% filter(tran.yrq < yrq.decl)
+pre.maj.courses <- left_join(pre.maj.gpa, students, by = "system_key") %>%
+  select(-yrq, -cgpa) %>%
+  group_by(system_key, ProgramCode) %>%
+  arrange(system_key, ProgramCode, tran.yrq) %>%
+  filter(tran.yrq < yrq.decl) %>%
+  distinct()
 
+rm(temp)
 
 # course names ------------------------------------------------------------
-rm(x, tb)
 
-tb <- tbl(aicon, in_schema("sec", "IV_CourseSections"))
 # nb: campus in this table is associated with the course, not the degree - the transcript file
 # 'branch' as the corresponding field; so create a matching code in the transcript file when merging
 # with this for the long names
-course.names <- tb %>%
+course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
   select(yrq = AcademicQtrKeyId,
-         course.code = CourseCode,
-         course.lname = CourseLongName,              # fix case in proc script
-         course.sname = CourseShortName) %>%
-  distinct() %>%
-  collect()
+         CourseCode,
+         CourseLongName,              # fix case in proc script
+         CourseShortName) %>%
+  collect() %>%
+  distinct()
 
 
 # fetch majors from sdb ---------------------------------------------------
+
 # req'd for checking start date for majors in the event that 2/5 years of data aren't available
-rm(tb, x)
-tb <- tbl(sdbcon, in_schema("sec", "sr_major_code"))
-tb <- tb %>% collect()
-tb$syrq <- (tb$major_first_yr*10) + tb$major_first_qtr
-tb$eyrq <- (tb$major_last_yr*10) + tb$major_last_qtr
-maj.age <- tb
+maj.age <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>% collect()
+
+maj.age$syrq <- (maj.age$major_first_yr*10) + maj.age$major_first_qtr
+maj.age$eyrq <- (maj.age$major_last_yr*10) + maj.age$major_last_qtr
 
 
-# integrity checks so far (wip) --------------------------------------------
-
-rm(x, tb)
-
-# tabulate students per major
-t <- table(pre.maj.gpa$maj.code)
-cbind(t[order(t)])
-table(t >= 5)
-rm(t)
-# by campus
-table(pre.maj.gpa$campus)
-table(pre.maj.gpa$maj.code, pre.maj.gpa$campus)     # ok, no x-over, that's a good sign
-
-# check that abbv+path aligns with maj.code
-# there are 361 active majors in kuali
-pre.maj.courses %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
-# this results in 304
-# this could be a consequence of majors with no students enrolled since 20124?
-# the other maj.first.yrq w/ 81k obs:
-maj.first.yrq %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
-# has 319
-# check those codes and the sids
-(i <- setdiff(maj.first.yrq$maj.code, pre.maj.courses$maj.code))      # 15 major codes in maj.first.yrq but not in pre.maj.courses
-(check <- maj.first.yrq[maj.first.yrq$maj.code %in% i,])              # 77 records with those codes
-# do any of those students appear at all in the pre.maj.gpa?
-(pre.maj.gpa[pre.maj.gpa$sys.key %in% check$sys.key,])                # yes
-
-
-# now we should see which kuali majors are/aren't in the other files
-# kuali code: "A A-0-1-6"
-# ai code   : "0_MUSIC_00_1_1"
-ku <- data.frame(str_split(active.majors$maj.key, "-", simplify = T))   # not going to try to do this in a single swoop w/ matrix today
-active.majors$maj.path <- paste0(ku$X1, ku$X2)
-mjfi <- unique(paste0(str_trim(maj.first.yrq$maj.abbv), maj.first.yrq$maj.path))
-mjpr <- unique(paste0(str_trim(pre.maj.gpa$maj.abbv), pre.maj.gpa$maj.path))
-
-(i <- setdiff(active.majors$maj.path, mjfi))
-active.majors[active.majors$maj.path %in% i,]
-
-# we will keep all active majors so they will show up in pivot even if no students
-
-# check that same num/set of student ids are in both gpa and courses
-length(unique(pre.maj.gpa$sys.key))
-length(unique(pre.maj.courses$sys.key))
+# # integrity checks so far (wip) --------------------------------------------
+#
+# rm(x, tb)
+#
+# # tabulate students per major
+# t <- table(pre.maj.gpa$maj.code)
+# cbind(t[order(t)])
+# table(t >= 5)
+# rm(t)
+# # by campus
+# table(pre.maj.gpa$campus)
+# table(pre.maj.gpa$maj.code, pre.maj.gpa$campus)     # ok, no x-over, that's a good sign
+#
+# # check that abbv+path aligns with maj.code
+# # there are 361 active majors in kuali
+# pre.maj.courses %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
+# # this results in 304
+# # this could be a consequence of majors with no students enrolled since 20124?
+# # the other maj.first.yrq w/ 81k obs:
+# maj.first.yrq %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
+# # has 319
+# # check those codes and the sids
+# (i <- setdiff(maj.first.yrq$maj.code, pre.maj.courses$maj.code))      # 15 major codes in maj.first.yrq but not in pre.maj.courses
+# (check <- maj.first.yrq[maj.first.yrq$maj.code %in% i,])              # 77 records with those codes
+# # do any of those students appear at all in the pre.maj.gpa?
+# (pre.maj.gpa[pre.maj.gpa$system_key %in% check$system_key,])                # yes
+#
+#
+# # now we should see which kuali majors are/aren't in the other files
+# # kuali code: "A A-0-1-6"
+# # ai code   : "0_MUSIC_00_1_1"
+# ku <- data.frame(str_split(active.majors$maj.key, "-", simplify = T))   # not going to try to do this in a single swoop w/ matrix today
+# active.majors$maj.path <- paste0(ku$X1, ku$X2)
+# mjfi <- unique(paste0(str_trim(maj.first.yrq$maj.abbv), maj.first.yrq$maj.path))
+# mjpr <- unique(paste0(str_trim(pre.maj.gpa$maj.abbv), pre.maj.gpa$maj.path))
+#
+# (i <- setdiff(active.majors$maj.path, mjfi))
+# active.majors[active.majors$maj.path %in% i,]
+#
+# # we will keep all active majors so they will show up in pivot even if no students
+#
+# # check that same num/set of student ids are in both gpa and courses
+# length(unique(pre.maj.gpa$system_key))
+# length(unique(pre.maj.courses$system_key))
 
 
 
