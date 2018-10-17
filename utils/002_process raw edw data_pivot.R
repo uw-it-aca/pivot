@@ -53,11 +53,8 @@ course.names <- df.trimws(course.names)
 k <- str_split(active.majors$maj.key, "-", simplify = T)
 k[,2] <- str_pad(k[,2], 2, "left", "0")
 active.majors$prog.code <- apply(k, 1, function(x) paste(x, collapse = "_"))
-
-# active.majors$mkey <- str_sub(active.majors$maj.key, end = str_locate(active.majors$maj.key, "[\\d]-")[,1])
-# active.majors$mkey <- str_replace(active.majors$mkey, "-", "_")
-# there's one major with 00 instead of 0; fortunately there is not also a CMS-0
-# active.majors$mkey <- str_replace(active.majors$mkey, "00", "0")
+active.majors$mkey <- paste(k[,1], k[,2], sep = "_")                            # to merge with major.college later
+rm(k)
 
 # concat abbv + path
 major.college$mkey <- str_sub(major.college$MajorCode, 3)
@@ -74,7 +71,7 @@ pre.maj.courses$CourseCode <- paste(pre.maj.courses$course.campus,
 # course names: filter dupes, fix case in course long names -------------------------------------------
 
 # take only most recent year for the name
-course.names <- course.names %>% group_by(ckey) %>% filter(yrq == max(yrq))
+course.names <- course.names %>% group_by(CourseCode) %>% filter(yrq == max(yrq))
 
 # I'm not fixing typos (career palnning sounds fun)
 
@@ -85,8 +82,8 @@ course.names <- course.names %>% group_by(ckey) %>% filter(yrq == max(yrq))
 # English titles, e.g. 'and' or 'in', but the runtime is just too slow to be feasible.
 # I'd expect 360k cases, vectorized over char+column, to run in a few seconds (trimming spaces occurs in ~.25s)
 # stringr has a wrapper for stringi's to_title which is fast. Just check for "i" needing conversion to "I" (1)
-# Also: i'm going to leave X-y as-is even though words like X-ray should by X-y.
-course.names$course.lname <- tolower(course.names$course.lname)
+# Also: I'm going to leave X-y as-is even though words like X-ray should by X-y.
+course.names$course.lname <- tolower(course.names$CourseLongName)
 # now need to fix roman numerals - there is a roman class in base r but it's not a lot of help as-is
 # because the numerals are embedded in strings
 # grep("ii", course.names$course.lname, value = T)
@@ -100,10 +97,8 @@ course.names$course.lname <- str_to_title(course.names$course.lname)
 course.names$course.lname <- str_replace_all(course.names$course.lname, "I[i]+", toupper)    # appears to work for II and III correctly
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\ Vi[i]+", toupper)  # appears correct for VII+
 # lastly, Vi > VI: space Vi followed by either : or eol
-# I'm not clever enough at regex to make it anchor/eol OR :, so:
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi\\:", toupper)
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi$", toupper)
-# these probably don't even matter for the rankings
 
 
 # Update grades in courses and filter -------------------------------------
@@ -128,16 +123,21 @@ pre.maj.courses <- pre.maj.courses %>%
   filter(is.na(grade) == F)
 
 # remove duplicate quarterly enrollments
-i <- pre.maj.courses %>% ungroup() %>% select(sys.key, mkey, ckey, tran.yrq) %>% duplicated(); table(i)
-pre.maj.courses <- pre.maj.courses[i == F,]
+pre.maj.courses <- pre.maj.courses %>% ungroup() %>% distinct(system_key, ProgramCode, CourseCode, tran.yrq, .keep_all = T)
+
+##########**************#########
+##########**************#########
+##########**************#########
+# 10/17/18 <---- here
+##########**************#########
+##########**************#########
+##########**************#########
 
 # validate active majors and kuali names ------------------------------------
 
-# kuali will be the official source. We don't want to add rows to kuali by duping keys nor do we want to drop any
-major.college[duplicated(major.college$mkey),]
-major.college <- major.college[!duplicated(major.college$mkey),]
+# Don't ask me why the Kuali file doesn't have a notion of campus
 
-active.majors <- active.majors %>% left_join(major.college, by = "mkey")
+active.majors <- active.majors %>% left_join(major.college, by = "MajorCode")
 unique(active.majors$mkey[is.na(active.majors$FinCollegeReportingName)])
 # checking this I found that CMS has double zeroes in kuali (nothing else does) so I went back and converted from above
 
@@ -229,10 +229,10 @@ course.rank[i,]
 
 # check the duplicate entries (with duplicated quarters already having been removed above)
 (huh <- course.rank[i,1:2])
-check <- huh %>% inner_join(pre.maj.courses) %>% group_by(sys.key) %>% filter(n() > 1) %>% ungroup()
+check <- huh %>% inner_join(pre.maj.courses) %>% group_by(system_key) %>% filter(n() > 1) %>% ungroup()
 # if student took same course more than once for credit, in different quarters - that seems acceptable
 # set n.course equal to n.major
-length(unique(check$sys.key))
+length(unique(check$system_key))
 rm(huh, check)
 
 course.rank$n.course <- ifelse(course.rank$n.course > course.rank$count, course.rank$count, course.rank$n.course)

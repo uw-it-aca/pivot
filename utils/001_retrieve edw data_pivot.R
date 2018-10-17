@@ -98,10 +98,19 @@ pre.maj.gpa <- left_join(maj.first.yrq, temp, by = c("system_key")) %>%
   group_by(system_key, ProgramCode) %>%
   filter(yrq < yrq.decl) %>%
   top_n(n = 1, wt = yrq) %>% # %>% filter(!is.na(cgpa))
-  distinct()
+  distinct() %>%
+  ungroup()
 
 # remove missing CGPA's
 pre.maj.gpa <- filter(pre.maj.gpa, !is.na(cgpa))
+
+# only keep first major+pathway+degree type
+# Is it possible to switch pathways or have two pathways in same quarter? Should that be omitted? Keeping for now, but see also: >> pre.maj.gpa %>% group_by(system_key, MajorAbbrCode) %>% filter(n() > 1)
+# There are still some programs that may not require separate applications to the BS v. BA, namely PSYCH
+pre.maj.gpa <- pre.maj.gpa %>%
+  group_by(system_key, MajorAbbrCode, DegreeTypeCode) %>%
+  filter(yrq.decl == min(yrq.decl)) %>%
+  ungroup()
 
 rm(temp)
 
@@ -135,7 +144,8 @@ pre.maj.courses <- left_join(pre.maj.gpa, students, by = "system_key") %>%
   group_by(system_key, ProgramCode) %>%
   arrange(system_key, ProgramCode, tran.yrq) %>%
   filter(tran.yrq < yrq.decl) %>%
-  distinct()
+  distinct() %>%
+  ungroup()
 
 rm(temp)
 
