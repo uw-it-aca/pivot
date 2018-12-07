@@ -18,5 +18,5 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
 
 class UtilsTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_PATH)
-    def test_google_analytics_processor(self):
+    def test_get_latest_term(self):
         self.assertEquals(get_latest_term(), 'au12')
