@@ -1,11 +1,13 @@
 """
 Tests utility scripts
 """
+import os
 
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
+
 import pivot
-from pivot.utils import *
+from pivot.utils import get_latest_term
 
 
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
