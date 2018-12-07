@@ -1,11 +1,13 @@
 """
 Tests utility scripts
 """
+import os
 
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
+
 import pivot
-from pivot.utils import *
+from pivot.utils import get_latest_term
 
 
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
@@ -16,5 +18,5 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
 
 class UtilsTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_PATH)
-    def test_google_analytics_processor(self):
+    def test_get_latest_term(self):
         self.assertEquals(get_latest_term(), 'au12')
