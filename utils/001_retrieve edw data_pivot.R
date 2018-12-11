@@ -7,7 +7,7 @@ library(tidyverse)
 library(dbplyr)
 library(odbc)
 
-# I'm using tb, x, and y as temporary/intermediate vars which shouldn't scope outside of their sections
+# I'm using tb, x, and y as temporary variables
 
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
@@ -21,15 +21,29 @@ setwd("..")
 
 source("scripts/config.R")
 
-# define 5yr (20 quarter) upper boundary, then calc 5 or 2 year cutoffs
-# this is the range for 5 years of transcripts
-max.yrq <- as.numeric(rstudioapi::showPrompt("Max year-quarter", "Enter max yrq (yyyyq) for transcript cutoff,\nusually the current quarter - 1"))
-last.major.yrq5 <- max.yrq - 50
+## DEPR - now get year-quarter from system calendar table
+  # define 5yr (20 quarter) upper boundary, then calc 5 or 2 year cutoffs
+  # this is the range for 5 years of transcripts
+  # max.yrq <- as.numeric(rstudioapi::showPrompt("Max year-quarter", "Enter max yrq (yyyyq) for transcript cutoff,\nusually the current quarter - 1"))
 
 # create connections to enterprise data server
 aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 
+
+# get date <-> quarter ----------------------------------------------------
+cal <- tbl(sdbcon, in_schema("sec", "sys_tbl_39_calendar")) %>%
+  filter(first_day >= "2018-01-01") %>%
+  select(table_key, first_day) %>%
+  collect() %>%
+  mutate(fd_next = lead(first_day),
+         yrq = as.numeric(str_sub(table_key, start = 2)),
+         yrq_last = lag(yrq))
+
+max.yrq <- cal$yrq_last[(Sys.Date() >= cal$first_day) & (Sys.Date() <= cal$fd_next)]
+# For 5 years of data:
+last.major.yrq5 <- max.yrq - 50
+rm(cal)
 
 # CM in SDB replaces Kuali csv ------------------------------------------------
 

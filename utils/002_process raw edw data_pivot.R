@@ -25,7 +25,7 @@ load(f); rm(f)
 # input: unquoted text as in Cs(x, y, z)
 Cs <- function(...) {as.character(sys.call())[-1]}
 
-# function to
+# function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
 #
 # input: a dataframe
 df.trimws <- function(df){
@@ -34,16 +34,18 @@ df.trimws <- function(df){
   return(df)
 }
 
-# use max available yrq from transcripts
+# functional way make file name prefix from max.yrq
+mk.prefix <- function(x){
+  q <- x %% 10
+  y <- (x %/% 10) - 2005  # subtract 5 years
+  q <- c("wi", "sp", "su", "au")[q]
+  return(paste0(q, y, "_20qtrs"))
+}
+
+
+# using max available yrq from transcripts to set upper boundary
 max.yrq <- max(pre.maj.courses$tran.yrq)
-
-# make file name prefix from max.yrq
-q <- max.yrq %% 10
-y <- (max.yrq %/% 10) - 2005  # subtract 5 years
-q <- c("wi", "sp", "su", "au")[q]
-prefix <- paste0(q, y, "_20qtrs")
-rm(q, y)
-
+prefix <- mk.prefix(max.yrq)
 
 # CM major codes ---------------------------------------------------
 
