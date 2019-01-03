@@ -1,3 +1,10 @@
+
+# [TODO]
+# Saved fresh data on 1/2/19 - names are no longer the least bit clean/standardized
+# Need to clean up the files and create calculated data re-factoring from the initial loading below
+
+
+
 rm(list = ls())
 gc()
 # setup -------------------------------------------------------------------
@@ -60,25 +67,19 @@ creds <- creds %>%
          cred_degree_type_code <= 8)
 creds <- df.trimws(creds)
 
+# We're not currently using the Kuali college names b/c they don't have them filled in for Tacoma/Bothell yet
 active.majors <- inner_join(creds, programs, by = "program_verind_id") %>%
   distinct(credential_code, .keep_all = T) %>%
-  rename(mkey = credential_code)
+  mutate(campus_no = ifelse(campus_name == "Seattle", 0,
+                            ifelse(campus_name == "Bothell", 1, 2)))
 
-
-# remove trailing spaces in SDB/AI sources
-
+# remove WS in data warehouse source files
 major.college <- df.trimws(major.college)
 pre.maj.gpa <- df.trimws(pre.maj.gpa)
 pre.maj.courses <- df.trimws(pre.maj.courses)
 course.names <- df.trimws(course.names)
 
-
-
-
-
-
-
-# concat abbv+path, 1 line fewer/cleaner for the rest
+# concat abbv+path, 1 line fewer/cleaner for the rest (why not use major.code...?)
 major.college$mkey <- paste(major.college$MajorAbbrCode, major.college$MajorPathwayNum, sep = "_")
 pre.maj.gpa$mkey <- paste(pre.maj.gpa$maj.abbv, pre.maj.gpa$maj.path, sep = "_")
 pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path, sep = "_")
@@ -86,11 +87,12 @@ pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path
 # for course code (try: split on \\_[\\D])
 course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
 pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
+pre.maj.courses$course.key <- paste(pre.maj.courses$course.campus, pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
 
 # course names: filter dupes, fix case in course long names -------------------------------------------
 
 # take only most recent year for the name
-course.names <- course.names %>% group_by(ckey) %>% filter(yrq == max(yrq))
+course.names <- course.names %>% group_by(course.code) %>% filter(yrq == max(yrq)) %>% ungroup()
 
 # I'm not fixing typos (career palnning sounds fun)
 
@@ -150,32 +152,39 @@ pre.maj.courses <- pre.maj.courses[i == F,]
 # validate active majors and kuali names ------------------------------------
 
 # kuali will be the official source. We don't want to add rows to kuali by duping keys nor do we want to drop any
-major.college[duplicated(major.college$mkey),]
-major.college <- major.college[!duplicated(major.college$mkey),]
+# major.college[duplicated(major.college$mkey),]
+# major.college <- major.college[!duplicated(major.college$mkey),]
+major.college <- major.college %>%
+  filter(!duplicated(mkey)) %>%
+  distinct(MajorCampus, FinCollegeReportingName, MajorAbbrCode)
 
-active.majors <- active.majors %>% left_join(major.college, by = "mkey")
-unique(active.majors$mkey[is.na(active.majors$FinCollegeReportingName)])
+# active.majors <- active.majors %>% left_join(major.college, by = "mkey")
+active.majors <- active.majors %>%
+  left_join(major.college, by = c("campus_no" = "MajorCampus",
+                                   "cred_abbv" = "MajorAbbrCode"))
+active.majors <- active.majors[!duplicated(active.majors$credential_verdep_id),]
 # checking this I found that CMS has double zeroes in kuali (nothing else does) so I went back and converted from above
 
-# filter kuali by unique mkeys, b/c data is unique by code
-active.majors <- active.majors[!duplicated(active.majors$mkey),]
-
 table(is.na(active.majors$FinCollegeReportingName))
-# are they sensible?
-table(active.majors$FinCollegeReportingName, active.majors$MajorCampus)
+active.majors[is.na(active.majors$FinCollegeReportingName),]        # so these are too new to be in the other file?
+active.majors <- active.majors[!is.na(active.majors$FinCollegeReportingName),]
+
+# are the depts+colleges sensible?
+table(active.majors$FinCollegeReportingName, active.majors$campus_name, useNA = "ifany")
 # yes, even though both bothell and tacoma have Interdisciplinary Arts and Sciences
 
-# kuali names for programs need to be split from the credential
-# unfortunately, there are a few that are just "Bachelor of XXX" instead of "in XXX"
-active.majors$maj.name <- str_sub(active.majors$title, start = str_locate(active.majors$title, "in\\s")[,2]+1)
+# CM names for programs need to be split from the credential
+# there are a few that are just "Bachelor of XXX" instead of "in XXX"
+active.majors$maj.name <- str_sub(active.majors$credential_title, start = str_locate(active.majors$credential_title, "in\\s")[,2]+1)
 # using indexing instead of manually changing
 i <- is.na(active.majors$maj.name)
-active.majors$maj.name[i] <- str_sub(active.majors$title[i], start = str_locate(active.majors$title[i], "of\\s")[,2]+1)
+active.majors$credential_title[i]
+active.majors$maj.name[i] <- str_sub(active.majors$credential_title[i], start = str_locate(active.majors$credential_title[i], "of\\s")[,2]+1)
 table(is.na(active.majors$maj.name))
 
 # Filter other files using active majors ----------------------------------
 
-i <- unique(active.majors$MajorCode)
+i <- unique(paste(active.majors$cred_abbv, active.majors$cred_pathway, sep = "_"))
 pre.maj.courses <- pre.maj.courses %>% filter(maj.code %in% i)
 pre.maj.gpa <- pre.maj.gpa %>% filter(maj.code %in% i)
 

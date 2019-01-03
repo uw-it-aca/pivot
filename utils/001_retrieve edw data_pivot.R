@@ -7,11 +7,11 @@ library(tidyverse)
 library(dbplyr)
 library(odbc)
 
-# I'm using tb, x, and y as temporary/intermediate vars which shouldn't scope outside of their sections
 
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
 Cs <- function(...){as.character(sys.call())[-1]}
+
 options(tibble.print_max = 800)
 
 # To access local files/vars that are not part of repo, move up one level from project directory
@@ -21,24 +21,31 @@ setwd("..")
 
 source("scripts/config.R")
 
-<<<<<<< Updated upstream
-max.yrq <- 20183
-=======
-# define 5yr (20 quarter) upper boundary, then calc 5 or 2 year cutoffs
-# this is the range for 5 years of transcripts
-max.yrq <- as.numeric(rstudioapi::showPrompt("Max year-quarter", "Enter max yrq (yyyyq) for transcript cutoff,\nusually the current quarter - 1"))
->>>>>>> Stashed changes
-last.major.yrq5 <- max.yrq - 50
-
 # create connections to enterprise data server
 aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 
+# get date <-> quarter from SDB ----------------------------------------------------
+cal <- tbl(sdbcon, in_schema("sec", "sys_tbl_39_calendar")) %>%
+  filter(first_day >= "2018-01-01") %>%
+  select(table_key, first_day, grade_submit_ddln) %>%
+  collect() %>%
+  mutate(fd_next = lead(first_day),
+         grade_dl_next = lead(grade_submit_ddln),
+         yrq = as.numeric(str_sub(table_key, start = 2)),
+         yrq_last = lag(yrq))
 
-# CM in SDB replaces Kuali csv ------------------------------------------------
+max.yrq <- cal$yrq[(Sys.Date() >= cal$grade_submit_ddln) & (Sys.Date() <= cal$grade_dl_next)]
+# For 5 years of data:
+last.major.yrq5 <- max.yrq - 50
+rm(cal)
+
+# [TODO]
+# CM in SDB to replace Kuali csv ------------------------------------------------
 
 programs <- tbl(sdbcon, in_schema("sec", "CM_Programs")) %>% collect()
 creds <- tbl(sdbcon, in_schema("sec", "CM_Credentials")) %>% collect()
+
 
 # Major to FinOrg ---------------------------------------------------------
 
@@ -51,7 +58,7 @@ major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) 
   collect()
 
 
-# First YRQ of students’ major(s) -----------------------------------------
+# First YRQ of students’ major(s)  and cumulative GPA before declared -----------------------------------------
 
 # AIDB should make first yrq easier b/c it calculates it automatically in ProgramEntryInd
 # and resolves pre-majors with another flag
@@ -60,6 +67,9 @@ major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) 
 # A concatenation of the MajorCampus, MajorAbbrCode, and MajorPathwayNum (each separated by underscores) e.g. '0_BIOL_10'.
 # https://canvas.uw.edu/courses/1061200/pages/studentprogramenrollment
 
+
+# We need credential code and level in order to match the CM data for credentials and
+# to make sure we get all the BA/BS degrees that aren't standard (e.g. they have the same pathway but a different level)
 maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
   filter(ProgramAcademicCareerLevelCode == "UG",
          ProgramEntryAcademicQtrKeyId >= last.major.yrq5,
@@ -68,69 +78,56 @@ maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
          VisitingMajorInd == "N",
          Student_ClassCode < 5,
          ProgramEntryInd == "Y",
-         DegreeLevelCode == 1) %>%                # degree level code == 1 is supposed to be Bachelor's
-  select(sys.key = SDBSrcSystemKey,
-         yrq.decl = ProgramEntryAcademicQtrKeyId,
-         campus = MajorCampus,
-         maj.abbv = MajorAbbrCode,
-         maj.path = MajorPathwayNum,
-         maj.code = MajorCode,
-         prog.code = ProgramCode) %>%
-  collect()
+         DegreeLevelCode == 1)            # degree level code == 1 is Bachelor's
 
-# Cumulative GPA when declared major -----------------------------------
-
-# Future: if tables are too large for collect() to be efficient then try creating temp tables, i.e. compute(name = 'something useful')
-x <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
-  select(sys.key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>%
-  collect()       # forcing the join in the same query is buggy
+sqo <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
+  select(SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA)
 
 # I noticed in doing integrity check (below) that there isn't outcome data for most recent yrq, re-wrote solution to accomodate that
 # join, spreading yrq.decl, group on sys.key+major, keep only rows < yrq.decl, take top row
-pre.maj.gpa <- left_join(maj.first.yrq, x, by = c("sys.key")) %>%
-  group_by(sys.key, maj.code) %>%
-  filter(yrq < yrq.decl) %>%
+pre.maj.gpa <- left_join(maj.first.yrq, sqo, by = "SDBSrcSystemKey" ) %>%
+  group_by(SDBSrcSystemKey, ProgramCode) %>%
+  filter(yrq < ProgramEntryAcademicQtrKeyId) %>%
   top_n(n = 1, wt = yrq) %>%
+  collect() %>%
   ungroup()
-
-rm(x)
 
 # how many w/ missing cgpa?
 table(is.na(pre.maj.gpa$cgpa))
 # remove:
 pre.maj.gpa <- filter(pre.maj.gpa, !is.na(cgpa))
 
-table(pre.maj.gpa$yrq >= pre.maj.gpa$yrq.decl, useNA = "ifany")      # should be 100% false
+table(pre.maj.gpa$yrq >= pre.maj.gpa$AcademicQtrKeyId, useNA = "ifany")      # should be 100% false
 
 # Transcripts from pre-declared-major quarters ----------------------
 
-# dplyr syntax doesn't have a good way to filter from w/in the query so use this list of students and join
-# and the database uses YYYY and Q separately by default
+# use this list of unique system_keys (students) and join
+# the SDB uses YYYY and Q separately by default
 
-students <- data.frame(system_key = unique(pre.maj.gpa$sys.key))
+students <- data.frame(system_key = unique(pre.maj.gpa$SDBSrcSystemKey))
 
-x <- tbl(sdbcon, in_schema("sec", "transcript_courses_taken")) %>%
+tct <- tbl(sdbcon, in_schema("sec", "transcript_courses_taken")) %>%
   inner_join(students, copy = T) %>%
   filter(deductible == 0,
          !(grade %in% c("S", "NS", "CR", "NC", "W", "HW")),
          grade_system == 0) %>%
-  select(sys.key = system_key,
-         tran.yr = tran_yr,
-         tran.qtr = tran_qtr,
-         course.campus = course_branch,
-         course.dept = dept_abbrev,
-         course.num = course_number,
-         course.grade = grade,                  # needs correction later
-         course.grade.sys = grade_system) %>%
-  collect()
-
-x$tran.yrq <- (x$tran.yr * 10) + x$tran.qtr
+  select(system_key,
+         tran_yr,
+         tran_qtr,
+         course_branch,
+         dept_abbrev,
+         course_number,
+         grade,
+         grade_system)
 
 # merge with first.yrq and then filter transcripts where yrq > yrq.decl
 # this should merge with pre major gpa, not maj.first.yrq b/c maj.first.yrq has students with no prior UW gpa to include
-pre.maj.courses <- left_join(pre.maj.gpa, x, by = "sys.key") %>% select(-yrq, -cgpa) %>% group_by(sys.key, maj.code) %>% arrange(sys.key, maj.code, tran.yrq) %>% filter(tran.yrq < yrq.decl)
+pre.maj.courses <- left_join(pre.maj.gpa, tct, by = c("SDBSrcSystemKey" = "system_key"), copy = T) %>%
+  select(-yrq, -cgpa) %>%
+  mutate(tran.yrq = tran_yr*10 + tran_qtr) %>%
+  filter(tran.yrq < AcademicQtrKeyId) %>%             # removed unecessary group_by()
+  arrange(SDBSrcSystemKey, ProgramCode, tran.yrq)
 
-rm(x)
 
 # course names ------------------------------------------------------------
 
@@ -138,10 +135,10 @@ rm(x)
 # 'branch' as the corresponding field; so create a matching code in the transcript file when merging
 # with this for the long names
 course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
-  select(yrq = AcademicQtrKeyId,
-         course.code = CourseCode,
-         course.lname = CourseLongName,              # fix case in proc script
-         course.sname = CourseShortName) %>%
+  select(AcademicQtrKeyId,
+         CourseCode,
+         CourseLongName,              # fix case in processing script
+         CourseShortName) %>%
   distinct() %>%
   collect()
 
@@ -149,12 +146,10 @@ course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
 # fetch majors from sdb ---------------------------------------------------
 
 # req'd for checking start date for majors in the event that 2/5 years of data aren't available
-tb <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>% collect()
-tb$syrq <- (tb$major_first_yr*10) + tb$major_first_qtr
-tb$eyrq <- (tb$major_last_yr*10) + tb$major_last_qtr
-maj.age <- tb
-rm(tb)
-
+maj.age <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>%
+  collect() %>%
+  mutate(syrq = major_first_yr*10 + major_first_qtr,
+         eyrq = major_last_yr*10 + major_last_qtr)
 
 # integrity checks so far (wip) --------------------------------------------
   #
@@ -197,9 +192,6 @@ rm(tb)
   # # check that same num/set of student ids are in both gpa and courses
   # length(unique(pre.maj.gpa$sys.key))
   # length(unique(pre.maj.courses$sys.key))
-
-
-
 
 
 # Write data ---------------------------------------------------------------
