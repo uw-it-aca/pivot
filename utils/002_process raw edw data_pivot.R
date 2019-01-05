@@ -1,12 +1,16 @@
 
 # [TODO]
-# Saved fresh data on 1/2/19 - names are no longer the least bit clean/standardized
-# Need to clean up the files and create calculated data re-factoring from the initial loading below
-
+# left off at "add "college" and calc n, iqr for majors"
 
 
 rm(list = ls())
 gc()
+# notes
+# a CM credential_code is in format of [ABBV]-[pathway]-[level]-[type]
+# pathway is not padded to 2 chars in CM, unlike most EDW sources
+# level is undergrad/grad/etc.
+# type is '...of Arts/Science/etc.'
+
 # setup -------------------------------------------------------------------
 
 library(tidyverse)
@@ -39,16 +43,18 @@ df.trimws <- function(df){
 
 # use max available yrq from transcripts rather than current
 max.yrq <- max(pre.maj.courses$tran.yrq)
+
 # make file name prefix from max.yrq
-q <- max.yrq %% 10
-y <- (max.yrq %/% 10) - 2005  # subtract 5 years
-q <- c("wi", "sp", "su", "au")[q]
-prefix <- paste0(q, y, "_20qtrs")
-rm(q, y)
+make.prefix <- function(x){
+  q <- x %% 10
+  y <- (x %/% 10) - 2005  # subtract 5 years
+  q <- c("wi", "sp", "su", "au")[q]
+  return(paste0(q, y, "_20qtrs"))
+}
+prefix <- make.prefix(max.yrq)
 
 
 # CM major codes ---------------------------------------------------
-
 programs <- programs %>%
   filter(program_status == "active",
          str_sub(program_code, 1, 2) == "UG",
@@ -60,6 +66,7 @@ names(x) <- c("cred_abbv", "cred_pathway", "cred_level_code", "cred_degree_type_
 creds <- bind_cols(creds, x)
 rm(x)
 
+xcreds <- creds %>% filter(credential_status != "active" | grepl("true", DoNotPublish, ignore.case = T) == T)
 creds <- creds %>%
   filter(grepl("true", DoNotPublish, ignore.case = T) == F,
          credential_status == "active",
@@ -79,32 +86,35 @@ pre.maj.gpa <- df.trimws(pre.maj.gpa)
 pre.maj.courses <- df.trimws(pre.maj.courses)
 course.names <- df.trimws(course.names)
 
-# concat abbv+path, 1 line fewer/cleaner for the rest (why not use major.code...?)
-major.college$mkey <- paste(major.college$MajorAbbrCode, major.college$MajorPathwayNum, sep = "_")
-pre.maj.gpa$mkey <- paste(pre.maj.gpa$maj.abbv, pre.maj.gpa$maj.path, sep = "_")
-pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path, sep = "_")
+# # concat abbv+path, 1 line fewer/cleaner for the rest (why not use major.code...?)
+# major.college$mkey <- paste(major.college$MajorAbbrCode, major.college$MajorPathwayNum, sep = "_")
+# pre.maj.gpa$mkey <- paste(pre.maj.gpa$maj.abbv, pre.maj.gpa$maj.path, sep = "_")
+# pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path, sep = "_")
+#
+# # for course code (try: split on \\_[\\D])
+# course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
+# pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
+# pre.maj.courses$course.key <- paste(pre.maj.courses$course.campus, pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
 
-# for course code (try: split on \\_[\\D])
-course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
-pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
-pre.maj.courses$course.key <- paste(pre.maj.courses$course.campus, pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
+# Course Names: filter dupes, fix case in course long names -------------------------------------------
 
-# course names: filter dupes, fix case in course long names -------------------------------------------
+# take only most recent name
+course.names <- course.names %>%
+  group_by(CourseCode) %>%
+  filter(AcademicQtrKeyId == max(AcademicQtrKeyId)) %>%
+  ungroup()
 
-# take only most recent year for the name
-course.names <- course.names %>% group_by(course.code) %>% filter(yrq == max(yrq)) %>% ungroup()
-
-# I'm not fixing typos (career palnning sounds fun)
+# I'm not finding and fixing all possible typos
 
 # re: long names, the base r solution is *extremely* slow(?)
 # tools::toTitleCase(tolower(course.names$course.lname))
-# also the names are about 35% space-padding by volume :P
+# (random note: the names appear to be about 35% space-padding by volume)
 # the tools option is supposed to ignore certain words that shouldn't be upper case in
 # English titles, e.g. 'and' or 'in', but the runtime is just too slow to be feasible.
 # I'd expect 360k cases, vectorized over char+column, to run in a few seconds (trimming spaces occurs in ~.25s)
 # stringr has a wrapper for stringi's to_title which is fast. Just check for "i" needing conversion to "I" (1)
-# Also: i'm going to leave X-y as-is even though words like X-ray should by X-y.
-course.names$course.lname <- tolower(course.names$course.lname)
+# Also: I'm leaving X-y as-is even though words like X-ray should by X-y.
+course.names$course.lname <- tolower(course.names$CourseLongName)
 # now need to fix roman numerals - there is a roman class in base r but it's not a lot of help as-is
 # because the numerals are embedded in strings
 # grep("ii", course.names$course.lname, value = T)
@@ -113,7 +123,9 @@ course.names$course.lname <- tolower(course.names$course.lname)
 # grep("vi", course.names$course.lname, value = T)      # civ, environ, survival, violin, &c.
 # grep(" vi", course.names$course.lname, value = T)
 # so it needs to be something like: space vi space OR space vi colon
-# nothing appears to go past VIII
+# nothing appears to go past VIII at the moment - a better solution would account for any Roman numerals but
+# would require significantly more time and testing (there is a Roman numeral package, it doesn't do what we need).
+# Fortunately, the stringr functions are extremely fast
 course.names$course.lname <- str_to_title(course.names$course.lname)
 course.names$course.lname <- str_replace_all(course.names$course.lname, "I[i]+", toupper)    # appears to work for II and III correctly
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\ Vi[i]+", toupper)  # appears correct for VII+
@@ -128,49 +140,82 @@ course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi$"
 
 # ref: https://www.washington.edu/students/gencat/front/Grading_Sys.html
 # I'm using the tops of the ranges
-pre.maj.courses$course.grade <- recode(pre.maj.courses$course.grade,
-                                       "A"  = "40",
-                                       "A-" = "38",
-                                       "B+" = "34",
-                                       "B"  = "31",
-                                       "B-" = "28",
-                                       "C+" = "24",
-                                       "C"  = "21",
-                                       "C-" = "18",
-                                       "D+" = "14",
-                                       "D"  = "11",
-                                       "D-" = "08",
-                                       "E"  = "00")
-pre.maj.courses <- pre.maj.courses %>%
-  mutate(grade = as.numeric(course.grade) / 10) %>%
-  filter(is.na(grade) == F)
 
-# remove duplicate quarterly enrollments
-i <- pre.maj.courses %>% ungroup() %>% select(sys.key, mkey, ckey, tran.yrq) %>% duplicated(); table(i)
-pre.maj.courses <- pre.maj.courses[i == F,]
+# wrapping in a function so the recode doesn't live on
+grade.recode <- function(g){
+  return(recode(g,
+                "A"  = "40",
+                "A-" = "38",
+                "B+" = "34",
+                "B"  = "31",
+                "B-" = "28",
+                "C+" = "24",
+                "C"  = "21",
+                "C-" = "18",
+                "D+" = "14",
+                "D"  = "11",
+                "D-" = "08",
+                "E"  = "00"
+                ))
+}
+
+pre.maj.courses <- pre.maj.courses %>%
+  mutate(grade = grade.recode(grade),
+         grade = as.numeric(grade) / 10) %>%            # keeping this a little easier to read than wrapping fun(fun)
+  filter(is.na(grade) == F)                             # remove rows with missing values for grade
+
+# rm(grade.recode)
+
+# remove duplicate quarterly-student-program-course enrollments
+pre.maj.courses <- pre.maj.courses %>%
+  distinct(SDBSrcSystemKey, ProgramCode, course_branch, dept_abbrev, course_number, tran.yrq, .keep_all = T)
+
 
 # validate active majors and kuali names ------------------------------------
 
-# kuali will be the official source. We don't want to add rows to kuali by duping keys nor do we want to drop any
-# major.college[duplicated(major.college$mkey),]
-# major.college <- major.college[!duplicated(major.college$mkey),]
-major.college <- major.college %>%
-  filter(!duplicated(mkey)) %>%
-  distinct(MajorCampus, FinCollegeReportingName, MajorAbbrCode)
+# kuali will be the official source. We don't want to add rows to kuali by duping keys
+# nor do we want to drop any active programs or creds. As for not-active-but-future...well...
+# Also unsure if it's safe to join only by campus and abbreviation. Probably but I'm not 100%.
+# y <- major.college
+# x <- active.majors %>%
+#   left_join(major.college, by = c("campus_no" = "MajorCampus",
+#                                   "cred_abbv" = "MajorAbbrCode",
+#                                   "cred_pathway" = "MajorPathwayNum"))
+# active.majors <- active.majors[!duplicated(active.majors$credential_verdep_id),]
+# # checking this I found that CMS has double zeroes in kuali (nothing else does) so I went back and converted from above
 
-# active.majors <- active.majors %>% left_join(major.college, by = "mkey")
-active.majors <- active.majors %>%
-  left_join(major.college, by = c("campus_no" = "MajorCampus",
-                                   "cred_abbv" = "MajorAbbrCode"))
-active.majors <- active.majors[!duplicated(active.majors$credential_verdep_id),]
-# checking this I found that CMS has double zeroes in kuali (nothing else does) so I went back and converted from above
+  # # 1/3/19 - here's a new solution that uses some of the Kuali data
+  # splitby <- active.majors$campus_no
+  # split.majors <- split.data.frame(active.majors, f = splitby)
+  #
+  # x <- unsplit(split.majors, splitby)
+  #
+  # # now we have a list of 3 data frames
+  # split.majors$Seattle$college <- str_to_title(split.majors$Seattle$college_name)
 
-table(is.na(active.majors$FinCollegeReportingName))
-active.majors[is.na(active.majors$FinCollegeReportingName),]        # so these are too new to be in the other file?
-active.majors <- active.majors[!is.na(active.majors$FinCollegeReportingName),]
+mj <- major.college %>%
+  select(MajorCampus,
+         college = FinCollegeReportingName,
+         MajorAbbrCode,
+         MajorPathwayNum) %>%
+  mutate(MajorPathwayNum = as.character(MajorPathwayNum))
+
+amj <- active.majors %>%
+  left_join(mj, by = c("campus_no" = "MajorCampus",
+                              "cred_abbv" = "MajorAbbrCode",
+                              "cred_pathway" = "MajorPathwayNum")) %>%
+  # now replace vals for Seattle
+  mutate(college = if_else(campus_no == 0,
+                           str_to_title(college_name),
+                           college))
+amj[is.na(amj$college),]
+# NA's should only be for future - i.e. active but not yet offered - credentials
+active.majors <- amj %>%
+  filter(!is.na(college))
+rm(mj, amj)
 
 # are the depts+colleges sensible?
-table(active.majors$FinCollegeReportingName, active.majors$campus_name, useNA = "ifany")
+table(active.majors$college, active.majors$campus_name, useNA = "ifany")
 # yes, even though both bothell and tacoma have Interdisciplinary Arts and Sciences
 
 # CM names for programs need to be split from the credential
@@ -182,11 +227,32 @@ active.majors$credential_title[i]
 active.majors$maj.name[i] <- str_sub(active.majors$credential_title[i], start = str_locate(active.majors$credential_title[i], "of\\s")[,2]+1)
 table(is.na(active.majors$maj.name))
 
-# Filter other files using active majors ----------------------------------
+# Filter pre-major courses and gpa using active majors ----------------------------------
 
-i <- unique(paste(active.majors$cred_abbv, active.majors$cred_pathway, sep = "_"))
-pre.maj.courses <- pre.maj.courses %>% filter(maj.code %in% i)
-pre.maj.gpa <- pre.maj.gpa %>% filter(maj.code %in% i)
+# i <- unique(paste(active.majors$cred_abbv, active.majors$cred_pathway, sep = "_"))
+
+table(pre.maj.courses$ProgramCode %in% active.majors$credential_code) # program code and credential code don't match by default b/c program code includes campus number
+# but also b/c program code pathways are padded but active majors in CM are not
+# and, of course, one uses '-' and one uses '_'
+# ANTH-0-1-1 v. 0_ANTH_00_1_1
+pre.maj.courses$credential_code <- paste(pre.maj.courses$MajorAbbrCode,
+                                         pre.maj.courses$MajorPathwayNum,
+                                         pre.maj.courses$DegreeLevelCode,
+                                         pre.maj.courses$DegreeTypeCode,
+                                         sep = "-")
+pre.maj.gpa$credential_code <- paste(pre.maj.gpa$MajorAbbrCode,
+                                     pre.maj.gpa$MajorPathwayNum,
+                                     pre.maj.gpa$DegreeLevelCode,
+                                     pre.maj.gpa$DegreeTypeCode,
+                                     sep = "-")
+
+  # table(pre.maj.courses$credential_code %in% active.majors$credential_code)
+  # i <- sort(setdiff(pre.maj.courses$credential_code, active.majors$credential_code)); cbind(i)
+  # # need the xcreds to at least try to validate these
+  # table(xcreds$credential_code %in% i)      # some, not all, are indeed 'active' but not published
+
+pre.maj.courses <- pre.maj.courses %>% filter(credential_code %in% unique(active.majors$credential_code))
+pre.maj.gpa <- pre.maj.gpa %>% filter(credential_code %in% unique(active.majors$credential_code))
 
 # add "college" and calc n, iqr for majors -----------------------------------------------------
 
