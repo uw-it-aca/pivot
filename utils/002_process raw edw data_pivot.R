@@ -254,14 +254,14 @@ pre.maj.gpa$credential_code <- paste(pre.maj.gpa$MajorAbbrCode,
 pre.maj.courses <- pre.maj.courses %>% filter(credential_code %in% unique(active.majors$credential_code))
 pre.maj.gpa <- pre.maj.gpa %>% filter(credential_code %in% unique(active.majors$credential_code))
 
-# add "college" and calc n, iqr for majors -----------------------------------------------------
+# add "college" and calc n + iqr for majors -----------------------------------------------------
 
-pre.maj.gpa <- pre.maj.gpa %>% inner_join(active.majors, by = "mkey")
+pre.maj.gpa <- pre.maj.gpa %>% inner_join(active.majors, by = "credential_code")
 
 med.tot <- pre.maj.gpa %>%
-  group_by(mkey, FinCollegeReportingName) %>%
+  group_by(college, credential_code) %>%
   summarize(count = n(),
-            campus = max(campus),
+            campus = max(campus_no),
             q1 = quantile(cgpa, .25),
             median = median(cgpa),
             q3 = quantile(cgpa, .75),
