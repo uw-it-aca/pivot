@@ -131,17 +131,10 @@ pre.maj.courses <- left_join(pre.maj.gpa, tct, by = c("SDBSrcSystemKey" = "syste
 
 # course names ------------------------------------------------------------
 
-# nb: campus in this table is associated with the course, not the degree - the transcript file
-# 'branch' as the corresponding field; so create a matching code in the transcript file when merging
-# with this for the long names
-course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
-  select(AcademicQtrKeyId,
-         CourseCode,
-         CourseLongName,              # fix case in processing script
-         CourseShortName) %>%
-  distinct() %>%
+# collect all, process later
+course.names <- tbl(sdbcon, in_schema("sec", "sr_course_titles")) %>%
+  select(department_abbrev, course_number, last_eff_yr, last_eff_qtr, course_branch, long_course_title) %>%
   collect()
-
 
 # fetch majors from sdb ---------------------------------------------------
 
@@ -200,8 +193,6 @@ save(programs, creds, major.college, pre.maj.courses, pre.maj.gpa, course.names,
 
 
 # Disconnect/close --------------------------------------------------------
-# DBI::dbListConnections() doesn't appear to work with odbc()
-# I don't trust s/vapply to correctly close each connection in x...
 x <- ls(pattern = "con")
 for(i in 1:length(x)){
   dbDisconnect(get(x[i]))
