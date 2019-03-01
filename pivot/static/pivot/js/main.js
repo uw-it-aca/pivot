@@ -206,8 +206,8 @@ function getMajorStatus(queryStr) {
 function displayMajorStatusURL(code) {
     var parts = code.split(/-(?=(\d))/);
     var major_abbr = parts[0].replace('-', ' ');
-    if (myplan_alias[code]) {
-	   major_abbr = myplan_alias[code];
+    if (myplan_alias[major_abbr]) {
+	   major_abbr = myplan_alias[major_abbr][0];
     }
     var url = "https://myplan.uw.edu/program/#/programs/UG-" + major_abbr + "-MAJOR";
     var msg = _completeMajorMap[code]["major_full_nm"];
