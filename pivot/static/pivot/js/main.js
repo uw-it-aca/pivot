@@ -83,6 +83,7 @@ function initOnboardingDialog() {
 
 //Reads file that maps data from course file to major file
 function getDataNameMap(queryStr) {
+    $(".loader").css("display", "block");
     queryStr = queryStr || "";
     d3.csv("/api/v1/data_map/" + queryStr, function(d) {
         return {

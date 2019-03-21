@@ -20,6 +20,7 @@ function checkStoredData() {
         createMajorCard(majors, gpa);
     } else {
         $(".sample-data").css("display","block");
+        $(".loader").css("display", "none");
     }
 
     // Preserve scroll state across pages
@@ -158,7 +159,7 @@ function createMajorCard(majors, gpa) {
         // There were no majors we could display
         $(".results-section").css("display","none");
     }
-    //$("#loadingModal").modal('hide');
+    $(".loader").css("display", "none");
 }
 
 //Creates the table cells for a major
