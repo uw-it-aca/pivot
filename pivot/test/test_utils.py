@@ -29,12 +29,12 @@ class UtilsTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_PATH)
     def test_pivot_extras(self):
         template = """
-        <a href=".?num_qtrs={0}&end_yr={4}&end_qtr={2}">
-            <strong>Last {1} Years</strong> <br>
+        <a href=".?num_qtrs=8&end_yr=12&end_qtr=AU">
+            <strong>Last 2 Years</strong> <br>
             <span>
-                {2}{3} - {2}{4}
+                AU10 - AU12
             </span>
         </a>
-    """.format(8, 2, 'AU', 10, 12)
+    """
         html = year_select_tab(8)
         self.assertEqual(html, template)
