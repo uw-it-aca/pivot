@@ -7,31 +7,22 @@ library(tidyverse)
 library(dbplyr)
 library(odbc)
 
-# I'm using tb, x, and y as temporary variables
-
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
 Cs <- function(...){as.character(sys.call())[-1]}
 options(tibble.print_max = 800)
 
 # To access local files/vars that are not part of repo, move up one level from project directory
-# but - to start (a tiny bit) more safely:
 setwd(rstudioapi::getActiveProject())
 setwd("..")
 
 source("scripts/config.R")
 
-## DEPR - now get year-quarter from system calendar table
-  # define 5yr (20 quarter) upper boundary, then calc 5 or 2 year cutoffs
-  # this is the range for 5 years of transcripts
-  # max.yrq <- as.numeric(rstudioapi::showPrompt("Max year-quarter", "Enter max yrq (yyyyq) for transcript cutoff,\nusually the current quarter - 1"))
-
 # create connections to enterprise data server
 aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 
-
-# get date <-> quarter ----------------------------------------------------
+# get date for year + quarter ----------------------------------------------------
 cal <- tbl(sdbcon, in_schema("sec", "sys_tbl_39_calendar")) %>%
   filter(first_day >= "2018-01-01") %>%
   select(table_key, first_day) %>%
@@ -56,7 +47,6 @@ major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) 
   filter(VisitingMajorInd == "N", PrimaryOrgUnitInd == "Y", PreMajorInd == "N") %>%         # ActiveMajorInd == "Y",
   select(MajorCampus, FinCampusReportingName, FinCollegeReportingName, MajorAbbrCode, MajorPathwayNum, MajorCode) %>%
   collect()
-
 
 # First YRQ of students’ major(s) -----------------------------------------
 
