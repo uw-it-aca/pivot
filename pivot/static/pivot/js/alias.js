@@ -9,10 +9,10 @@ const search_alias = {
 	'ACMS-30': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
 	'ACMS-50': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
 	'ACMS-70': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'C SCI-0': ['CSE'],
-	'C SCI-10': ['CSE'],
-	'CIV E-0': ['CE'],
-	'IND E-0': ['IE']
+	'C-SCI-0': ['CSE'],
+	'C-SCI-10': ['CSE'],
+	'CIV-E-0': ['CE'],
+	'IND-E-0': ['IE']
 };
 
 
