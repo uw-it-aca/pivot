@@ -12,11 +12,9 @@ setup(
     packages=['pivot'],
     include_package_data=True,
     install_requires=[
-        'Django<2.0',
+        'Django>1.11.15,<2.0',
         'django-compressor',
         'django-templatetag-handlebars',
-        'UW-Restclients-SWS',
-        'UW-Restclients-Core'
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',

@@ -1,18 +1,18 @@
 from django import template
-from uw_sws.term import get_term_before, get_previous_term
+from pivot.utils import get_latest_term, get_quarters_for_file, is_more_recent
 
 register = template.Library()
 
 
 @register.simple_tag
 def year_select_tab(num_qtrs):
-    end_term = get_term_before(get_previous_term())
+    end_term = get_latest_term()
 
     num_years = int(num_qtrs / 4)
-    end_year = str(end_term.year % 100)
-    start_year = str((int(end_term.year) - int(num_years)) % 100)
+    end_year = end_term[2:]
+    start_year = str((int(end_term[2:]) - int(num_years)) % 100)
 
-    qtr = end_term.quarter[:2]
+    qtr = end_term[:2].upper()
 
     return """
         <a href=".?num_qtrs={0}&end_yr={4}&end_qtr={2}">

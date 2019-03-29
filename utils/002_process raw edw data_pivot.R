@@ -28,6 +28,7 @@ Cs <- function(...) {as.character(sys.call())[-1]}
 # function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
 #
 # input: a dataframe
+
 df.trimws <- function(df){
   i <- sapply(df, is.character)
   df[i] <- lapply(df[i], trimws)
@@ -71,12 +72,12 @@ active.majors <- inner_join(creds, programs, by = "program_verind_id") %>%
   distinct(credential_code, .keep_all = T) %>%
   rename(mkey = credential_code)
 
-
 # remove trailing spaces in SDB/AI sources
 major.college <- df.trimws(major.college)
 pre.maj.gpa <- df.trimws(pre.maj.gpa)
 pre.maj.courses <- df.trimws(pre.maj.courses)
 course.names <- df.trimws(course.names)
+
 
 
 # concat abbv+path

@@ -48,8 +48,6 @@ major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) 
   select(MajorCampus, FinCampusReportingName, FinCollegeReportingName, MajorAbbrCode, MajorPathwayNum, MajorCode) %>%
   collect()
 
-# First YRQ of students’ major(s) -----------------------------------------
-
 # re: MajorCode: Code that fully identifies the major.
 # A concatenation of the MajorCampus, MajorAbbrCode, and MajorPathwayNum (each separated by underscores) e.g. '0_BIOL_10'.
 # https://canvas.uw.edu/courses/1061200/pages/studentprogramenrollment
@@ -97,6 +95,8 @@ pre.maj.gpa <- filter(pre.maj.gpa, !is.na(cgpa))
 # Transcripts from pre-declared-major quarters ----------------------
 
 # dplyr syntax doesn't have a good way to filter from w/in the query so use this list of students and join
+# and the database uses YYYY and Q separately by default
+
 students <- data.frame(system_key = unique(pre.maj.gpa$sys.key))
 
 x <- tbl(sdbcon, in_schema("sec", "transcript_courses_taken")) %>%
@@ -127,6 +127,7 @@ rm(x)
 
 # campus in this table is associated with the course, not the degree
 # create a matching code in the transcript file when merging with this for the longer version of the names
+
 course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
   select(yrq = AcademicQtrKeyId,
          course.code = CourseCode,
@@ -144,6 +145,52 @@ tb$syrq <- (tb$major_first_yr*10) + tb$major_first_qtr
 tb$eyrq <- (tb$major_last_yr*10) + tb$major_last_qtr
 maj.age <- tb
 rm(tb)
+
+
+# integrity checks so far (wip) --------------------------------------------
+  #
+  # # tabulate students per major
+  # t <- table(pre.maj.gpa$maj.code)
+  # cbind(t[order(t)])
+  # table(t >= 5)
+  # rm(t)
+  # # by campus
+  # table(pre.maj.gpa$campus)
+  # table(pre.maj.gpa$maj.code, pre.maj.gpa$campus)     # should be no cross-over between elements
+  #
+  # # check that abbv+path aligns with maj.code
+  # pre.maj.courses %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
+  # # this results in 304
+  # # this could be a consequence of majors with no students enrolled since 20124?
+  # # the other maj.first.yrq w/ 81k obs:
+  # maj.first.yrq %>% group_by(maj.abbv, maj.path, maj.code) %>% summarize(n())
+  # # has 319
+  # # check those codes and the sids
+  # (i <- setdiff(maj.first.yrq$maj.code, pre.maj.courses$maj.code))      # 15 major codes in maj.first.yrq but not in pre.maj.courses
+  # (check <- maj.first.yrq[maj.first.yrq$maj.code %in% i,])              # 77 records with those codes
+  # # do any of those students appear at all in the pre.maj.gpa?
+  # (pre.maj.gpa[pre.maj.gpa$sys.key %in% check$sys.key,])                # yes
+  #
+  #
+  # # now we should see which kuali majors are/aren't in the other files
+  # # kuali code: "A A-0-1-6"
+  # # ai code   : "0_MUSIC_00_1_1"
+  # ku <- data.frame(str_split(active.majors$maj.key, "-", simplify = T))   # not going to try to do this in a single swoop w/ matrix today
+  # active.majors$maj.path <- paste0(ku$X1, ku$X2)
+  # mjfi <- unique(paste0(str_trim(maj.first.yrq$maj.abbv), maj.first.yrq$maj.path))
+  # mjpr <- unique(paste0(str_trim(pre.maj.gpa$maj.abbv), pre.maj.gpa$maj.path))
+  #
+  # (i <- setdiff(active.majors$maj.path, mjfi))
+  # active.majors[active.majors$maj.path %in% i,]
+  #
+  # # we will keep all active majors so they will show up in pivot even if no students
+  #
+  # # check that same num/set of student ids are in both gpa and courses
+  # length(unique(pre.maj.gpa$sys.key))
+  # length(unique(pre.maj.courses$sys.key))
+
+
+
 
 
 # Write data ---------------------------------------------------------------
