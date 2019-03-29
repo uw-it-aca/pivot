@@ -1,3 +1,7 @@
+
+## Update on re-factoring with CM data - the holdup now is that Bothell/Tacoma 'college' is not up to date
+## in the CM SDB tables
+
 rm(list = ls())
 gc()
 # setup -------------------------------------------------------------------
@@ -16,29 +20,33 @@ f <- list.files("raw data/", pattern = "raw", full.names = T)
 f <- f[which.max(file.mtime(f))]
 load(f); rm(f)
 
-# source("scripts/config.R")
-
-options(tibble.print_max = 800)
-
-# custom function to created quoted character vectors from unquoted text
+# function to created quoted character vectors from unquoted text
+#
+# input: unquoted text as in Cs(x, y, z)
 Cs <- function(...) {as.character(sys.call())[-1]}
 
-# re-written to use base r instead of stringr
+# function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
+#
+# input: a dataframe
+
 df.trimws <- function(df){
   i <- sapply(df, is.character)
   df[i] <- lapply(df[i], trimws)
   return(df)
 }
 
-# use max available yrq from transcripts rather than current
-max.yrq <- max(pre.maj.courses$tran.yrq)
-# make file name prefix from max.yrq
-q <- max.yrq %% 10
-y <- (max.yrq %/% 10) - 2005  # subtract 5 years
-q <- c("wi", "sp", "su", "au")[q]
-prefix <- paste0(q, y, "_20qtrs")
-rm(q, y)
+# functional way make file name prefix from max.yrq
+mk.prefix <- function(x){
+  q <- x %% 10
+  y <- (x %/% 10) - 2005  # subtract 5 years
+  q <- c("wi", "sp", "su", "au")[q]
+  return(paste0(q, y, "_20qtrs"))
+}
 
+
+# using max available yrq from transcripts to set upper boundary
+max.yrq <- max(pre.maj.courses$tran.yrq)
+prefix <- mk.prefix(max.yrq)
 
 # CM major codes ---------------------------------------------------
 
@@ -64,9 +72,7 @@ active.majors <- inner_join(creds, programs, by = "program_verind_id") %>%
   distinct(credential_code, .keep_all = T) %>%
   rename(mkey = credential_code)
 
-
 # remove trailing spaces in SDB/AI sources
-
 major.college <- df.trimws(major.college)
 pre.maj.gpa <- df.trimws(pre.maj.gpa)
 pre.maj.courses <- df.trimws(pre.maj.courses)
@@ -74,55 +80,34 @@ course.names <- df.trimws(course.names)
 
 
 
-
-
-
-
-# concat abbv+path, 1 line fewer/cleaner for the rest
+# concat abbv+path
 major.college$mkey <- paste(major.college$MajorAbbrCode, major.college$MajorPathwayNum, sep = "_")
 pre.maj.gpa$mkey <- paste(pre.maj.gpa$maj.abbv, pre.maj.gpa$maj.path, sep = "_")
 pre.maj.courses$mkey <- paste(pre.maj.courses$maj.abbv, pre.maj.courses$maj.path, sep = "_")
 
-# for course code (try: split on \\_[\\D])
+# split course codes
 course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
 pre.maj.courses$ckey <- paste(pre.maj.courses$course.dept, pre.maj.courses$course.num, sep = "_")
 
-# course names: filter dupes, fix case in course long names -------------------------------------------
 
-# take only most recent year for the name
+# course names: limit to most recent year, filter dupes, fix case in course long names
+
 course.names <- course.names %>% group_by(ckey) %>% filter(yrq == max(yrq))
 
-# I'm not fixing typos (career palnning sounds fun)
+# Steps:
+# lowercase conversion
+# fix roman numerals
+# not analyzing or fixing actual typos
 
-# re: long names, the base r solution is *extremely* slow(?)
-# tools::toTitleCase(tolower(course.names$course.lname))
-# also the names are about 35% space-padding by volume :P
-# the tools option is supposed to ignore certain words that shouldn't be upper case in
-# English titles, e.g. 'and' or 'in', but the runtime is just too slow to be feasible.
-# I'd expect 360k cases, vectorized over char+column, to run in a few seconds (trimming spaces occurs in ~.25s)
-# stringr has a wrapper for stringi's to_title which is fast. Just check for "i" needing conversion to "I" (1)
-# Also: i'm going to leave X-y as-is even though words like X-ray should by X-y.
 course.names$course.lname <- tolower(course.names$course.lname)
-# now need to fix roman numerals - there is a roman class in base r but it's not a lot of help as-is
-# because the numerals are embedded in strings
-# grep("ii", course.names$course.lname, value = T)
-# chars can occur in the middle of a string, not just the end so I'm going to try to capture most cases
-# the one I'm concerned about is:
-# grep("vi", course.names$course.lname, value = T)      # civ, environ, survival, violin, &c.
-# grep(" vi", course.names$course.lname, value = T)
-# so it needs to be something like: space vi space OR space vi colon
-# nothing appears to go past VIII
 course.names$course.lname <- str_to_title(course.names$course.lname)
 course.names$course.lname <- str_replace_all(course.names$course.lname, "I[i]+", toupper)    # appears to work for II and III correctly
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\ Vi[i]+", toupper)  # appears correct for VII+
 # lastly, Vi > VI: space Vi followed by either : or eol
-# I'm not clever enough at regex to make it anchor/eol OR :, so:
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi\\:", toupper)
 course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi$", toupper)
-# these probably don't even matter for the rankings
 
-
-# Update grades in courses and filter -------------------------------------
+# Update grades in courses -------------------------------------
 
 # ref: https://www.washington.edu/students/gencat/front/Grading_Sys.html
 # I'm using the tops of the ranges
@@ -146,10 +131,11 @@ pre.maj.courses <- pre.maj.courses %>%
 # remove duplicate quarterly enrollments
 i <- pre.maj.courses %>% ungroup() %>% select(sys.key, mkey, ckey, tran.yrq) %>% duplicated(); table(i)
 pre.maj.courses <- pre.maj.courses[i == F,]
+rm(i)
 
-# validate active majors and kuali names ------------------------------------
+### Major.college <- finorg table is going to go away when we get
 
-# kuali will be the official source. We don't want to add rows to kuali by duping keys nor do we want to drop any
+# swapping out kuali csv for CM data via SDB
 major.college[duplicated(major.college$mkey),]
 major.college <- major.college[!duplicated(major.college$mkey),]
 
@@ -157,7 +143,7 @@ active.majors <- active.majors %>% left_join(major.college, by = "mkey")
 unique(active.majors$mkey[is.na(active.majors$FinCollegeReportingName)])
 # checking this I found that CMS has double zeroes in kuali (nothing else does) so I went back and converted from above
 
-# filter kuali by unique mkeys, b/c data is unique by code
+# filter by unique mkeys
 active.majors <- active.majors[!duplicated(active.majors$mkey),]
 
 table(is.na(active.majors$FinCollegeReportingName))

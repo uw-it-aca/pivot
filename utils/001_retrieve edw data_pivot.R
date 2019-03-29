@@ -7,33 +7,34 @@ library(tidyverse)
 library(dbplyr)
 library(odbc)
 
-# I'm using tb, x, and y as temporary/intermediate vars which shouldn't scope outside of their sections
-
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
 Cs <- function(...){as.character(sys.call())[-1]}
 options(tibble.print_max = 800)
 
 # To access local files/vars that are not part of repo, move up one level from project directory
-# but - to start (a tiny bit) more safely:
 setwd(rstudioapi::getActiveProject())
 setwd("..")
 
 source("scripts/config.R")
 
-<<<<<<< Updated upstream
-max.yrq <- 20183
-=======
-# define 5yr (20 quarter) upper boundary, then calc 5 or 2 year cutoffs
-# this is the range for 5 years of transcripts
-max.yrq <- as.numeric(rstudioapi::showPrompt("Max year-quarter", "Enter max yrq (yyyyq) for transcript cutoff,\nusually the current quarter - 1"))
->>>>>>> Stashed changes
-last.major.yrq5 <- max.yrq - 50
-
 # create connections to enterprise data server
 aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
 
+# get date for year + quarter ----------------------------------------------------
+cal <- tbl(sdbcon, in_schema("sec", "sys_tbl_39_calendar")) %>%
+  filter(first_day >= "2018-01-01") %>%
+  select(table_key, first_day) %>%
+  collect() %>%
+  mutate(fd_next = lead(first_day),
+         yrq = as.numeric(str_sub(table_key, start = 2)),
+         yrq_last = lag(yrq))
+
+max.yrq <- cal$yrq_last[(Sys.Date() >= cal$first_day) & (Sys.Date() <= cal$fd_next)]
+# For 5 years of data:
+last.major.yrq5 <- max.yrq - 50
+rm(cal)
 
 # CM in SDB replaces Kuali csv ------------------------------------------------
 
@@ -42,19 +43,10 @@ creds <- tbl(sdbcon, in_schema("sec", "CM_Credentials")) %>% collect()
 
 # Major to FinOrg ---------------------------------------------------------
 
-# Made some post-corrections here after checking in 002 script. There is a mis-match between the EDW data and
-# the kuali dump, so I got rid of the active filter
-# however, there are duplicate id's in the EDW b/c a major can belong to multiple orgs
 major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) %>%
   filter(VisitingMajorInd == "N", PrimaryOrgUnitInd == "Y", PreMajorInd == "N") %>%         # ActiveMajorInd == "Y",
   select(MajorCampus, FinCampusReportingName, FinCollegeReportingName, MajorAbbrCode, MajorPathwayNum, MajorCode) %>%
   collect()
-
-
-# First YRQ of students’ major(s) -----------------------------------------
-
-# AIDB should make first yrq easier b/c it calculates it automatically in ProgramEntryInd
-# and resolves pre-majors with another flag
 
 # re: MajorCode: Code that fully identifies the major.
 # A concatenation of the MajorCampus, MajorAbbrCode, and MajorPathwayNum (each separated by underscores) e.g. '0_BIOL_10'.
@@ -80,13 +72,12 @@ maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
 
 # Cumulative GPA when declared major -----------------------------------
 
-# Future: if tables are too large for collect() to be efficient then try creating temp tables, i.e. compute(name = 'something useful')
+# collect quarterly outcomes temporarily, then merge with first quarter in major
 x <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
   select(sys.key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>%
   collect()       # forcing the join in the same query is buggy
 
-# I noticed in doing integrity check (below) that there isn't outcome data for most recent yrq, re-wrote solution to accomodate that
-# join, spreading yrq.decl, group on sys.key+major, keep only rows < yrq.decl, take top row
+# Need to spread declaration quarter
 pre.maj.gpa <- left_join(maj.first.yrq, x, by = c("sys.key")) %>%
   group_by(sys.key, maj.code) %>%
   filter(yrq < yrq.decl) %>%
@@ -95,12 +86,11 @@ pre.maj.gpa <- left_join(maj.first.yrq, x, by = c("sys.key")) %>%
 
 rm(x)
 
-# how many w/ missing cgpa?
-table(is.na(pre.maj.gpa$cgpa))
-# remove:
+# remove if missing cgpa
 pre.maj.gpa <- filter(pre.maj.gpa, !is.na(cgpa))
 
-table(pre.maj.gpa$yrq >= pre.maj.gpa$yrq.decl, useNA = "ifany")      # should be 100% false
+# table(pre.maj.gpa$yrq >= pre.maj.gpa$yrq.decl, useNA = "ifany")      # should be 100% false
+
 
 # Transcripts from pre-declared-major quarters ----------------------
 
@@ -132,11 +122,12 @@ pre.maj.courses <- left_join(pre.maj.gpa, x, by = "sys.key") %>% select(-yrq, -c
 
 rm(x)
 
+
 # course names ------------------------------------------------------------
 
-# nb: campus in this table is associated with the course, not the degree - the transcript file
-# 'branch' as the corresponding field; so create a matching code in the transcript file when merging
-# with this for the long names
+# campus in this table is associated with the course, not the degree
+# create a matching code in the transcript file when merging with this for the longer version of the names
+
 course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
   select(yrq = AcademicQtrKeyId,
          course.code = CourseCode,
