@@ -11,11 +11,20 @@ setwd("..")
 Cs <- function(...) {as.character(sys.call())[-1]}
 
 load("intermediate data/intermediate cleaned files.RData")
-data.map <- read_csv("transformed data/Data_Map.csv")
+data.map <- read_csv("transformed data/data_map.csv")
 # Gen most recent two years of data for switch ----------------------------
 
 # use max available yrq from transcripts rather than current
 (yrq.cut <- max(pre.maj.courses$tran.yrq) - 20)
+
+# create prefix
+max.yrq <- max(pre.maj.courses$tran.yrq)
+# make file name prefix from max.yrq
+q <- max.yrq %% 10
+y <- (max.yrq %/% 10) - 2000
+q <- c("wi", "sp", "su", "au")[q]
+prefix <- paste0(q, y, "_8qtrs")
+rm(q, y)
 
 pre.gpa2 <- pre.maj.gpa %>% ungroup() %>% filter(yrq.decl >= yrq.cut)
 
@@ -50,7 +59,7 @@ nrow(course.rank) / length(unique(course.rank$mkey))
 course.rank %>% group_by(mkey) %>% filter(max(pop) < 10)
 
 # add numeric keys
-c <- course.names %>% select(ckey, ckey.num)
+c <- course.names %>% ungroup() %>% select(ckey, ckey.num)
 course.rank <- course.rank %>% left_join(c, by = "ckey")
 m <- active.majors %>% select(mkey, mkey.num, MajorCampus)
 course.rank <- course.rank %>% left_join(m, by = "mkey")
@@ -94,6 +103,33 @@ names(student.data.all.majors)
 names(course.rank)
 
 
+# append any additional courses to the data map ---------------------------
+
+i <- setdiff(course.rank$course_num, data.map$key[data.map$is_course == 1])
+# to.add <- course.names[course.names$ckey %in% i,]
+to.add <- course.names %>%
+  ungroup() %>%
+  filter(ckey %in% i) %>%
+  transmute(is_course = 1,
+         is_major = 0,
+         is_campus = 0,
+         name = course.lname,
+         id = ckey.num,
+         key = ckey)
+
+data.map <- bind_rows(data.map, to.add)
+
+table(duplicated(data.map$key))
+table(duplicated(data.map$id))
+i <- data.map[data.map$id %in% data.map$id[duplicated(data.map$id)],]
+i[order(i$id),]
+
+# [TODO] test for duplicate is_x flag + id
+
 # output ------------------------------------------------------------------
-write.csv(student.data.all.majors, file = "transformed data/two year window/wi16_8qtrs_student_data_all_majors.csv", row.names = F)
-write.csv(course.rank, file = "transformed data/two year window/wi16_8qtrs_majors_and_courses.csv", row.names = F)
+# write.csv(student.data.all.majors, file = "transformed data/two year window/wi16_8qtrs_student_data_all_majors.csv", row.names = F)
+# write.csv(course.rank, file = "transformed data/two year window/wi16_8qtrs_majors_and_courses.csv", row.names = F)
+outdir <- paste0(getwd(), "/transformed data/")
+write.csv(data.map, paste0(outdir, "data_map.csv"), row.names = F)
+write.csv(student.data.all.majors, paste0(outdir, prefix, "_student_data_all_majors.csv"), row.names = F)
+write.csv(course.rank, paste0(outdir, prefix, "_majors_and_courses.csv"), row.names = F)
