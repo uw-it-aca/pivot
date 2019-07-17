@@ -22,6 +22,8 @@ load(f); rm(f)
 # input: unquoted text as in Cs(x, y, z)
 Cs <- function(...) {as.character(sys.call())[-1]}
 
+# [NICETOHAVE] a not-in function around [!(x %in% y)]
+
 # function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
 #
 # input: a dataframe
@@ -107,7 +109,9 @@ active.majors$campus_num <- case_when(active.majors$campus_name == "Seattle"~ 0,
 # Also worth noting is that program code means something different in the new CM tables where
 # it indicates "level-dept abbv-major/minor"
 
-(x <- str_split(active.majors$credential_code, "-", simplify = T))
+(x <- str_split(active.majors$credential_code, "_", simplify = T))
+
+active.majors$credential_code <- str_replace_all(active.majors$credential_code, "-", "_")
 
 # for course code (try: split on \\_[\\D])
 # course.names$ckey <- str_sub(course.names$course.code, start = str_locate(course.names$course.code, "\\_\\D")[,2])
@@ -212,11 +216,14 @@ table(is.na(active.majors$maj.name))
 
 x <- str_split(pre.maj.courses$prog.code, "_", simplify = T)
 x[,3] <- as.numeric(x[,3])
-pre.maj.courses$credential_code <- paste(x[,2], x[,3], x[,4], x[,5], sep = "-")
+pre.maj.courses$credential_code <- paste(x[,2], x[,3], x[,4], x[,5], sep = "_")
 
 x <- str_split(pre.maj.gpa$prog.code, "_", simplify = T)                          # this file has path as a numeric var but still need the other two elements
 x[,3] <- as.numeric(x[,3])
-pre.maj.gpa$credential_code <- paste(x[,2], x[,3], x[,4], x[,5], sep = "-")
+pre.maj.gpa$credential_code <- paste(x[,2], x[,3], x[,4], x[,5], sep = "_")
+
+rm(x)
+
 
 ###
 #  ! At this point it's a good idea to do some validation of the !(%in%) between active.majors and pre.maj.courses
@@ -245,70 +252,55 @@ med.tot <- pre.maj.gpa %>%
             iqr_max = if_else(q3 + IQR(cgpa) > 4, 4, q3 + IQR(cgpa))) %>%
   ungroup()
 
-med.ann <- pre.maj.gpa %>%
-  mutate(yr.decl = yrq.decl %/% 10) %>%
-  group_by(campus, credential_code, program_school_or_college, yr.decl) %>%
-  summarize(count = n(),
-            # campus = max(campus),
-            q1 = quantile(cgpa, .25),
-            median = median(cgpa),
-            q3 = quantile(cgpa, .75),
-            iqr_min = q1 - IQR(cgpa),
-            iqr_max = if_else(q3 + IQR(cgpa) > 4, 4, q3 + IQR(cgpa))) %>%
-  ungroup()
+# med.ann <- pre.maj.gpa %>%
+#   mutate(yr.decl = yrq.decl %/% 10) %>%
+#   group_by(campus, credential_code, program_school_or_college, yr.decl) %>%
+#   summarize(count = n(),
+#             # campus = max(campus),
+#             q1 = quantile(cgpa, .25),
+#             median = median(cgpa),
+#             q3 = quantile(cgpa, .75),
+#             iqr_min = q1 - IQR(cgpa),
+#             iqr_max = if_else(q3 + IQR(cgpa) > 4, 4, q3 + IQR(cgpa))) %>%
+#   ungroup()
 
-## [HERE]
 # Calc rankings for courses by majors; add additional fields for final file -------------------------------------
 
-# first check for courses without names: (SHOULD BE FIXED USING SDB INSTEAD OF AI)
+# check for courses without names: (SHOULD BE FIXED USING SDB INSTEAD OF AI)
 i <- !(pre.maj.courses$ckey %in% course.names$ckey)
 table(i)
 cbind(sort(unique(pre.maj.courses$ckey[i])))
 any(course.names == "")
-# I've checked through many of these in the full course names file, which has no filters applied
-# Not much to do to reconcile them right now
 
 course.rank <- pre.maj.courses %>%
   filter(ckey %in% course.names$ckey) %>%
-  group_by(mkey, ckey) %>%
+  group_by(credential_code, ckey) %>%
   summarize(n.course = n(), mgrade = median(grade)) %>%
   arrange(desc(n.course), .by_group = T) %>%
   filter(row_number() <= 10) %>%
   mutate(pop = seq_along(n.course)) %>%
   ungroup()
 
-nrow(course.rank) / length(unique(course.rank$mkey))      # some may not have 10
-course.rank %>% group_by(mkey) %>% filter(max(pop) < 10)  # examine
+nrow(course.rank) / length(unique(course.rank$credential_code))      # some may not have 10
+course.rank %>% group_by(credential_code) %>% filter(max(pop) < 10)  # examine
 
 # need: long name, major name, and campus (for MAJOR) are supposed to be numeric codes
 course.names$ckey.num <- seq_along(course.names$ckey)
-active.majors$mkey.num <- seq_along(active.majors$mkey)
+active.majors$mkey.num <- seq_along(active.majors$credential_code)
 
 c <- course.names %>% ungroup() %>% select(ckey, ckey.num)
 course.rank <- course.rank %>% left_join(c, by = "ckey")
-m <- active.majors %>% select(mkey, mkey.num, MajorCampus)
-course.rank <- course.rank %>% left_join(m, by = "mkey")
-m <- med.tot %>% select(mkey, count)
-course.rank <- course.rank %>% left_join(m, by = "mkey")
+m <- active.majors %>% select(credential_code, mkey.num, campus_name)
+course.rank <- course.rank %>% left_join(m, by = "credential_code")
+m <- med.tot %>% select(credential_code, count)
+course.rank <- course.rank %>% left_join(m, by = "credential_code")
 
 # check: number in course should (usually) not exceed total in major:
 any(course.rank$n.course > course.rank$count)
-table(course.rank$n.course > course.rank$count)
-i <- course.rank$n.course > course.rank$count
-course.rank[i,]
-
-# check the duplicate entries (with duplicated quarters already having been removed above)
-(huh <- course.rank[i,1:2])
-check <- huh %>% inner_join(pre.maj.courses) %>% group_by(sys.key) %>% filter(n() > 1) %>% ungroup()
-# if student took same course more than once for credit, in different quarters - that seems acceptable
-# set n.course equal to n.major
-length(unique(check$sys.key))
-rm(huh, check)
+course.rank[course.rank$n.course > course.rank$count,]
 
 course.rank$n.course <- ifelse(course.rank$n.course > course.rank$count, course.rank$count, course.rank$n.course)
 table(course.rank$n.course > course.rank$count)
-course.rank[course.rank$mkey == "MUSIC_0",]
-
 
 # # run script to boxplot all the majors+pathways?
 # # source("one script to print them all.R")
@@ -339,14 +331,13 @@ major.map <- active.majors %>%
          is_campus,
          name = maj.name,
          id = mkey.num,
-         key = mkey)
+         key = credential_code)
 campus.map <- data.frame(is_course = 0,
                          is_major = 0,
                          is_campus = 1,
                          name = c("Seattle",
                                   "Bothell",
                                   "Tacoma"),
-                         # id = c(0,1,2),
                          id = c(0,1,2),
                          key = c('0','1','2'),
                          stringsAsFactors = F)
@@ -357,15 +348,16 @@ rm(campus.map, course.map, major.map)
 
 # create student.data.all.majors (med.tot) ------------------------------------------
 
-student.data.all.majors <- med.tot %>% select(major_path = mkey, college = FinCollegeReportingName, count, iqr_min, q1, median, q3, iqr_max)
+student.data.all.majors <- med.tot %>%
+  select(major_path = credential_code, college = program_school_or_college, count, iqr_min, q1, median, q3, iqr_max)
 # edit rows with count < 5
 cols <- Cs(count, iqr_min, q1, median, q3, iqr_max)
 student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], function(x) ifelse(student.data.all.majors$count < 5, -1, x))
 
 # add majors that are active but have no students
 active.no.stu <- active.majors %>%
-  filter(!(mkey %in% med.tot$mkey)) %>%
-           select(major_path = mkey, college = FinCollegeReportingName) %>%
+  filter(!(credential_code %in% med.tot$credential_code)) %>%
+           select(major_path = credential_code, college = program_school_or_college) %>%
   mutate(count = -1, iqr_min = -1, q1 = -1, median = -1, q3 = -1, iqr_max = -1)
 
 student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
@@ -374,27 +366,72 @@ student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
 # status lookup + age -----------------------------------------------------------
 
 # status lookup does not need to replicate names from data.map (but it's useful for error checking)
-status.lookup <- active.majors %>% select(code = mkey, name = maj.name, status = program_admissionType)
+status.lookup <- active.majors %>% select(code = credential_code, name = maj.name, status = program_admissionType)
 
-# Add age to status lookup
-maj.age$mkey <- paste(trimws(maj.age$major_abbr), maj.age$major_pathway, sep = "_")
-maj.age <- maj.age %>% group_by(mkey) %>% add_tally() %>% filter(any(eyrq == 99994)) %>% ungroup()
-maj.age <- maj.age %>% group_by(mkey) %>% transmute(st = min(syrq), end = max(eyrq)) %>% ungroup()
+maj.age$credential_code <- paste(maj.age$major_abbr, maj.age$major_pathway, maj.age$major_default_lvl, maj.age$major_default_typ, sep = "_")
 
-maj.age$quarters_of_data <- qtr.diff(max.yrq, maj.age$st)
-maj.age <- maj.age %>% select(mkey, quarters_of_data) %>% mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
 
-# check:
-status.lookup[!(status.lookup$code %in% maj.age$mkey),]
-# These may have been updated since the last time, e.g. ECFS O is no longer accepting students
-status.lookup <- status.lookup %>% left_join(maj.age, by = c("code" = "mkey")) %>% distinct() %>% select(-name)
+# a <- maj.age
+#
+# (x <- str_split(status.lookup$code, "_", simplify = T))
+# x <- sort(paste(x[,1], x[,2], sep = "_"))
+# y <- sort(unique(paste(a$major_abbr, a$major_pathway, sep = "_")))
+# all(x %in% y)
+# y <- y[y %in% x]
+# # ok...
+#
+# # try: lvl, w/o type
+# x <- sort(str_sub(status.lookup$code, end = -3))
+# y <- sort(unique(paste(a$major_abbr, a$major_pathway, a$major_default_lvl, sep = "_")))  # , a$major_default_typ, sep = "_")))
+# all(x %in% y)
+# sum(x %in% y)         # missing 4 is an improvement over ^^^
+# (z <- x[!(x %in% y)])
+# zz <- c()
+# for(i in 1:length(z)){
+#   zz <- c(zz, (grep(z[i], active.majors$credential_code, value = T)))
+# }
+# View(active.majors[active.majors$credential_code %in% zz,])
+# View(pre.maj.courses[pre.maj.courses$credential_code %in% zz,])
+
+# AGE
+# step 1: use maj.age for as many as possible
+# step 2: use pre.maj.courses data for the remaining credentials
+
+ma <- maj.age %>%
+  mutate(len = qtr.diff(eyrq, syrq),
+         len = if_else(len < 0, 0, len)) %>%
+  group_by(credential_code) %>%
+  summarize(quarters_of_data = sum(len)) %>%
+  ungroup() %>%
+  mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
+
+(i <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
+any(i %in% active.no.students$credential_code)
+i <- i[!(i %in% active.no.students$credential_code)]
+all(i %in% pre.maj.courses$credential_code)
+i <- i[!(i %in% pre.maj.courses$credential_code)]
+ma2 <- pre.maj.courses %>%
+  filter(credential_code %in% i) %>%
+  group_by(credential_code) %>%
+  summarize(quarters_of_data = qtr.diff(max(tran.yrq), min(tran.yrq))) %>%
+  ungroup() %>%
+  mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
+
+ages <- rbind(ma, ma2)
+
+status.lookup <- status.lookup %>%
+  left_join(ages, by = c("code" = "credential_code")) # %>% distinct() %>% select(-name)
+x <- status.lookup$code[is.na(status.lookup$quarters_of_data)]
+all(x %in% active.no.students$credential_code)
+status.lookup$quarters_of_data[is.na(status.lookup$quarters_of_data)] <- 0
+rm(ma, ma2, x, y, z, zz, i, ages)
+
 
 # Course.major.rankings ---------------------------------------------------
 
-# no long using "Major full name" or "course long name" columns in the majors_and_course.csv
-course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, student_count = n.course,
+course.rank <- course.rank %>% select(major_path = credential_code, course_num = ckey, student_count = n.course,
                                       students_in_major = count, course_gpa_50pct = mgrade,
-                                      course_popularity_rank = pop, campus = MajorCampus)
+                                      course_popularity_rank = pop, campus = campus_name)
 i <- course.rank$students_in_major < 5
 cols <- Cs(student_count, students_in_major, course_gpa_50pct)
 course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$students_in_major < 5, -1, x))
