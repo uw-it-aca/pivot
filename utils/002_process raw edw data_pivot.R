@@ -74,7 +74,6 @@ active.majors$campus_num <- case_when(active.majors$campus_name == "Seattle"~ 0,
                                       active.majors$campus_name == "Bothell" ~ 1,
                                       active.majors$campus_name == "Tacoma" ~ 2)
 
-
 # programs <- programs %>%
 #   filter(program_status == "active",
 #          str_sub(program_code, 1, 2) == "UG",
@@ -209,6 +208,11 @@ active.majors$maj.name <- str_sub(active.majors$credential_title, start = str_lo
 i <- is.na(active.majors$maj.name)
 active.majors$maj.name[i] <- str_sub(active.majors$credential_title[i], start = str_locate(active.majors$credential_title[i], "of\\s")[,2]+1)
 table(is.na(active.majors$maj.name))
+
+
+# [TODO] fix the list of titles that have XXX_0_1_1/5 but title is the same, e.g. Chemistry/Chemistry
+
+
 
 # Create the common credential code for pre major courses and pre major gpa ----------------------------------
 

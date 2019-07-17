@@ -4,8 +4,7 @@ gc()
 
 library(tidyverse)
 
-setwd(rstudioapi::getActiveProject())
-setwd("..")
+setwd(paste0(rstudioapi::getActiveProject(), "/.."))
 
 # custom function to created quoted character vectors from unquoted text
 Cs <- function(...) {as.character(sys.call())[-1]}
@@ -17,18 +16,18 @@ data.map <- read_csv("transformed data/data_map.csv")
 # use max available yrq from transcripts rather than current
 (yrq.cut <- max(pre.maj.courses$tran.yrq) - 20)
 
-# create prefix
+# create prefix for 2 year window
 max.yrq <- max(pre.maj.courses$tran.yrq)
 # make file name prefix from max.yrq
-q <- max.yrq %% 10
-y <- (max.yrq %/% 10) - 2000
-q <- c("wi", "sp", "su", "au")[q]
-prefix <- paste0(q, y, "_8qtrs")
+(q <- max.yrq %% 10)
+(y <- (max.yrq %/% 10) - 2000)
+(q <- c("wi", "sp", "su", "au")[q])
+(prefix <- paste0(q, y, "_8qtrs"))
 rm(q, y)
 
 pre.gpa2 <- pre.maj.gpa %>% ungroup() %>% filter(yrq.decl >= yrq.cut)
 
-med.tot <- pre.gpa2 %>% group_by(mkey, FinCollegeReportingName) %>%
+med.tot <- pre.gpa2 %>% group_by(credential_code, program_school_or_college) %>%
   summarize(count = n(),
             campus = max(campus),
             q1 = quantile(cgpa, .25),
@@ -41,30 +40,30 @@ med.tot <- pre.gpa2 %>% group_by(mkey, FinCollegeReportingName) %>%
 # diagnostics
 nrow(active.majors) - nrow(med.tot)
 table(med.tot$count < 5)
+(majors.wo.2yrs <- active.majors$credential_code[!(active.majors$credential_code %in% med.tot$credential_code)])
 
 
 # transcripts for those declarations --------------------------------------
-i <- pre.gpa2 %>% select(sys.key, yrq, mkey)
-course.rank <- inner_join(pre.maj.courses, i)
-course.rank <- course.rank %>%
+i <- pre.gpa2 %>% select(sys.key, yrq, credential_code)
+course.rank <- inner_join(pre.maj.courses, i) %>%
   filter(ckey %in% course.names$ckey) %>%
-  group_by(mkey, ckey) %>%
+  group_by(credential_code, ckey) %>%
   summarize(n.course = n(), mgrade = median(grade)) %>%
   arrange(desc(n.course), .by_group = T) %>%
   filter(row_number() <= 10) %>%
   mutate(pop = seq_along(n.course)) %>%
   ungroup()
 
-nrow(course.rank) / length(unique(course.rank$mkey))
-course.rank %>% group_by(mkey) %>% filter(max(pop) < 10)
+nrow(course.rank) / length(unique(course.rank$credential_code))
+course.rank %>% group_by(credential_code) %>% filter(max(pop) < 10)
 
 # add numeric keys
 c <- course.names %>% ungroup() %>% select(ckey, ckey.num)
 course.rank <- course.rank %>% left_join(c, by = "ckey")
-m <- active.majors %>% select(mkey, mkey.num, MajorCampus)
-course.rank <- course.rank %>% left_join(m, by = "mkey")
-m <- med.tot %>% select(mkey, count)
-course.rank <- course.rank %>% left_join(m, by = "mkey")
+m <- active.majors %>% select(credential_code, mkey.num, campus_name)
+course.rank <- course.rank %>% left_join(m, by = "credential_code")
+m <- med.tot %>% select(credential_code, count)
+course.rank <- course.rank %>% left_join(m, by = "credential_code")
 rm(c, m)
 
 table(course.rank$n.course > course.rank$count)
@@ -76,21 +75,21 @@ table(course.rank$n.course == course.rank$count)
 
 # fix names, write files --------------------------------------------------
 
-student.data.all.majors <- med.tot %>% select(major_path = mkey, college = FinCollegeReportingName, count, iqr_min, q1, median, q3, iqr_max)
+student.data.all.majors <- med.tot %>% select(major_path = credential_code, college = program_school_or_college, count, iqr_min, q1, median, q3, iqr_max)
 # edit rows with count < 5
 cols <- Cs(count, iqr_min, q1, median, q3, iqr_max)
 student.data.all.majors[,cols] <- lapply(student.data.all.majors[,cols], function(x) ifelse(med.tot$count < 5, -1, x))
 
 # add majors that are active but have no students
 active.no.stu <- active.majors %>%
-  filter(!(mkey %in% med.tot$mkey)) %>%
-  select(major_path = mkey, college = FinCollegeReportingName) %>%
+  filter(!(credential_code %in% med.tot$credential_code)) %>%
+  select(major_path = credential_code, college = program_school_or_college) %>%
   mutate(count = -1, iqr_min = -1, q1 = -1, median = -1, q3 = -1, iqr_max = -1)
 student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
 
-course.rank <- course.rank %>% select(major_path = mkey, course_num = ckey, student_count = n.course,
+course.rank <- course.rank %>% select(major_path = credential_code, course_num = ckey, student_count = n.course,
                                       students_in_major = count, course_gpa_50pct = mgrade,
-                                      course_popularity_rank = pop, campus = MajorCampus)
+                                      course_popularity_rank = pop, campus = campus_name)
 i <- course.rank$students_in_major < 5
 cols <- Cs(student_count, students_in_major, course_gpa_50pct)
 course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$students_in_major < 5, -1, x))
@@ -123,8 +122,6 @@ table(duplicated(data.map$key))
 table(duplicated(data.map$id))
 i <- data.map[data.map$id %in% data.map$id[duplicated(data.map$id)],]
 i[order(i$id),]
-
-# [TODO] test for duplicate is_x flag + id
 
 # output ------------------------------------------------------------------
 # write.csv(student.data.all.majors, file = "transformed data/two year window/wi16_8qtrs_student_data_all_majors.csv", row.names = F)
