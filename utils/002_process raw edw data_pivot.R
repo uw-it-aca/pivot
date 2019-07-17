@@ -9,8 +9,7 @@ library(tidyverse)
 # To access local files/vars that are not part of repo, move up one level from project directory.
 # This is included to 'reset' 002 in the event that 001 > 002 aren't being
 # run in the same session.
-setwd(rstudioapi::getActiveProject())
-setwd("..")
+setwd(paste0(rstudioapi::getActiveProject(), "/.."))
 
 # in case there are multiple raw data files, load the most recently created
 f <- list.files("raw data/", pattern = "raw", full.names = T)
@@ -37,7 +36,7 @@ df.trimws <- function(df){
 # make file name prefix from max.yrq
 mk.prefix <- function(x){
   q <- x %% 10
-  y <- (x %/% 10) - 2005  # subtract 5 years
+  y <- (x %/% 10) - 2000  # diff from yr 2000; [TODO] make this an argument
   q <- c("wi", "sp", "su", "au")[q]
   return(paste0(q, y, "_20qtrs"))
 }
@@ -438,6 +437,12 @@ course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$
 head(course.rank[i,], 30)
 
 
+# Need a check on status lookup for majors with same name but diff --------
+### [HERE] checking with the service team on how to handle these duplicate names - either complete string or add (BS)/(BA) to some
+
+# i <- status.lookup[duplicated(status.lookup$name),]
+
+
 # double check names ---------------------------------------------
 names(status.lookup)
 names(student.data.all.majors)
@@ -454,4 +459,4 @@ write.csv(data.map, paste0(outdir, "data_map.csv"), row.names = F)
 write.csv(student.data.all.majors, paste0(outdir, prefix, "_student_data_all_majors.csv"), row.names = F)
 write.csv(course.rank, paste0(outdir, prefix, "_majors_and_courses.csv"), row.names = F)
 
-save(list = Cs(active.majors, pre.maj.courses, med.ann, pre.maj.gpa, course.names, major.college), file = "intermediate data/intermediate cleaned files.RData")
+save(list = Cs(active.majors, pre.maj.courses, pre.maj.gpa, course.names), file = "intermediate data/intermediate cleaned files.RData")
