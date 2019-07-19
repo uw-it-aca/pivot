@@ -8,6 +8,7 @@ library(dbplyr)
 library(odbc)
 # addtl req: keyring
 
+
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
 Cs <- function(...){as.character(sys.call())[-1]}
@@ -22,6 +23,7 @@ source("scripts/config.R")
 # create connections to enterprise data server
 aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = keyring::key_get("sdb"))
 sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = keyring::key_get("sdb"))
+
 
 # get date for year + quarter ----------------------------------------------------
 cal <- tbl(sdbcon, in_schema("sec", "sys_tbl_39_calendar")) %>%
@@ -46,6 +48,7 @@ programs <- tbl(sdbcon, in_schema("sec", "CM_Programs")) %>%
 creds <- tbl(sdbcon, in_schema("sec", "CM_Credentials")) %>%
   filter(credential_status == "active",
          DoNotPublish %in% c("", "False", "false"))
+
 
 active.majors = creds %>%
   inner_join(programs, by = c("program_verind_id")) %>%    # be sure not to use the default and/or join on CIP code too
@@ -141,7 +144,6 @@ maj.age <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>%
   mutate(syrq = major_first_yr*10 + major_first_qtr,
          eyrq = major_last_yr*10 + major_last_qtr)
 
-
 # integrity checks so far (wip) --------------------------------------------
   #
   # # tabulate students per major
@@ -191,6 +193,7 @@ maj.age <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>%
 # Write data ---------------------------------------------------------------
 
 save(active.majors, pre.maj.courses, pre.maj.gpa, course.names, maj.age, file = paste0("raw data/raw data_", Sys.Date()))
+
 
 
 # Disconnect/close --------------------------------------------------------

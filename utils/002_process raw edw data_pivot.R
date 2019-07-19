@@ -1,3 +1,7 @@
+
+## Update on re-factoring with CM data - the holdup now is that Bothell/Tacoma 'college' is not up to date
+## in the CM SDB tables
+
 rm(list = ls())
 gc()
 
@@ -20,6 +24,7 @@ load(f); rm(f)
 #
 # input: unquoted text as in Cs(x, y, z)
 Cs <- function(...) {as.character(sys.call())[-1]}
+
 
 # [NICETOHAVE] a not-in function around [!(x %in% y)]
 
@@ -167,7 +172,6 @@ course.names$course.lname <- str_replace_all(course.names$course.lname, "\\sVi$"
 
 course.names <- course.names %>%
   select(campus = course_branch, ckey, course.lname)
-
 
 # Update grades in courses -------------------------------------
 
@@ -349,6 +353,7 @@ major.map <- active.majors %>%
          name = maj.name,
          id = mkey.num,
          key = credential_code)
+
 campus.map <- data.frame(is_course = 0,
                          is_major = 0,
                          is_campus = 1,
