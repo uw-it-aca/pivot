@@ -210,12 +210,26 @@ active.majors$maj.name[i] <- str_sub(active.majors$credential_title[i], start = 
 table(is.na(active.majors$maj.name))
 
 
-# [TODO] fix the list of titles that have XXX_0_1_1/5 but title is the same, e.g. Chemistry/Chemistry
+# fix the list of titles that have XXX_0_1_1/5 but title is the same, e.g. Chemistry/Chemistry ----------------------------------
 
+# another nice to have: this should be a function
 
+# ANTH has several more that aren't 0_1_1/5
+abbvs <- c("B CHEM", "B PHYS", "CHEM", "ECON", "INDIV", "MATH", "OCEAN", "PH", "PSYCH", "TCSCI")
+anth <- c("ANTH_0_1_1", "ANTH_10_1_1", "ANTH_30_1_1", "ANTH_40_1_1")
+anthbs <- c("ANTH_0_1_5", "ANTH_10_1_5", "ANTH_30_1_5", "ANTH_40_1_5")
+(ba <- c(anth, sapply(abbvs, function(x) paste0(x, "_0_1_1"), simplify = T, USE.NAMES = F)))
+(bs <- c(anthbs, sapply(abbvs, function(x) paste0(x, "_0_1_5"), simplify = T, USE.NAMES = F)))
+
+i <- active.majors$credential_code %in% ba
+active.majors$maj.name[i] <- paste(active.majors$maj.name[i], "(BA)",  sep = " ")
+
+i <- active.majors$credential_code %in% bs
+active.majors$maj.name[i] <- paste(active.majors$maj.name[i], "(BS)",  sep = " ")
+
+rm(abbvs, anth, anthbs, i, ba, bs)
 
 # Create the common credential code for pre major courses and pre major gpa ----------------------------------
-
 
 x <- str_split(pre.maj.courses$prog.code, "_", simplify = T)
 x[,3] <- as.numeric(x[,3])
