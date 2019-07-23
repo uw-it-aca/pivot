@@ -1,6 +1,19 @@
 rm(list = ls())
 gc()
 
+
+# Notes: ------------------------------------------------------------------
+
+# Outfiles:
+#   status.lookup
+#     code (credential), name, status, number of quarters of data
+#   student.data.all.majors
+#     major_path, college or school, count (n students), iqr-min, q1, median, q3, iqr-max
+#   data.map
+#     is_course, is_major, is_campus, name, id, key (abbv/major_pathway)
+#   course.rank
+#     major_path (credential_code), course_num, student_count, students_in_major, course_gpa_50pct, course_long_name, major_full_nm, course_popularity_rank, campus (numeric, campus of major)
+
 # setup -------------------------------------------------------------------
 
 library(tidyverse)
@@ -73,28 +86,6 @@ prefix <- mk.prefix(max.yrq)
 active.majors$campus_num <- case_when(active.majors$campus_name == "Seattle"~ 0,
                                       active.majors$campus_name == "Bothell" ~ 1,
                                       active.majors$campus_name == "Tacoma" ~ 2)
-
-# programs <- programs %>%
-#   filter(program_status == "active",
-#          str_sub(program_code, 1, 2) == "UG",
-#          grepl("MAJOR", program_code, ignore.case = F) == T)
-# programs <- df.trimws(programs)
-#
-# x <- data.frame(str_split(creds$credential_code, "-", simplify = T))
-# names(x) <- c("cred_abbv", "cred_pathway", "cred_level_code", "cred_degree_type_code")
-# creds <- bind_cols(creds, x)
-# rm(x)
-#
-# creds <- creds %>%
-#   filter(grepl("true", DoNotPublish, ignore.case = T) == F,
-#          credential_status == "active",
-#          cred_level_code == 1,
-#          cred_degree_type_code <= 8)
-# creds <- df.trimws(creds)
-#
-# active.majors <- inner_join(creds, programs, by = "program_verind_id") %>%
-#   distinct(credential_code, .keep_all = T) %>%
-#   mutate(mkey = paste(cred_abbv, cred_pathway, sep = "_"))
 
 # add compatible key to active majors
 # the transcript files use _left_ padding on the pathway for the string codes when
@@ -290,13 +281,19 @@ cbind(sort(unique(pre.maj.courses$ckey[i])))
 any(course.names == "")
 
 course.rank <- pre.maj.courses %>%
+  select(sys.key, credential_code, ckey, campus, grade) %>%
   filter(ckey %in% course.names$ckey) %>%
-  group_by(credential_code, ckey) %>%
+  mutate(campus = as.numeric(campus)) %>%
+  group_by(sys.key, credential_code, ckey, campus) %>%
+  summarize(grade = max(grade)) %>%                     # limit to highest grade in major+course per student
+  ungroup() %>%
+  group_by(campus, credential_code, ckey) %>%
   summarize(n.course = n(), mgrade = median(grade)) %>%
   arrange(desc(n.course), .by_group = T) %>%
-  filter(row_number() <= 10) %>%
-  mutate(pop = seq_along(n.course)) %>%
+  mutate(pop = row_number()) %>%
+  filter(pop <= 10) %>%
   ungroup()
+
 
 nrow(course.rank) / length(unique(course.rank$credential_code))      # some may not have 10
 course.rank %>% group_by(credential_code) %>% filter(max(pop) < 10)  # examine
@@ -307,7 +304,7 @@ active.majors$mkey.num <- seq_along(active.majors$credential_code)
 
 c <- course.names %>% ungroup() %>% select(ckey, ckey.num)
 course.rank <- course.rank %>% left_join(c, by = "ckey")
-m <- active.majors %>% select(credential_code, mkey.num, campus_name)
+m <- active.majors %>% select(credential_code, mkey.num)
 course.rank <- course.rank %>% left_join(m, by = "credential_code")
 m <- med.tot %>% select(credential_code, count)
 course.rank <- course.rank %>% left_join(m, by = "credential_code")
@@ -388,27 +385,6 @@ status.lookup <- active.majors %>% select(code = credential_code, name = maj.nam
 maj.age$credential_code <- paste(maj.age$major_abbr, maj.age$major_pathway, maj.age$major_default_lvl, maj.age$major_default_typ, sep = "_")
 
 
-# a <- maj.age
-#
-# (x <- str_split(status.lookup$code, "_", simplify = T))
-# x <- sort(paste(x[,1], x[,2], sep = "_"))
-# y <- sort(unique(paste(a$major_abbr, a$major_pathway, sep = "_")))
-# all(x %in% y)
-# y <- y[y %in% x]
-# # ok...
-#
-# # try: lvl, w/o type
-# x <- sort(str_sub(status.lookup$code, end = -3))
-# y <- sort(unique(paste(a$major_abbr, a$major_pathway, a$major_default_lvl, sep = "_")))  # , a$major_default_typ, sep = "_")))
-# all(x %in% y)
-# sum(x %in% y)         # missing 4 is an improvement over ^^^
-# (z <- x[!(x %in% y)])
-# zz <- c()
-# for(i in 1:length(z)){
-#   zz <- c(zz, (grep(z[i], active.majors$credential_code, value = T)))
-# }
-# View(active.majors[active.majors$credential_code %in% zz,])
-# View(pre.maj.courses[pre.maj.courses$credential_code %in% zz,])
 
 # AGE
 # step 1: use maj.age for as many as possible
@@ -422,24 +398,29 @@ ma <- maj.age %>%
   ungroup() %>%
   mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
 
-(i <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
-any(i %in% active.no.students$credential_code)
-i <- i[!(i %in% active.no.students$credential_code)]
-all(i %in% pre.maj.courses$credential_code)
-i <- i[!(i %in% pre.maj.courses$credential_code)]
+(no.age <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
+
 ma2 <- pre.maj.courses %>%
-  filter(credential_code %in% i) %>%
+  filter(credential_code %in% no.age) %>%
   group_by(credential_code) %>%
   summarize(quarters_of_data = qtr.diff(max(tran.yrq), min(tran.yrq))) %>%
   ungroup() %>%
   mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
 
+# (i <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
+# any(i %in% active.no.students$credential_code)
+# i <- i[!(i %in% active.no.students$credential_code)]
+# all(i %in% pre.maj.courses$credential_code)
+# only if FALSE:
+# i <- i[!(i %in% pre.maj.courses$credential_code)]
+
 ages <- rbind(ma, ma2)
+any(duplicated(ages$credential_code))   # should be FALSE
 
 status.lookup <- status.lookup %>%
   left_join(ages, by = c("code" = "credential_code")) # %>% distinct() %>% select(-name)
 x <- status.lookup$code[is.na(status.lookup$quarters_of_data)]
-all(x %in% active.no.students$credential_code)
+all(x %in% active.no.students$credential_code)                    # Hopefully TRUE, otherwise something has gone wrong
 status.lookup$quarters_of_data[is.na(status.lookup$quarters_of_data)] <- 0
 rm(ma, ma2, x, y, z, zz, i, ages)
 
@@ -448,7 +429,7 @@ rm(ma, ma2, x, y, z, zz, i, ages)
 
 course.rank <- course.rank %>% select(major_path = credential_code, course_num = ckey, student_count = n.course,
                                       students_in_major = count, course_gpa_50pct = mgrade,
-                                      course_popularity_rank = pop, campus = campus_name)
+                                      course_popularity_rank = pop, campus)
 i <- course.rank$students_in_major < 5
 cols <- Cs(student_count, students_in_major, course_gpa_50pct)
 course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$students_in_major < 5, -1, x))
