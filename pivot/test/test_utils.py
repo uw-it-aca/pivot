@@ -1,11 +1,14 @@
 """
 Tests utility scripts
 """
+import os
 
 from django.test import TestCase, RequestFactory
 from django.test.utils import override_settings
+
 import pivot
-from pivot.utils import *
+from pivot.utils import get_latest_term, is_more_recent
+from pivot.templatetags.pivot_extras import year_select_tab
 
 
 TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
@@ -16,5 +19,22 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
 
 class UtilsTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_PATH)
-    def test_google_analytics_processor(self):
+    def test_get_latest_term(self):
         self.assertEquals(get_latest_term(), 'au12')
+
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    def test_is_more_recent_true(self):
+        self.assertTrue(is_more_recent('au19', 'au18'))
+
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    def test_pivot_extras(self):
+        template = """
+        <a href=".?num_qtrs=8&end_yr=12&end_qtr=AU">
+            <strong>Last 2 Years</strong> <br>
+            <span>
+                AU10 - AU12
+            </span>
+        </a>
+    """
+        html = year_select_tab(8)
+        self.assertEqual(html, template)
