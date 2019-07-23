@@ -47,11 +47,15 @@ table(med.tot$count < 5)
 i <- pre.gpa2 %>% select(sys.key, yrq, credential_code)
 course.rank <- inner_join(pre.maj.courses, i) %>%
   filter(ckey %in% course.names$ckey) %>%
-  group_by(credential_code, ckey) %>%
+  mutate(campus = as.numeric(campus)) %>%
+  group_by(sys.key, credential_code, ckey, campus) %>%
+  summarize(grade = max(grade)) %>%                     # limit to highest grade in major+course per student
+  ungroup() %>%
+  group_by(campus, credential_code, ckey) %>%
   summarize(n.course = n(), mgrade = median(grade)) %>%
   arrange(desc(n.course), .by_group = T) %>%
-  filter(row_number() <= 10) %>%
-  mutate(pop = seq_along(n.course)) %>%
+  mutate(pop = row_number()) %>%
+  filter(pop <= 10) %>%
   ungroup()
 
 nrow(course.rank) / length(unique(course.rank$credential_code))
@@ -60,7 +64,7 @@ course.rank %>% group_by(credential_code) %>% filter(max(pop) < 10)
 # add numeric keys
 c <- course.names %>% ungroup() %>% select(ckey, ckey.num)
 course.rank <- course.rank %>% left_join(c, by = "ckey")
-m <- active.majors %>% select(credential_code, mkey.num, campus_name)
+m <- active.majors %>% select(credential_code, mkey.num)
 course.rank <- course.rank %>% left_join(m, by = "credential_code")
 m <- med.tot %>% select(credential_code, count)
 course.rank <- course.rank %>% left_join(m, by = "credential_code")
@@ -89,7 +93,7 @@ student.data.all.majors <- bind_rows(student.data.all.majors, active.no.stu)
 
 course.rank <- course.rank %>% select(major_path = credential_code, course_num = ckey, student_count = n.course,
                                       students_in_major = count, course_gpa_50pct = mgrade,
-                                      course_popularity_rank = pop, campus = campus_name)
+                                      course_popularity_rank = pop, campus)
 i <- course.rank$students_in_major < 5
 cols <- Cs(student_count, students_in_major, course_gpa_50pct)
 course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$students_in_major < 5, -1, x))
