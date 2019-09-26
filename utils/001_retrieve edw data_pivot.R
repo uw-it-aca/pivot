@@ -49,9 +49,11 @@ creds <- tbl(sdbcon, in_schema("sec", "CM_Credentials")) %>%
   filter(credential_status == "active",
          DoNotPublish %in% c("", "False", "false"))
 
-
-active.majors = creds %>%
+active.majors <- creds %>%
   inner_join(programs, by = c("program_verind_id")) %>%    # be sure not to use the default and/or join on CIP code too
+  filter(credential_status == "active",
+         program_type == "Major",
+         program_level == "Undergraduate") %>%
   collect() %>%
   distinct(credential_code, .keep_all = T)
 
@@ -77,12 +79,12 @@ maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
 
 # Cumulative GPA when declared major -----------------------------------
 
-# collect quarterly outcomes temporarily, then merge with first quarter in major
+# Collect quarterly outcomes temporarily, then merge with first quarter in major
 x <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
   select(sys.key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>%
-  collect()       # forcing the join in the same query is buggy
+  collect()       # performing join in the same query is buggy
 
-# Need to spread declaration quarter
+# Spread declaration quarter
 pre.maj.gpa <- left_join(maj.first.yrq, x, by = c("sys.key")) %>%
   group_by(sys.key, maj.code) %>%
   filter(yrq < yrq.decl) %>%
@@ -193,7 +195,6 @@ maj.age <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>%
 # Write data ---------------------------------------------------------------
 
 save(active.majors, pre.maj.courses, pre.maj.gpa, course.names, maj.age, file = paste0("raw data/raw data_", Sys.Date()))
-
 
 
 # Disconnect/close --------------------------------------------------------
