@@ -1,7 +1,3 @@
-
-## Update on re-factoring with CM data - the holdup now is that Bothell/Tacoma 'college' is not up to date
-## in the CM SDB tables
-
 rm(list = ls())
 gc()
 
@@ -441,10 +437,26 @@ course.rank[,cols] <- lapply(course.rank[,cols], function(x) ifelse(course.rank$
 head(course.rank[i,], 30)
 
 
-# Need a check on status lookup for majors with same name but diff --------
-### [HERE] checking with the service team on how to handle these duplicate names - either complete string or add (BS)/(BA) to some
 
-# i <- status.lookup[duplicated(status.lookup$name),]
+# add any missing majors from data map to majors+courses ------------------
+# majors_courses <=> course.rank
+#' Compare two text lists and return a data.frame padded with n -1's
+fill.missing.majors <- function(complete.list = data.map$key[data.map$is_major == 1],
+                                inc.list = course.rank$major_path,
+                                df.names = names(course.rank)){
+  diff <- complete.list[!complete.list %in% inc.list]
+  negmat <- matrix(-1, nrow = length(diff), ncol = length(df.names)-1)
+  res <- data.frame(cbind(diff, negmat))
+  names(res) <- df.names
+  return(res)
+}
+# [TODO] fix this type conversion problem
+x <- fill.missing.majors()
+str(x)
+x[,3:ncol(x)] <- lapply(x[,3:ncol(x)], as.numeric)
+
+course.rank <- bind_rows(course.rank, x)
+rm(x)
 
 
 # double check names ---------------------------------------------

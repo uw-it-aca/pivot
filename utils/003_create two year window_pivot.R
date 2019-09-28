@@ -127,6 +127,27 @@ table(duplicated(data.map$id))
 i <- data.map[data.map$id %in% data.map$id[duplicated(data.map$id)],]
 i[order(i$id),]
 
+
+# add any missing majors from data map to majors+courses ------------------
+# majors_courses <=> course.rank
+#' Compare two text lists and return a data.frame padded with n -1's
+fill.missing.majors <- function(complete.list = data.map$key[data.map$is_major == 1],
+                                inc.list = course.rank$major_path,
+                                df.names = names(course.rank)){
+  diff <- complete.list[!complete.list %in% inc.list]
+  negmat <- matrix(-1, nrow = length(diff), ncol = length(df.names)-1)
+  res <- data.frame(cbind(diff, negmat))
+  names(res) <- df.names
+  return(res)
+}
+# [TODO] fix this type conversion problem
+x <- fill.missing.majors()
+str(x)
+x[,3:ncol(x)] <- lapply(x[,3:ncol(x)], as.numeric)
+
+course.rank <- bind_rows(course.rank, x)
+rm(x)
+
 # output ------------------------------------------------------------------
 # write.csv(student.data.all.majors, file = "transformed data/two year window/wi16_8qtrs_student_data_all_majors.csv", row.names = F)
 # write.csv(course.rank, file = "transformed data/two year window/wi16_8qtrs_majors_and_courses.csv", row.names = F)
