@@ -177,7 +177,6 @@ function createBoxForMajor(i, median, majorId) {
         major_id: majorId,
         major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"],
         num_qtrs: _statusLookup[majorId].num_qtrs,
-        total_qtrs: request_qtrs,
         qtrs: (request_qtrs == 1 ? "quarter" : "quarters"),
         insufficient_data: parseInt(_statusLookup[majorId].num_qtrs) < parseInt(request_qtrs)
     }));
