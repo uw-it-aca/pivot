@@ -247,7 +247,6 @@ function goSearch() {
 
 //Displays message when no results found
 function noResults() {
-    console.log("hello")
     $(".sample-data").css("display","none");
     $("#suggestions").css("display","none");
     // $(".protected-result-warning").css("display","none");
