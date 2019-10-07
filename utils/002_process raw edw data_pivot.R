@@ -455,6 +455,11 @@ x <- fill.missing.majors()
 str(x)
 x[,3:ncol(x)] <- lapply(x[,3:ncol(x)], as.numeric)
 
+# get the correct campus for missing majors
+
+x$campus <- active.majors$campus_num[active.majors$credential_code %in% x$major_path]
+
+# add back to course+major data
 course.rank <- bind_rows(course.rank, x)
 rm(x)
 
