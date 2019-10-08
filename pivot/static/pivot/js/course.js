@@ -11,6 +11,7 @@ function checkStoredData() {
     } else {
         $(".sample-data").css("display","block");
     }
+    $(".loader").css("display", "none");
 }
 
 /***SEARCH***/
