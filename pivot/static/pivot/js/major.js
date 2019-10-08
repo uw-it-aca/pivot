@@ -515,7 +515,7 @@ function displayResults() {
             }
         }
     }
-
+    
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -741,8 +741,9 @@ function goSearch() {
     if (list.length > 0) {
         hideSearchSuggestions();
         setTimeout(createMajorCard(list),300);
-    } else if (!results)
+    } else if (!results && $('#search').val().length > 0) {
         noResults();
+    }
     //else $("#loadingModal").modal('hide');
 }
 
