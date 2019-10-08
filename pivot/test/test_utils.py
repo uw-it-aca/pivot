@@ -27,6 +27,10 @@ class UtilsTest(TestCase):
         self.assertTrue(is_more_recent('au19', 'au18'))
 
     @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    def test_is_more_recent_false(self):
+        self.assertFalse(is_more_recent('au18', 'au19'))
+
+    @override_settings(CSV_ROOT=TEST_CSV_PATH)
     def test_pivot_extras(self):
         template = """
         <a href=".?num_qtrs=8&end_yr=12&end_qtr=AU">

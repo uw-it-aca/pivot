@@ -241,6 +241,10 @@ function displayMajorStatusText(code) {
     var msg = "";
     if (_statusLookup.hasOwnProperty(code))
         msg = _statusLookup[code]["status"];
+        msg = msg.charAt(0) + msg.slice(1);
+        if (msg === "minimumRequirements") {
+            msg = "minimum";
+        }
     return msg;
 }
 
