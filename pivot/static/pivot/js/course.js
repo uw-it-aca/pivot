@@ -234,7 +234,7 @@ function goSearch() {
         maj = $("#selectedCollege li.suggested_major").data("code");
     } else if ($("#suggestions li.suggested_major").length > 1) {
         multipleResults();
-    } else {
+    } else if($("#search").val().length > 0){
         noResults();
     }
 

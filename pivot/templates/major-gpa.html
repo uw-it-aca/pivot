@@ -33,7 +33,7 @@
 							      <label for="search" class="sr-only">Major</label>
 							      <div class="sr-only" id="search-description">Enter the name of a major. Matches results will be shown below as you type.</div>
  								  <input id="search" type="text" class="form-control" name="searchQuery" value="" size="" tabindex="0" data-save-value="true" data-role="Control" data-control_for="search" placeholder="e.g. Biology, English, etc." autocomplete="off" aria-describedby="search-description" aria-owns="suggestions" aria-haspopup="true" aria-expanded="false" aria-autocomplete="both" aria-activedescendant="">
-								  <span role="status" aria-live="polite" class="ui-helper-hidden-accessible"> </span>
+								  <span id='search-status' role="status" aria-live="assertive" class="ui-helper-hidden-accessible sr-only"> </span>
 
 						      <!-- search results go in #suggestions -->
 					            <div id="suggestions" role="listbox"></div>
