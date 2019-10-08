@@ -368,8 +368,10 @@ function iqr(k) {
 function initKeyboardNav() {
     $("#search").keydown(function (e) {
         if (e.which == 40) {
+            e.preventDefault();
             var toBeFocused = $("#suggestions").find("legend").first()
         } else if (e.which == 38) {
+            e.preventDefault();
             var toBeFocused =  $("#suggestions").find("input").last();
         }
 
@@ -384,6 +386,7 @@ function initKeyboardNav() {
         var selectedLegend = allSelected.filter("fieldset").find("legend");
 
         if (e.which == 40 || e.which == 39) { //down or right arrow
+            e.preventDefault();
             //We want the element immediately before the next input
             //Since there's a br between labels, we should select that if we're on a label
             //if we're on legend, don't select the br because there isn't one
@@ -399,6 +402,7 @@ function initKeyboardNav() {
                 $(next).focus();
             }
         } else if (e.which == 38 || e.which == 37) { //up or left arrow
+            e.preventDefault();
             //We want the element immediately after the next input to be selected
             //if theres a br before this input, select that, otherwise, select the input
             //if an input isn't selected, the legend must be since thats the only other focusable
@@ -415,9 +419,19 @@ function initKeyboardNav() {
             if (prev) {
                 $(prev).focus();
             }
-        } else if (e.which == 32 || e.which == 13) { //select with space key
-            e.preventDefault();
-            $(":focus").trigger("click");
+        } else if (e.which == 32) { //select with space key
+            $(":focus").trigger("select");
+
+            // add selection to 'search-status' sr status span
+            var major = $(":focus")[0]['labels'][0]['innerText'].trim();
+            $('#search-status').empty();
+            var verb = "";
+            if(!$(":focus")[0]['checked']){
+                verb = " added to ";
+            } else {
+                verb = " removed from ";
+            }
+            $('#search-status').text(major + " major" + verb + "the comparison list");
         }
     });
 }
