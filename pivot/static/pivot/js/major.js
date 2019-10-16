@@ -212,7 +212,7 @@ function createBoxForMajor(i, median, majorId) {
 
 //Draw boxplot using D3
 function createBoxplot(i, gpa, majorId, median, majorData) {
-    var height = 125;
+    var height = 155;
     var width = $(".data-display").width();
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
