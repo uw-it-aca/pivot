@@ -206,7 +206,7 @@ table(is.na(active.majors$maj.name))
 # another nice to have: this should be a function
 
 # ANTH has several more that aren't 0_1_1/5
-abbvs <- c("B CHEM", "B PHYS", "CHEM", "ECON", "INDIV", "MATH", "OCEAN", "PH", "PSYCH", "TCSCI")
+abbvs <- c("B CHEM", "B PHYS", "BIOCHM", "CHEM", "ECON", "INDIV", "MATH", "OCEAN", "PH", "PSYCH", "TCSCI")
 anth <- c("ANTH_0_1_1", "ANTH_10_1_1", "ANTH_30_1_1", "ANTH_40_1_1")
 anthbs <- c("ANTH_0_1_5", "ANTH_10_1_5", "ANTH_30_1_5", "ANTH_40_1_5")
 (ba <- c(anth, sapply(abbvs, function(x) paste0(x, "_0_1_1"), simplify = T, USE.NAMES = F)))
