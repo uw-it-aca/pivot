@@ -177,7 +177,6 @@ function createBoxForMajor(i, median, majorId) {
         major_id: majorId,
         major_name: _completeMajorMap[majorId.replace("_"," ")]["major_full_nm"],
         num_qtrs: _statusLookup[majorId].num_qtrs,
-        total_qtrs: request_qtrs,
         qtrs: (request_qtrs == 1 ? "quarter" : "quarters"),
         insufficient_data: parseInt(_statusLookup[majorId].num_qtrs) < parseInt(request_qtrs)
     }));
@@ -213,7 +212,7 @@ function createBoxForMajor(i, median, majorId) {
 
 //Draw boxplot using D3
 function createBoxplot(i, gpa, majorId, median, majorData) {
-    var height = 125;
+    var height = 155;
     var width = $(".data-display").width();
     //create the boxplot
     var chart = d3.box().whiskers(iqr(1.5)).width(width).domain([1.5, 4.0]).showLabels(false).customGPA(gpa);
@@ -371,8 +370,10 @@ function iqr(k) {
 function initKeyboardNav() {
     $("#search").keydown(function (e) {
         if (e.which == 40) {
+            e.preventDefault();
             var toBeFocused = $("#suggestions").find("legend").first()
         } else if (e.which == 38) {
+            e.preventDefault();
             var toBeFocused =  $("#suggestions").find("input").last();
         }
 
@@ -387,6 +388,7 @@ function initKeyboardNav() {
         var selectedLegend = allSelected.filter("fieldset").find("legend");
 
         if (e.which == 40 || e.which == 39) { //down or right arrow
+            e.preventDefault();
             //We want the element immediately before the next input
             //Since there's a br between labels, we should select that if we're on a label
             //if we're on legend, don't select the br because there isn't one
@@ -402,6 +404,7 @@ function initKeyboardNav() {
                 $(next).focus();
             }
         } else if (e.which == 38 || e.which == 37) { //up or left arrow
+            e.preventDefault();
             //We want the element immediately after the next input to be selected
             //if theres a br before this input, select that, otherwise, select the input
             //if an input isn't selected, the legend must be since thats the only other focusable
@@ -418,9 +421,19 @@ function initKeyboardNav() {
             if (prev) {
                 $(prev).focus();
             }
-        } else if (e.which == 32 || e.which == 13) { //select with space key
-            e.preventDefault();
-            $(":focus").trigger("click");
+        } else if (e.which == 32) { //select with space key
+            $(":focus").trigger("select");
+
+            // add selection to 'search-status' sr status span
+            var major = $(":focus")[0]['labels'][0]['innerText'].trim();
+            $('#search-status').empty();
+            var verb = "";
+            if(!$(":focus")[0]['checked']){
+                verb = " added to ";
+            } else {
+                verb = " removed from ";
+            }
+            $('#search-status').text(major + " major" + verb + "the comparison list");
         }
     });
 }
@@ -504,7 +517,7 @@ function displayResults() {
             }
         }
     }
-
+    
     if (count == 0 && search_val.length > 0) {
         if (all_data_loaded) {
            noResults();
@@ -730,8 +743,9 @@ function goSearch() {
     if (list.length > 0) {
         hideSearchSuggestions();
         setTimeout(createMajorCard(list),300);
-    } else if (!results)
+    } else if (!results && $('#search').val().length > 0) {
         noResults();
+    }
     //else $("#loadingModal").modal('hide');
 }
 
