@@ -199,6 +199,37 @@ label{
 	font-size: 1.286em;
 }
 
+.nav-tabs > li:hover {
+    background-color: #CC721E;
+    border-bottom: 4px solid #CC721E;
+    border-top: 1px solid #CC721E;
+    color: white;
+    -webkit-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+
+.nav-tabs > li > a:hover {
+    background-color: #CC721E;
+    border-left: 1px solid #CC721E;
+    border-right: 1px solid #CC721E;
+    border-bottom: 4px solid #CC721E;
+    border-top: 1px solid #CC721E;
+    color: white;
+    -webkit-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+
+.nav-tabs > .active:hover, .nav-tabs > li.active > a:hover {
+    background-color: #CC721E;
+    border-bottom: 4px solid #CC721E;
+    color: white;
+    -webkit-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+
 .underline > li > a, .underline > li > a:active {
 	border:none;
 	border-radius: 0px;
@@ -939,7 +970,6 @@ label.suggested_major {
 /*Year select*/
 .pivot-year-selector {
     height: 100%;
-    margin-top: 5px;
     border: 0;
 }
 
