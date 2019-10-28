@@ -28,7 +28,7 @@ d3.box = function() {
 
       // Compute the new y-scale.
       var y1 = d3.scale.linear()
-          .domain([1.5, 4])
+          .domain([2.5, 4])
           .range([0, width]);
 
       // Retrieve the old y-scale, if this is an update.

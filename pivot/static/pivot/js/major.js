@@ -222,8 +222,8 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
     var y = d3.scale.ordinal().domain([median]).rangeRoundBands([0, height], 0.7, 0.3);
     var yAxis = d3.svg.axis().scale(y).orient("left");
     // Setting the domain to start from 1.4999 instead of 1.5 so the tick at 1.5 will show
-    var x = d3.scale.linear().domain([1.4999, 4.0]).range([0, width]);
-    var xAxis = d3.svg.axis().scale(x).orient("top").ticks(6);
+    var x = d3.scale.linear().domain([2.4999, 4.0001]).range([0, width]);
+    var xAxis = d3.svg.axis().scale(x).orient("top").ticks(5);
     // height for the xAxis
     var xHeight = height - 1; 
     
@@ -241,10 +241,12 @@ function createBoxplot(i, gpa, majorId, median, majorData) {
 
     //hide numbers for .5 ticks
     $(".tick text").each(function () {
-        if ($(this).text().indexOf(".5") > 0) {
-            $(this).hide();
-        }
         $(this).attr("aria-hidden", true);
+        // Move text to the right side of the tick if it is the first tick
+        // otherwise the 2.0 text will be hidden behind other elements
+        if ($(this).text() === "2.5") {
+            $(this).attr("x", "23");
+        }
     });
 
     //Add numbers for screen reader
