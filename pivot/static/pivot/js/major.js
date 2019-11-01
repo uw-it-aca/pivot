@@ -105,38 +105,40 @@ function createMajorCard(majors, gpa) {
         var id = majors[l].replace(" ","_");
 
         // Add the card
-        $("#boxplots").append(template({
-            id: id,
-            college: _completeMajorMap[majors[l]]["college"],
-            campus: _completeMajorMap[majors[l]]["campus"],
-            major_status_url: displayMajorStatusURL(majors[l]),
-            major_status_icon: displayMajorStatusIcon(majors[l]),
-            major_status_text: displayMajorStatusText(majors[l]),
-        }));
+        if(!$("#" + id).length){
+            $("#boxplots").append(template({
+                id: id,
+                college: _completeMajorMap[majors[l]]["college"],
+                campus: _completeMajorMap[majors[l]]["campus"],
+                major_status_url: displayMajorStatusURL(majors[l]),
+                major_status_icon: displayMajorStatusIcon(majors[l]),
+                major_status_text: displayMajorStatusText(majors[l]),
+            }));
 
-        $("#" + id).data("code", majors[l]);
+            $("#" + id).data("code", majors[l]);
 
-        //Add the initial content for the major
-        //if the statuslookup array has been populated, proceed
-        //if it hasn't, add the rest of the code as a listener for its completion
-        //so that we can proceed once it's done
-        if (!$.isEmptyObject(_statusLookup)) {
-            createBoxForMajor(l, med, id);
-            createBoxplot(l, gpa, id, med, major);
-        } else {
-            //This IIFE creates a scope so that each listener has its own 
-            //closure from which it can reference values
-            (function () {
-                var localL = l;
-                var localMed = med;
-                var localId = id;
-                var localGpa = gpa;
-                var localMajor = major;
-                statusLookupListener.push(function () {
-                    createBoxForMajor(localL, localMed, localId);
-                    createBoxplot(localL, localGpa, localId, localMed, localMajor);
-                });
-            })();
+            //Add the initial content for the major
+            //if the statuslookup array has been populated, proceed
+            //if it hasn't, add the rest of the code as a listener for its completion
+            //so that we can proceed once it's done
+            if (!$.isEmptyObject(_statusLookup)) {
+                createBoxForMajor(l, med, id);
+                createBoxplot(l, gpa, id, med, major);
+            } else {
+                //This IIFE creates a scope so that each listener has its own 
+                //closure from which it can reference values
+                (function () {
+                    var localL = l;
+                    var localMed = med;
+                    var localId = id;
+                    var localGpa = gpa;
+                    var localMajor = major;
+                    statusLookupListener.push(function () {
+                        createBoxForMajor(localL, localMed, localId);
+                        createBoxplot(localL, localGpa, localId, localMed, localMajor);
+                    });
+                })();
+            }
         }
 
         //Add the boxplot
