@@ -3,9 +3,9 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
-    url(r'^login/$', auth_views.login, {'template_name': 'login.html'},
+    url(r'^login/$', auth_views.LoginView, {'template_name': 'login.html'},
         name='login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': '/'},
+    url(r'^logout/$', auth_views.LogoutView, {'next_page': '/'},
         name='logout'),
     url(r'^', include('pivot.urls')),
 ]

@@ -113,3 +113,10 @@ static/CACHE
 #R Studio
 .Rproj.user
 Icon
+
+# vscode
+.vscode
+
+# pipenv
+Pipfile
+Pipfile.lock
