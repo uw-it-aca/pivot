@@ -97,7 +97,7 @@ share/
 
 # django project
 db.sqlite3
-manage.py
+./manage.py
 project/
 
 # pivot data
