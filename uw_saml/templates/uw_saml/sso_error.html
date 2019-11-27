@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head></head>
+    <body>
+        <h2>SSO Error: {{ error_msg|default:"Login Failed" }}</h2>
+
+        <ul>
+        {% for error in errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>
