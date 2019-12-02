@@ -12,9 +12,10 @@ setup(
     packages=['pivot'],
     include_package_data=True,
     install_requires=[
-        'Django<2.3',
+        'Django<2.1',
         'django-compressor',
         'django-templatetag-handlebars',
+        'python3-saml>=1.8.0'
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
