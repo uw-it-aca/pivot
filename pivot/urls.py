@@ -21,9 +21,6 @@ from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = [
-    # Authentication pages
-    url(r'^login/$', user_login,
-        name='login'),
     # Home
     url(r'^$', RedirectView.as_view(url='/major-gpa/')),
     # All links are login protected
