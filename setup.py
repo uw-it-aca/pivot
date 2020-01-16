@@ -15,7 +15,7 @@ setup(
         'Django<2.1',
         'django-compressor',
         'django-templatetag-handlebars',
-        'UW-Django-SAML2 @ git+ssh://git@github.com/uw-it-aca/uw-django-saml2.git@36f3fde6f68c5400e9b308d7a9d99464958d7165#egg=UW-Django-SAML2'
+        'UW-Django-SAML2'
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
