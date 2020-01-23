@@ -241,6 +241,10 @@ function displayMajorStatusText(code) {
     var msg = "";
     if (_statusLookup.hasOwnProperty(code))
         msg = _statusLookup[code]["status"];
+        msg = msg.charAt(0) + msg.slice(1);
+        if (msg === "minimumRequirements") {
+            msg = "minimum";
+        }
     return msg;
 }
 
@@ -681,6 +685,11 @@ function doneTyping() {
         suggestion_text = num_suggestions + " result for '" + raw_search + "'";
     } else {
         suggestion_text = num_suggestions + " results for '" + raw_search + "'";
+    }
+    // Edge case in which the user has selected options but hasn't typed anything
+    // instead of saying "X results for ''", it will simply say "X results"
+    if (raw_search === "") {
+        suggestion_text = suggestion_text.substring(0, suggestion_text.length - 6);
     }
     document.getElementById("numResults").innerHTML = suggestion_text;
 }

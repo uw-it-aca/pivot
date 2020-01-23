@@ -1,25 +1,15 @@
-import os
 import csv
+import os
+from io import StringIO
+from urllib.error import URLError
+from urllib.parse import urljoin
+from urllib.request import urlopen
 
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
-
-try:
-    from urllib.parse import urljoin
-    from urllib.request import urlopen
-    from urllib.error import URLError
-except ImportError:
-    # for Python 2.7 compatibility
-    from urlparse import urljoin
-    from urllib2 import urlopen
-    from urllib2 import URLError
-
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
 from django.views import View
-from django.http import HttpResponse, HttpResponseBadRequest
-from django.conf import settings
+
 from pivot.utils import get_latest_term
 
 

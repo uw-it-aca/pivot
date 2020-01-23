@@ -1,14 +1,7 @@
-import os
 import csv
-try:
-    from urllib.parse import urljoin
-except ImportError:
-    # for Python 2.7 compatibility
-    from urlparse import urljoin
-try:
-    from StringIO import StringIO
-except ImportError:
-    from io import StringIO
+import os
+from io import StringIO
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import User
