@@ -686,6 +686,11 @@ function doneTyping() {
     } else {
         suggestion_text = num_suggestions + " results for '" + raw_search + "'";
     }
+    // Edge case in which the user has selected options but hasn't typed anything
+    // instead of saying "X results for ''", it will simply say "X results"
+    if (raw_search === "") {
+        suggestion_text = suggestion_text.substring(0, suggestion_text.length - 6);
+    }
     document.getElementById("numResults").innerHTML = suggestion_text;
 }
 

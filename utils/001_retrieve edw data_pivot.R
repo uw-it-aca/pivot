@@ -6,6 +6,8 @@ gc()
 library(tidyverse)
 library(dbplyr)
 library(odbc)
+# addtl req: keyring
+
 
 # helper function - create quoted vector, i.e. c(), from unquoted text
 # not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
@@ -19,8 +21,9 @@ setwd("..")
 source("scripts/config.R")
 
 # create connections to enterprise data server
-aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
-sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = rstudioapi::askForPassword("pwd-"))
+aicon <- dbConnect(odbc::odbc(), dns, Database = dabs[1], UID = uid, PWD = keyring::key_get("sdb"))
+sdbcon <- dbConnect(odbc::odbc(), dns, Database = dabs[2], UID = uid, PWD = keyring::key_get("sdb"))
+
 
 # get date for year + quarter ----------------------------------------------------
 cal <- tbl(sdbcon, in_schema("sec", "sys_tbl_39_calendar")) %>%
@@ -38,19 +41,23 @@ rm(cal)
 
 # CM in SDB replaces Kuali csv ------------------------------------------------
 
-programs <- tbl(sdbcon, in_schema("sec", "CM_Programs")) %>% collect()
-creds <- tbl(sdbcon, in_schema("sec", "CM_Credentials")) %>% collect()
+programs <- tbl(sdbcon, in_schema("sec", "CM_Programs")) %>%
+  filter(program_type == "Major",
+         program_level == "Undergraduate",
+         program_status == "active")
+creds <- tbl(sdbcon, in_schema("sec", "CM_Credentials")) %>%
+  filter(credential_status == "active",
+         DoNotPublish %in% c("", "False", "false"))
 
-# Major to FinOrg ---------------------------------------------------------
+active.majors <- creds %>%
+  inner_join(programs, by = c("program_verind_id")) %>%    # be sure not to use the default and/or join on CIP code too
+  filter(credential_status == "active",
+         program_type == "Major",
+         program_level == "Undergraduate") %>%
+  collect() %>%
+  distinct(credential_code, .keep_all = T)
 
-major.college <- tbl(aicon, in_schema("sec", "IV_MajorFinancialOrganizations")) %>%
-  filter(VisitingMajorInd == "N", PrimaryOrgUnitInd == "Y", PreMajorInd == "N") %>%         # ActiveMajorInd == "Y",
-  select(MajorCampus, FinCampusReportingName, FinCollegeReportingName, MajorAbbrCode, MajorPathwayNum, MajorCode) %>%
-  collect()
-
-# re: MajorCode: Code that fully identifies the major.
-# A concatenation of the MajorCampus, MajorAbbrCode, and MajorPathwayNum (each separated by underscores) e.g. '0_BIOL_10'.
-# https://canvas.uw.edu/courses/1061200/pages/studentprogramenrollment
+# Student 1st yrq in major ------------------------------------------------
 
 maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
   filter(ProgramAcademicCareerLevelCode == "UG",
@@ -72,12 +79,12 @@ maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
 
 # Cumulative GPA when declared major -----------------------------------
 
-# collect quarterly outcomes temporarily, then merge with first quarter in major
+# Collect quarterly outcomes temporarily, then merge with first quarter in major
 x <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
   select(sys.key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>%
-  collect()       # forcing the join in the same query is buggy
+  collect()       # performing join in the same query is buggy
 
-# Need to spread declaration quarter
+# Spread declaration quarter
 pre.maj.gpa <- left_join(maj.first.yrq, x, by = c("sys.key")) %>%
   group_by(sys.key, maj.code) %>%
   filter(yrq < yrq.decl) %>%
@@ -125,27 +132,19 @@ rm(x)
 
 # course names ------------------------------------------------------------
 
-# campus in this table is associated with the course, not the degree
-# create a matching code in the transcript file when merging with this for the longer version of the names
-
-course.names <- tbl(aicon, in_schema("sec", "IV_CourseSections")) %>%
-  select(yrq = AcademicQtrKeyId,
-         course.code = CourseCode,
-         course.lname = CourseLongName,              # fix case in proc script
-         course.sname = CourseShortName) %>%
-  distinct() %>%
+# nb: campus in this table is associated with the _course_, not the degree - the transcript file
+# 'branch' as the corresponding field; so create a matching code in the transcript file when merging
+# with this for the long names
+course.names <- tbl(sdbcon, in_schema("sec", "sr_course_titles")) %>%
   collect()
-
 
 # fetch majors from sdb ---------------------------------------------------
 
 # req'd for checking start date for majors in the event that 2/5 years of data aren't available
-tb <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>% collect()
-tb$syrq <- (tb$major_first_yr*10) + tb$major_first_qtr
-tb$eyrq <- (tb$major_last_yr*10) + tb$major_last_qtr
-maj.age <- tb
-rm(tb)
-
+maj.age <- tbl(sdbcon, in_schema("sec", "sr_major_code")) %>%
+  collect() %>%
+  mutate(syrq = major_first_yr*10 + major_first_qtr,
+         eyrq = major_last_yr*10 + major_last_qtr)
 
 # integrity checks so far (wip) --------------------------------------------
   #
@@ -195,7 +194,7 @@ rm(tb)
 
 # Write data ---------------------------------------------------------------
 
-save(programs, creds, major.college, pre.maj.courses, pre.maj.gpa, course.names, maj.age, file = paste0("raw data/raw data_", Sys.Date()))
+save(active.majors, pre.maj.courses, pre.maj.gpa, course.names, maj.age, file = paste0("raw data/raw data_", Sys.Date()))
 
 
 # Disconnect/close --------------------------------------------------------
