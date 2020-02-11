@@ -18,6 +18,11 @@ function checkStoredData() {
             $(".selected").append(template({chosen: majors[m]}));
         //Populate data table
         createMajorCard(majors, gpa);
+
+        var selectedMajors= sessionStorage.getItem("majors").replace('[', '')
+            .replace(']','').replace(/"/g, "");
+
+        window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", selectedMajors));
     } else {
         $(".sample-data").css("display","block");
         $(".loader").css("display", "none");
@@ -636,6 +641,7 @@ function updateEvents() {
             list.push($(this).text());
         });
 
+        window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", list.join(",")));
 
         // Draw data table(s) if list is not empty otherwise clear
         // the table
@@ -810,6 +816,8 @@ function clear_results() {
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
     storeSelections(null, null);
+
+    window.history.replaceState(null, null, window.location.pathname)
 }
 
 /**** SELECT YEAR ****/

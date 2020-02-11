@@ -283,8 +283,39 @@ function addStudents(queryStr) {
         all_data_loaded = true;
 
         if (window.location.pathname == '/major-gpa/' && getParameterByName("code") != null) {
-            var majorParam = getParameterByName("code");
-            sessionStorage.setItem("majors", '["' + majorParam +'"]');
+            var majorParam = getParameterByName("code").split(",");
+            var validCodes = [];
+            var invalidCodes = [];
+
+            for (var i in majorParam) {
+                var major = majorParam[i].trim();
+                if (major.length > 0) {
+                    if (_statusLookup.hasOwnProperty(major)) {
+                        validCodes.push('"' + major + '"');
+                    } else {
+                        invalidCodes.push(major);
+                    }
+                }
+            }
+
+            console.log(invalidCodes)
+
+            if (invalidCodes.length > 0) {
+                // ToDo: The following code is not working
+
+                // $(".no-results-warning").css("display","inline");
+                // var source = $("#no-results").html();
+                // var template = Handlebars.compile(source);
+                // var search_key = invalidCodes.join(", ");
+                // $(".no-results-warning").html(template({search: search_key}));
+            }
+            
+            var selectedMajors = '[' + validCodes.join(',') + ']';
+            
+            // majorParam = majorParam.map(i => '"' + i.trim() + '"');
+            // var selectedMajors = '[' + majorParam.join(',') + ']';
+            console.log(selectedMajors)
+            sessionStorage.setItem("majors", selectedMajors);
         }
 
         checkStoredData();
@@ -611,6 +642,46 @@ function getParameterByName(name, url) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+// Set url parameters
+function setUrlParameter(url, key, value) {
+    var key = encodeURIComponent(key),
+        value = encodeURIComponent(value);
+
+    var baseUrl = url.split('?')[0],
+        newParam = key + '=' + value,
+        params = '?' + newParam;
+
+    if (url.split('?')[1] === undefined){ // if there are no query strings, make urlQueryString empty
+        urlQueryString = '';
+    } else {
+        urlQueryString = '?' + url.split('?')[1];
+    }
+
+    // If the "search" string exists, then build params from it
+    if (urlQueryString) {
+        var updateRegex = new RegExp('([\?&])' + key + '=[^&]*');
+        var removeRegex = new RegExp('([\?&])' + key + '=[^&;]+[&;]?');
+
+        if (value === undefined || value === null || value === '') { // Remove param if value is empty
+            params = urlQueryString.replace(removeRegex, "$1");
+            params = params.replace(/[&;]$/, "");
+    
+        } else if (urlQueryString.match(updateRegex) !== null) { // If param exists already, update it
+            params = urlQueryString.replace(updateRegex, "$1" + newParam);
+    
+        } else if (urlQueryString == '') { // If there are no query strings
+            params = '?' + newParam;
+        } else { // Otherwise, add it to end of query string
+            params = urlQueryString + '&' + newParam;
+        }
+    }
+
+    // no parameter was set so we don't need the question mark
+    params = params === '?' ? '' : params;
+
+    return baseUrl + params;
 }
 
 //rounds to the specified decimal place
