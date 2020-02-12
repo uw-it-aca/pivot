@@ -298,23 +298,12 @@ function addStudents(queryStr) {
                 }
             }
 
-            console.log(invalidCodes)
-
             if (invalidCodes.length > 0) {
-                // ToDo: The following code is not working
-
-                // $(".no-results-warning").css("display","inline");
-                // var source = $("#no-results").html();
-                // var template = Handlebars.compile(source);
-                // var search_key = invalidCodes.join(", ");
-                // $(".no-results-warning").html(template({search: search_key}));
+                // ToDo: Show warning when user entered invalid major codes in url
             }
             
             var selectedMajors = '[' + validCodes.join(',') + ']';
             
-            // majorParam = majorParam.map(i => '"' + i.trim() + '"');
-            // var selectedMajors = '[' + majorParam.join(',') + ']';
-            console.log(selectedMajors)
             sessionStorage.setItem("majors", selectedMajors);
         }
 
