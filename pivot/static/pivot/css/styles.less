@@ -199,6 +199,37 @@ label{
 	font-size: 1.286em;
 }
 
+.nav-tabs > li:hover {
+    background-color: #CC721E;
+    border-bottom: 4px solid #CC721E;
+    border-top: 1px solid #CC721E;
+    color: white;
+    -webkit-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+
+.nav-tabs > li > a:hover {
+    background-color: #CC721E;
+    border-left: 1px solid #CC721E;
+    border-right: 1px solid #CC721E;
+    border-bottom: 4px solid #CC721E;
+    border-top: 1px solid #CC721E;
+    color: white;
+    -webkit-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+
+.nav-tabs > .active:hover, .nav-tabs > li.active > a:hover {
+    background-color: #CC721E;
+    border-bottom: 4px solid #CC721E;
+    color: white;
+    -webkit-transition: all 100ms linear;
+    -ms-transition: all 100ms linear;
+    transition: all 100ms linear;
+}
+
 .underline > li > a, .underline > li > a:active {
 	border:none;
 	border-radius: 0px;
@@ -808,7 +839,7 @@ p.course-table-row {
 	font-size: 1.75em;
 	font-weight: bold;
 	color: #9e005d;
-	padding-top:30px;
+	padding-top:45px;
 	margin-left: -15px;
 }
 
@@ -939,7 +970,6 @@ label.suggested_major {
 /*Year select*/
 .pivot-year-selector {
     height: 100%;
-    margin-top: 5px;
     border: 0;
 }
 
@@ -1127,6 +1157,7 @@ ul, fieldset {
 	    font-size: 1em;
 	    margin-bottom: 10px;
     	margin-left: -15px;
+	    margin-right: 20px;
 	    padding: 20px;
 	    width: 160px;
     }
@@ -1136,6 +1167,9 @@ ul, fieldset {
     /* Move the  your GPA form to left */
     .yourgpa-form {
 	    float: left;
+    }
+    #compare-module {
+        border-bottom: 1px solid #D3D3D3;
     }
 }/* end of med screen style */
  /* ==========================================================================
