@@ -779,7 +779,7 @@ function showCompareModule(gpa) {
 //Check entered GPA is valid
 function validateGPA() {
     //check GPA is under 4, round to 2 dp
-    if (isNaN($("#compare").val()) || $("#compare").val() > 4 || $("#compare").val() < 1.5) {
+    if (isNaN($("#compare").val()) || $("#compare").val() > 4 || $("#compare").val() < 2.5) {
         var source = $("#validate-gpa").html();
         var template = Handlebars.compile(source);
         showGPA(null);
