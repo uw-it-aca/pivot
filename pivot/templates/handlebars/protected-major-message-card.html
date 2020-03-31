@@ -1,0 +1,20 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "protected-major-message-card" %}
+
+<div class="row major-card" aria-live="polite">
+    <div class='col-xs-12 col-md-12 protected-major'>
+        <div class="alert-info col-xs-12 col-md-10 protected-major-message">
+            <p>
+                <b>
+                    The requested GPA data for '{{ major }}' is not available. <i><u>Try exploring other time frames</u></i>.
+                </b>
+            </p>
+            <p>
+                For reliable statistics and student privacy, we only show data for majors with 5 or more 
+                declared students in the selected time frame. 
+            </p>
+        </div>
+    </div>
+</div>
+
+{% endtplhandlebars %}
