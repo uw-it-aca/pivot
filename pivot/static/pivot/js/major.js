@@ -155,8 +155,8 @@ function createMajorCard(majors, gpa) {
 
         //Add the boxplot
         //D3 - vars to pass = gpa, id, med, major
-
     }
+
     for (var l in majors_noInfo) {
         var source = $("#create-no-data-card").html();
         var template = Handlebars.compile(source);
@@ -178,7 +178,6 @@ function createMajorCard(majors, gpa) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
         var yearTabId = (getParameterByName("num_qtrs") || "8") + "qtrs" ;
-        console.log(yearTabId)
         showYearSelectModule(yearTabId);
     } else {
         // There were no majors we could display
@@ -237,8 +236,6 @@ function createBoxForMajor(i, median, majorId) {
 
 //Draw boxplot using D3
 function createBoxplot(i, gpa, majorId, median, majorData) {
-    console.log("createBoxPlot: --------")
-    console.log(majorData)
     var height = 155;
     var width = $(".data-display").width();
     //create the boxplot
