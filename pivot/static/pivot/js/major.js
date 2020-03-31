@@ -79,43 +79,55 @@ function createMajorCard(majors, gpa) {
         majors = [];
     }
 
+    var majors_noInfo = [];
+    var majors_withInfo = [];
+
     //For each selected major...
     for (var l in majors) {
-        if (!_completeMajorMap[majors[l]]) {
-            var source = $("#create-no-data-card").html();
-            var template = Handlebars.compile(source);
-            $("#boxplots").append(template({
-                reason: "The data does not contain any information about this major."
-            }));
-            //get the results div to display
-            valid_majors++
+        if (_completeMajorMap[majors[l]]) {
+            majors_withInfo.push(majors[l]);
+        } else {
+            majors_noInfo.push(majors[l]);
         }
+    }
 
-        var major = filterByMajors([majors[l]]);
-        var med = major[0]["median"];
+    var majorList = filterByMajors(majors_withInfo);
+
+    for (var l in majorList) {
+        var majorAbbr = majorList[l]["major_abbr"].replace(/_/g, "-")
+
+        var med = majorList[l]["median"];
         if (med == -1) {
             // If the median GPA is -1... that means that this major is protected
-            protected_list.push(_completeMajorMap[majors[l]]["major_full_nm"]);
+            protected_list.push(_completeMajorMap[majorAbbr]["major_full_nm"]);
+            var source = $("#protected-major-message-card").html();
+            var template = Handlebars.compile(source);
+            $("#boxplots").append(template({
+                major: _completeMajorMap[majorAbbr]["major_full_nm"]
+            }));
+            
+            //get the results div to display
+            valid_majors++
             continue;
         }
 
         valid_majors++;
 
         //draw the major's data "card" in the table
-        var id = majors[l].replace(" ","_");
+        var id = majorAbbr.replace(" ","_");
 
         // Add the card
         if(!$("#" + id).length){
             $("#boxplots").append(template({
                 id: id,
-                college: _completeMajorMap[majors[l]]["college"],
-                campus: _completeMajorMap[majors[l]]["campus"],
-                major_status_url: displayMajorStatusURL(majors[l]),
-                major_status_icon: displayMajorStatusIcon(majors[l]),
-                major_status_text: displayMajorStatusText(majors[l]),
+                college: _completeMajorMap[majorAbbr]["college"],
+                campus: _completeMajorMap[majorAbbr]["campus"],
+                major_status_url: displayMajorStatusURL(majorAbbr),
+                major_status_icon: displayMajorStatusIcon(majorAbbr),
+                major_status_text: displayMajorStatusText(majorAbbr),
             }));
 
-            $("#" + id).data("code", majors[l]);
+            $("#" + id).data("code", majorAbbr);
 
             //Add the initial content for the major
             //if the statuslookup array has been populated, proceed
@@ -123,7 +135,7 @@ function createMajorCard(majors, gpa) {
             //so that we can proceed once it's done
             if (!$.isEmptyObject(_statusLookup)) {
                 createBoxForMajor(l, med, id);
-                createBoxplot(l, gpa, id, med, major);
+                createBoxplot(l, gpa, id, med, [majorList[l]]);
             } else {
                 //This IIFE creates a scope so that each listener has its own 
                 //closure from which it can reference values
@@ -132,7 +144,7 @@ function createMajorCard(majors, gpa) {
                     var localMed = med;
                     var localId = id;
                     var localGpa = gpa;
-                    var localMajor = major;
+                    var localMajor = [majorList[l]];
                     statusLookupListener.push(function () {
                         createBoxForMajor(localL, localMed, localId);
                         createBoxplot(localL, localGpa, localId, localMed, localMajor);
@@ -145,17 +157,28 @@ function createMajorCard(majors, gpa) {
         //D3 - vars to pass = gpa, id, med, major
 
     }
-    if (protected_list.length > 0) {
-        // Display a message for the protected majors, if there are any
-        protectedResult(protected_list);
-    } else {
-        $(".protected-result-warning").css("display","none");
+    for (var l in majors_noInfo) {
+        var source = $("#create-no-data-card").html();
+        var template = Handlebars.compile(source);
+        $("#boxplots").append(template({
+            reason: "The data does not contain any information about major code " + majors_noInfo[l] + "."
+        }));
+        //get the results div to display
+        valid_majors++;
     }
+
+    // if (protected_list.length > 0) {
+    //     // Display a message for the protected majors, if there are any
+    //     protectedResult(protected_list);
+    // } else {
+    //     $(".protected-result-warning").css("display","none");
+    // }
 
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
         var yearTabId = (getParameterByName("num_qtrs") || "8") + "qtrs" ;
+        console.log(yearTabId)
         showYearSelectModule(yearTabId);
     } else {
         // There were no majors we could display
@@ -214,6 +237,8 @@ function createBoxForMajor(i, median, majorId) {
 
 //Draw boxplot using D3
 function createBoxplot(i, gpa, majorId, median, majorData) {
+    console.log("createBoxPlot: --------")
+    console.log(majorData)
     var height = 155;
     var width = $(".data-display").width();
     //create the boxplot
@@ -337,7 +362,12 @@ function filterByMajors(list) {
 
     for (index in list) {
         var major = list[index];
-        majors.push(_majorLookup[major]);
+        var majorObject = _majorLookup[major]
+        if (_majorLookup[major]["median"] == -1) {
+            majors.push(majorObject);
+        } else {
+            majors.unshift(majorObject)
+        }
     }
     return majors;
 }
