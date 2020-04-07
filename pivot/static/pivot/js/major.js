@@ -668,6 +668,7 @@ function updateEvents() {
         });
 
         window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", list.join(",")));
+        $(".invalid-major-code-warning").css("display", "none");
 
         // Draw data table(s) if list is not empty otherwise clear
         // the table
@@ -841,6 +842,7 @@ function clear_results() {
     $(".no-results-warning").removeClass("alert alert-info");
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
+    $(".invalid-major-code-warning").css("display", "none")
     storeSelections(null, null);
 
     window.history.replaceState(null, null, window.location.pathname)

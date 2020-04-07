@@ -1,0 +1,16 @@
+{% load templatetag_handlebars %}
+{% tplhandlebars "invalid-major-code-warning" %}
+
+<div class="alert alert-info" role="alert" aria-atomic="true">
+    {{#if plural}}
+    <p>
+        Sorry, <b>'{{codes}}'</b> are not valid major codes.
+    </p>
+    {{else}}
+    <p>
+        Sorry, <b>'{{codes}}'</b> is not a valid major code.
+    </p>
+    {{/if}}
+</div>
+
+{% endtplhandlebars %}
