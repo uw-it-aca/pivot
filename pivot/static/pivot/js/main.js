@@ -299,7 +299,10 @@ function addStudents(queryStr) {
             }
 
             if (invalidCodes.length > 0) {
-                // ToDo: Show warning when user entered invalid major codes in url
+                $(".invalid-major-code-warning").css("display", "inline")
+                var source = $("#invalid-major-code-warning").html();
+                var template = Handlebars.compile(source);
+                $(".invalid-major-code-warning").html(template({codes: invalidCodes.join(', '), plural: invalidCodes.length > 1}))
             }
             
             var selectedMajors = '[' + validCodes.join(',') + ']';
@@ -602,7 +605,18 @@ function populateCollegeDropdown() {
 
     //If this is the course page and a code is provided, load the data without searching
     if (window.location.pathname == '/course-gpa/' && getParameterByName("code") != null) {
-        listCoursesForMajor(getParameterByName("code").replace("_", " "));
+        var major = getParameterByName("code").replace("_", " ").trim();
+
+        if (_statusLookup.hasOwnProperty(major)) {
+            storeSelections(major);
+        } else {
+            storeSelections(null);
+            $(".invalid-major-code-warning").css("display", "inline");
+            var source = $("#invalid-major-code-warning").html();
+            var template = Handlebars.compile(source);
+            $(".invalid-major-code-warning").html(template({codes: major, plural: false}))
+        }
+
         //TODO: need to update placeholders
     }
 

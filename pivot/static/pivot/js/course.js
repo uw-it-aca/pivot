@@ -3,10 +3,7 @@
 /**** SETUP ****/
 //If major was already loaded (this session), automatically load it again
 function checkStoredData() {
-    var paramCode = getParameterByName("code");
-    if (paramCode != null) {
-        listCoursesForMajor(paramCode.replace("_", " "));
-    } else if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != null && sessionStorage.getItem("courses") != "null") {
+    if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != null && sessionStorage.getItem("courses") != "null") {
         var majorCode = sessionStorage.getItem("courses");
         listCoursesForMajor(majorCode);
         window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", majorCode));
@@ -72,6 +69,7 @@ function updateEvents() {
 
 
     $("#suggestions li.suggested_major").click(function (e) {
+        $(".invalid-major-code-warning").css("display", "none");
         e.preventDefault();
         var list = [];
         var code = $(this).data("code");
