@@ -469,15 +469,23 @@ function displayResults() {
     $("#suggestions").css("display","block");
     $("#search").attr("aria-expanded", "true");
     var count = 0;
+
+    console.log($("#search").val())
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    console.log(search_val)
+
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
+        console.log(_completeMajorMap[maj]["major_full_nm"].toLowerCase())
+        console.log(index)
         // If the search term matches the major abbreviation
         var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
         // If the search term matches an search_alias (listed in alias.js)
         var alias_index = false;
+        
+        // This part of code is not working as intended, need to update the keys in search_alias
         if (search_alias[maj]) {
             for (var i = 0; i < search_alias[maj].length; i++) {
                 if (search_alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
@@ -486,6 +494,8 @@ function displayResults() {
                 }
             }
         }
+        //////////////////
+
         var prevSelected = false;
         $(".chosen_major").each(function() {
            if ($(this).text() == maj) {
@@ -494,6 +504,7 @@ function displayResults() {
            }
         });
         //check matches for search term
+
         if (search_val.length > 0 && (alias_index || abbr_index == 0 || (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")))) {
             //Find substring matching search term to make bold - should only highlight matches at beginning of word
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
