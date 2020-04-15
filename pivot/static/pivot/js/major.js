@@ -167,13 +167,6 @@ function createMajorCard(majors, gpa) {
         valid_majors++;
     }
 
-    // if (protected_list.length > 0) {
-    //     // Display a message for the protected majors, if there are any
-    //     protectedResult(protected_list);
-    // } else {
-    //     $(".protected-result-warning").css("display","none");
-    // }
-
     if (valid_majors > 0) {
         overlayGPA(gpa);
         showCompareModule(gpa = (gpa == null) ? "":gpa);
