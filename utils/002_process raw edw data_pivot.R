@@ -14,6 +14,8 @@ gc()
 #   course.rank
 #     major_path (credential_code), course_num, student_count, students_in_major, course_gpa_50pct, course_long_name, major_full_nm, course_popularity_rank, campus (numeric, campus of major)
 
+# [TODO] roxygen-ize functions
+
 # setup -------------------------------------------------------------------
 
 library(tidyverse)
@@ -35,17 +37,7 @@ load(f); rm(f)
 Cs <- function(...) {as.character(sys.call())[-1]}
 
 
-# [NICETOHAVE] a not-in function around [!(x %in% y)]
 
-# function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
-#
-# input: a dataframe
-# return: dataframe
-df.trimws <- function(df){
-  i <- sapply(df, is.character)
-  df[i] <- lapply(df[i], trimws)
-  return(df)
-}
 
 # make file name prefix from max.yrq
 mk.prefix <- function(x){
@@ -60,14 +52,19 @@ qtr.diff <- function(x, y){
   (((x %/% 10) - (y %/% 10)) * 4) + ((x %% 10) - (y %% 10))
 }
 
-# Trim WS from everything
-l <- ls()
-# apply(l, function(x) {
-#   cur <- get(x)
-#   if(is.data.frame(cur)){
+
+# trim WS from everything in one pass -----------------------------------
+# function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
 #
-#   }
-# })
+# input: a dataframe
+# return: dataframe
+df.trimws <- function(df){
+  i <- sapply(df, is.character)
+  df[i] <- lapply(df[i], trimws)
+  return(df)
+}
+
+l <- ls()
 for(i in 1:length(l)){
   cur.df <- get(l[i])
   if(is.data.frame(cur.df)){
@@ -99,7 +96,7 @@ active.majors$campus_num <- case_when(active.majors$campus_name == "Seattle"~ 0,
 # Also worth noting is that program code means something different in the new CM tables where
 # it indicates "level-dept abbv-major/minor"
 
-(x <- str_split(active.majors$credential_code, "_", simplify = T))
+x <- str_split(active.majors$credential_code, "_", simplify = T)
 
 active.majors$credential_code <- str_replace_all(active.majors$credential_code, "-", "_")
 
@@ -186,24 +183,15 @@ i <- pre.maj.courses %>% ungroup() %>% select(sys.key, prog.code, ckey, tran.yrq
 pre.maj.courses <- pre.maj.courses[i == F,]
 rm(i)
 
-# verify everything in active majors is active:
-unique(active.majors$program_status)
-
-# and the program school/college
-unique(active.majors$program_school_or_college)
-
-# kuali names for programs need to be split from the credential
+# kuali (CM) names for programs need to be split from the credential
 # unfortunately, there are a few that are just "Bachelor of XXX" instead of "in XXX"
 active.majors$maj.name <- str_sub(active.majors$credential_title, start = str_locate(active.majors$credential_title, "in\\s")[,2]+1)
 # using indexing instead of manually changing
 i <- is.na(active.majors$maj.name)
 active.majors$maj.name[i] <- str_sub(active.majors$credential_title[i], start = str_locate(active.majors$credential_title[i], "of\\s")[,2]+1)
-table(is.na(active.majors$maj.name))
-
+# table(is.na(active.majors$maj.name))
 
 # fix the list of titles that have XXX_0_1_1/5 but title is the same, e.g. Chemistry/Chemistry ----------------------------------
-
-# another nice to have: this should be a function
 
 # ANTH has several more that aren't 0_1_1/5
 abbvs <- c("B CHEM", "B PHYS", "BIOCHM", "CHEM", "ECON", "INDIV", "MATH", "OCEAN", "PH", "PSYCH", "TCSCI")
@@ -275,10 +263,10 @@ med.tot <- pre.maj.gpa %>%
 # Calc rankings for courses by majors; add additional fields for final file -------------------------------------
 
 # check for courses without names: (SHOULD BE FIXED USING SDB INSTEAD OF AI)
-i <- !(pre.maj.courses$ckey %in% course.names$ckey)
-table(i)
-cbind(sort(unique(pre.maj.courses$ckey[i])))
-any(course.names == "")
+# i <- !(pre.maj.courses$ckey %in% course.names$ckey)
+# table(i)
+# cbind(sort(unique(pre.maj.courses$ckey[i])))
+# any(course.names == "")
 
 course.rank <- pre.maj.courses %>%
   select(sys.key, credential_code, ckey, campus, grade) %>%
@@ -295,8 +283,8 @@ course.rank <- pre.maj.courses %>%
   ungroup()
 
 
-nrow(course.rank) / length(unique(course.rank$credential_code))      # some may not have 10
-course.rank %>% group_by(credential_code) %>% filter(max(pop) < 10)  # examine
+# nrow(course.rank) / length(unique(course.rank$credential_code))      # some may not have 10
+# course.rank %>% group_by(credential_code) %>% filter(max(pop) < 10)  # examine
 
 # need: long name, major name, and campus (for MAJOR) are supposed to be numeric codes
 course.names$ckey.num <- seq_along(course.names$ckey)
@@ -399,7 +387,7 @@ ma <- maj.age %>%
   ungroup() %>%
   mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
 
-(no.age <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
+# (no.age <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
 
 ma2 <- pre.maj.courses %>%
   filter(credential_code %in% no.age) %>%
