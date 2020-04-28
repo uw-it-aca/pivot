@@ -470,16 +470,14 @@ function displayResults() {
     $("#search").attr("aria-expanded", "true");
     var count = 0;
 
-    console.log($("#search").val())
     var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
-    console.log(search_val)
-
+    if (search_val.indexOf("selected") != -1) {
+        search_val = "";
+    }
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
-        console.log(_completeMajorMap[maj]["major_full_nm"].toLowerCase())
-        console.log(index)
         // If the search term matches the major abbreviation
         var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
         // If the search term matches an search_alias (listed in alias.js)
