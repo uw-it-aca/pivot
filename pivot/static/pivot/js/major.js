@@ -483,7 +483,6 @@ function displayResults() {
         // If the search term matches an search_alias (listed in alias.js)
         var alias_index = false;
         
-        // This part of code is not working as intended, need to update the keys in search_alias
         if (search_alias[maj]) {
             for (var i = 0; i < search_alias[maj].length; i++) {
                 if (search_alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
@@ -492,8 +491,6 @@ function displayResults() {
                 }
             }
         }
-        //////////////////
-
         var prevSelected = false;
         $(".chosen_major").each(function() {
            if ($(this).text() == maj) {
