@@ -469,7 +469,7 @@ function displayResults() {
     $("#suggestions").css("display","block");
     $("#search").attr("aria-expanded", "true");
     var count = 0;
-    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','').replace(/\s+/g,' ').trim();
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
