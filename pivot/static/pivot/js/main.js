@@ -695,7 +695,7 @@ function doneTyping() {
 }
 
 var typingTimer;
-var doneTypingInterval = 1000; // time in milliseconds
+var doneTypingInterval = 500; // time in milliseconds
 
 // Initiates the doneTyping function whenever
 // the user is finished typing in the search box,
