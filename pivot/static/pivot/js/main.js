@@ -307,7 +307,7 @@ function init_search_events() {
         //test if the text is an error messae
         var search_val = $("#search").val();
         var placeholder = /[0-9]+\smajor[s]*\sselected/.test(search_val);
-        if (placeholder) {
+        if (placeholder || window.location.pathname == "/course-gpa/") {
             $("#search").val("");
         }
         prepareResults();
@@ -695,7 +695,7 @@ function doneTyping() {
 }
 
 var typingTimer;
-var doneTypingInterval = 1000; // time in milliseconds
+var doneTypingInterval = 500; // time in milliseconds
 
 // Initiates the doneTyping function whenever
 // the user is finished typing in the search box,

@@ -3,16 +3,19 @@ Ex: If you search CSE, the major corresponding to 'C SCI-0' should
 show up in the search results (in this case: Computer Science on the Seattle Campus) */
 
 const search_alias = {
-	'ACMS-0': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'ACMS-10': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'ACMS-20': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'ACMS-30': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'ACMS-50': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'ACMS-70': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
-	'C-SCI-0': ['CSE'],
-	'C-SCI-10': ['CSE'],
-	'CIV-E-0': ['CE'],
-	'IND-E-0': ['IE']
+	'ACMS-0-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-10-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-20-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-30-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-40-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-50-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-70-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'ACMS-80-1-5': ['AMATH', 'Applied Math', 'Applied and Computational Mathematical Sciences', 'Applied & Computational Mathematical Sciences'],
+	'C-SCI-0-1-5': ['CSE'],
+	'C-SCI-10-1-5': ['CSE'],
+	'CMP-E-0-1-6': ['CSE'],
+	'CIV-E-0-1-6': ['CE'],
+	'IND-E-0-1-6': ['IE']
 };
 
 

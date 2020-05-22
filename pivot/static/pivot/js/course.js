@@ -116,7 +116,7 @@ function displayResults() {
     var template = Handlebars.compile(source);
 
     var count = 0;
-    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','').replace(/\s+/g,' ').trim();
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
         var index = _completeMajorMap[maj]["major_full_nm"].toLowerCase().indexOf(search_val);
