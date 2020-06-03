@@ -3,11 +3,10 @@
 /**** SETUP ****/
 //If major was already loaded (this session), automatically load it again
 function checkStoredData() {
-    var paramCode = getParameterByName("code");
-    if (paramCode != null) {
-        listCoursesForMajor(paramCode.replace("_", " "));
-    } else if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != null && sessionStorage.getItem("courses") != "null") {
-        listCoursesForMajor(sessionStorage.getItem("courses"));
+    if (sessionStorage.length > 0 && sessionStorage.getItem("courses") != null && sessionStorage.getItem("courses") != "null") {
+        var majorCode = sessionStorage.getItem("courses");
+        listCoursesForMajor(majorCode);
+        window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", majorCode));
     } else {
         $(".sample-data").css("display","block");
     }
@@ -70,6 +69,7 @@ function updateEvents() {
 
 
     $("#suggestions li.suggested_major").click(function (e) {
+        $(".invalid-major-code-warning").css("display", "none");
         e.preventDefault();
         var list = [];
         var code = $(this).data("code");
@@ -94,6 +94,9 @@ function updateEvents() {
                 //$("#loadingModal").modal('show');
                 setTimeout(listCoursesForMajor($(this).text()), 300);
             });
+
+            window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", list.join(",")));
+
             closeSuggestions();
         }
     });
@@ -407,6 +410,8 @@ $("#clear_majors").on("click", function(e) {
     // Clear attributes specific to page
     $("#courselist").html("");
     storeSelections(null);
+
+    window.history.replaceState(null, null, window.location.pathname);
 });
 
 //returns the ColorBrewer bucket index for the given GPA
