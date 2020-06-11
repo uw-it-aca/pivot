@@ -18,6 +18,11 @@ function checkStoredData() {
             $(".selected").append(template({chosen: majors[m]}));
         //Populate data table
         createMajorCard(majors, gpa);
+
+        var selectedMajors= sessionStorage.getItem("majors").replace('[', '')
+            .replace(']','').replace(/"/g, "");
+
+        window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", selectedMajors));
     } else {
         $(".sample-data").css("display","block");
         $(".loader").css("display", "none");
@@ -79,43 +84,55 @@ function createMajorCard(majors, gpa) {
         majors = [];
     }
 
+    var majors_noInfo = [];
+    var majors_withInfo = [];
+
     //For each selected major...
     for (var l in majors) {
-        if (!_completeMajorMap[majors[l]]) {
-            var source = $("#create-no-data-card").html();
-            var template = Handlebars.compile(source);
-            $("#boxplots").append(template({
-                reason: "The data does not contain any information about this major."
-            }));
-            //get the results div to display
-            valid_majors++
+        if (_completeMajorMap[majors[l]]) {
+            majors_withInfo.push(majors[l]);
+        } else {
+            majors_noInfo.push(majors[l]);
         }
+    }
 
-        var major = filterByMajors([majors[l]]);
-        var med = major[0]["median"];
+    var majorList = filterByMajors(majors_withInfo);
+
+    for (var l in majorList) {
+        var majorAbbr = majorList[l]["major_abbr"].replace(/_/g, "-")
+
+        var med = majorList[l]["median"];
         if (med == -1) {
             // If the median GPA is -1... that means that this major is protected
-            protected_list.push(_completeMajorMap[majors[l]]["major_full_nm"]);
+            protected_list.push(_completeMajorMap[majorAbbr]["major_full_nm"]);
+            var source = $("#protected-major-message-card").html();
+            var template = Handlebars.compile(source);
+            $("#boxplots").append(template({
+                major: _completeMajorMap[majorAbbr]["major_full_nm"]
+            }));
+            
+            //get the results div to display
+            valid_majors++
             continue;
         }
 
         valid_majors++;
 
         //draw the major's data "card" in the table
-        var id = majors[l].replace(" ","_");
+        var id = majorAbbr.replace(" ","_");
 
         // Add the card
         if(!$("#" + id).length){
             $("#boxplots").append(template({
                 id: id,
-                college: _completeMajorMap[majors[l]]["college"],
-                campus: _completeMajorMap[majors[l]]["campus"],
-                major_status_url: displayMajorStatusURL(majors[l]),
-                major_status_icon: displayMajorStatusIcon(majors[l]),
-                major_status_text: displayMajorStatusText(majors[l]),
+                college: _completeMajorMap[majorAbbr]["college"],
+                campus: _completeMajorMap[majorAbbr]["campus"],
+                major_status_url: displayMajorStatusURL(majorAbbr),
+                major_status_icon: displayMajorStatusIcon(majorAbbr),
+                major_status_text: displayMajorStatusText(majorAbbr),
             }));
 
-            $("#" + id).data("code", majors[l]);
+            $("#" + id).data("code", majorAbbr);
 
             //Add the initial content for the major
             //if the statuslookup array has been populated, proceed
@@ -123,7 +140,7 @@ function createMajorCard(majors, gpa) {
             //so that we can proceed once it's done
             if (!$.isEmptyObject(_statusLookup)) {
                 createBoxForMajor(l, med, id);
-                createBoxplot(l, gpa, id, med, major);
+                createBoxplot(l, gpa, id, med, [majorList[l]]);
             } else {
                 //This IIFE creates a scope so that each listener has its own 
                 //closure from which it can reference values
@@ -132,7 +149,7 @@ function createMajorCard(majors, gpa) {
                     var localMed = med;
                     var localId = id;
                     var localGpa = gpa;
-                    var localMajor = major;
+                    var localMajor = [majorList[l]];
                     statusLookupListener.push(function () {
                         createBoxForMajor(localL, localMed, localId);
                         createBoxplot(localL, localGpa, localId, localMed, localMajor);
@@ -143,13 +160,16 @@ function createMajorCard(majors, gpa) {
 
         //Add the boxplot
         //D3 - vars to pass = gpa, id, med, major
-
     }
-    if (protected_list.length > 0) {
-        // Display a message for the protected majors, if there are any
-        protectedResult(protected_list);
-    } else {
-        $(".protected-result-warning").css("display","none");
+
+    for (var l in majors_noInfo) {
+        var source = $("#create-no-data-card").html();
+        var template = Handlebars.compile(source);
+        $("#boxplots").append(template({
+            reason: "The data does not contain any information about major code " + majors_noInfo[l] + "."
+        }));
+        //get the results div to display
+        valid_majors++;
     }
 
     if (valid_majors > 0) {
@@ -337,7 +357,12 @@ function filterByMajors(list) {
 
     for (index in list) {
         var major = list[index];
-        majors.push(_majorLookup[major]);
+        var majorObject = _majorLookup[major]
+        if (_majorLookup[major]["median"] == -1) {
+            majors.push(majorObject);
+        } else {
+            majors.unshift(majorObject)
+        }
     }
     return majors;
 }
@@ -449,7 +474,11 @@ function displayResults() {
     $("#suggestions").css("display","block");
     $("#search").attr("aria-expanded", "true");
     var count = 0;
-    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','');
+    var search_val = $("#search").val().toLowerCase().replace('(','').replace(')','').replace(/\s+/g,' ').trim();
+    if (search_val.indexOf("selected") != -1) {
+        search_val = "";
+    }
+
     //need to bring chosen_major text out here
     for(var maj in _completeMajorMap) {
         // If the search term matches the full name of the major
@@ -458,6 +487,7 @@ function displayResults() {
         var abbr_index = maj.split('-')[0].toLowerCase().indexOf(search_val);
         // If the search term matches an search_alias (listed in alias.js)
         var alias_index = false;
+        
         if (search_alias[maj]) {
             for (var i = 0; i < search_alias[maj].length; i++) {
                 if (search_alias[maj][i].toLowerCase().indexOf(search_val) == 0) {
@@ -474,6 +504,7 @@ function displayResults() {
            }
         });
         //check matches for search term
+
         if (search_val.length > 0 && (alias_index || abbr_index == 0 || (index > -1 && (index == 0 || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == " " || _completeMajorMap[maj]["major_full_nm"].toLowerCase().charAt(index - 1) == "(")))) {
             //Find substring matching search term to make bold - should only highlight matches at beginning of word
             var substring = _completeMajorMap[maj]["major_full_nm"].substr(index, search_val.length);
@@ -636,6 +667,8 @@ function updateEvents() {
             list.push($(this).text());
         });
 
+        window.history.replaceState(null, null, setUrlParameter(window.location.href, "code", list.join(",")));
+        $(".invalid-major-code-warning").css("display", "none");
 
         // Draw data table(s) if list is not empty otherwise clear
         // the table
@@ -809,7 +842,10 @@ function clear_results() {
     $(".no-results-warning").removeClass("alert alert-info");
     $("#boxplots").html("");
     $(".yourgpa-box").remove();
+    $(".invalid-major-code-warning").css("display", "none")
     storeSelections(null, null);
+
+    window.history.replaceState(null, null, window.location.pathname)
 }
 
 /**** SELECT YEAR ****/

@@ -283,8 +283,31 @@ function addStudents(queryStr) {
         all_data_loaded = true;
 
         if (window.location.pathname == '/major-gpa/' && getParameterByName("code") != null) {
-            var majorParam = getParameterByName("code");
-            sessionStorage.setItem("majors", '["' + majorParam +'"]');
+            var majorParam = getParameterByName("code").split(",");
+            var validCodes = [];
+            var invalidCodes = [];
+
+            for (var i in majorParam) {
+                var major = majorParam[i].trim();
+                if (major.length > 0) {
+                    if (_statusLookup.hasOwnProperty(major)) {
+                        validCodes.push('"' + major + '"');
+                    } else {
+                        invalidCodes.push(major);
+                    }
+                }
+            }
+
+            if (invalidCodes.length > 0) {
+                $(".invalid-major-code-warning").css("display", "inline")
+                var source = $("#invalid-major-code-warning").html();
+                var template = Handlebars.compile(source);
+                $(".invalid-major-code-warning").html(template({codes: invalidCodes.join(', '), plural: invalidCodes.length > 1}))
+            }
+            
+            var selectedMajors = '[' + validCodes.join(',') + ']';
+            
+            sessionStorage.setItem("majors", selectedMajors);
         }
 
         checkStoredData();
@@ -307,7 +330,7 @@ function init_search_events() {
         //test if the text is an error messae
         var search_val = $("#search").val();
         var placeholder = /[0-9]+\smajor[s]*\sselected/.test(search_val);
-        if (placeholder) {
+        if (placeholder || window.location.pathname == "/course-gpa/") {
             $("#search").val("");
         }
         prepareResults();
@@ -582,7 +605,18 @@ function populateCollegeDropdown() {
 
     //If this is the course page and a code is provided, load the data without searching
     if (window.location.pathname == '/course-gpa/' && getParameterByName("code") != null) {
-        listCoursesForMajor(getParameterByName("code").replace("_", " "));
+        var major = getParameterByName("code").replace("_", " ").trim();
+
+        if (_statusLookup.hasOwnProperty(major)) {
+            storeSelections(major);
+        } else {
+            storeSelections(null);
+            $(".invalid-major-code-warning").css("display", "inline");
+            var source = $("#invalid-major-code-warning").html();
+            var template = Handlebars.compile(source);
+            $(".invalid-major-code-warning").html(template({codes: major, plural: false}))
+        }
+
         //TODO: need to update placeholders
     }
 
@@ -611,6 +645,46 @@ function getParameterByName(name, url) {
     if (!results) return null;
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+// Set url parameters
+function setUrlParameter(url, key, value) {
+    var key = encodeURIComponent(key),
+        value = encodeURIComponent(value);
+
+    var baseUrl = url.split('?')[0],
+        newParam = key + '=' + value,
+        params = '?' + newParam;
+
+    if (url.split('?')[1] === undefined){ // if there are no query strings, make urlQueryString empty
+        urlQueryString = '';
+    } else {
+        urlQueryString = '?' + url.split('?')[1];
+    }
+
+    // If the "search" string exists, then build params from it
+    if (urlQueryString) {
+        var updateRegex = new RegExp('([\?&])' + key + '=[^&]*');
+        var removeRegex = new RegExp('([\?&])' + key + '=[^&;]+[&;]?');
+
+        if (value === undefined || value === null || value === '') { // Remove param if value is empty
+            params = urlQueryString.replace(removeRegex, "$1");
+            params = params.replace(/[&;]$/, "");
+    
+        } else if (urlQueryString.match(updateRegex) !== null) { // If param exists already, update it
+            params = urlQueryString.replace(updateRegex, "$1" + newParam);
+    
+        } else if (urlQueryString == '') { // If there are no query strings
+            params = '?' + newParam;
+        } else { // Otherwise, add it to end of query string
+            params = urlQueryString + '&' + newParam;
+        }
+    }
+
+    // no parameter was set so we don't need the question mark
+    params = params === '?' ? '' : params;
+
+    return baseUrl + params;
 }
 
 //rounds to the specified decimal place
@@ -695,7 +769,7 @@ function doneTyping() {
 }
 
 var typingTimer;
-var doneTypingInterval = 1000; // time in milliseconds
+var doneTypingInterval = 500; // time in milliseconds
 
 // Initiates the doneTyping function whenever
 // the user is finished typing in the search box,
