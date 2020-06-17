@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  app:
+    environment:
+      - ENV=localdev
+      - PORT=8000
+    restart: always
+    container_name: pivot
+    build:
+      context: .
+    volumes:
+      - ./pivot:/app/pivot
+    ports:
+      - "8000:8000"
