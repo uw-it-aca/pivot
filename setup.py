@@ -16,7 +16,7 @@ setup(
     packages=['pivot'],
     include_package_data=True,
     install_requires=[
-        'Django>1.11.15,<2.0',
+        'Django>=2.0.13,<2.1',
         'django-compressor',
         'django-templatetag-handlebars',
         'django-prometheus',

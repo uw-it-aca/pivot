@@ -1,10 +1,5 @@
 #!/bin/bash
 
-INVENV=$(python -c 'import sys; print ("1" if hasattr(sys, "real_prefix") else "0")')
-
-echo $INVENV
-
-if [ "$ENV"  = "localdev" ]
-then
-  ls -l bin/
-fi
+python manage.py makemigrations
+python manage.py migrate
+# python manage.py initadmin --username test1 --password test1234 --noinput --email 'abcdef@gmail.com'
