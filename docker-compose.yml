@@ -1,10 +1,7 @@
-version: '2'
+version: '3'
 
 services:
   app:
-    environment:
-      - ENV=localdev
-      - PORT=8000
     restart: always
     container_name: pivot
     build:
@@ -13,3 +10,7 @@ services:
       - ./pivot:/app/pivot
     ports:
       - "8000:8000"
+    environment:
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-NONE}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-NONE}
+    
