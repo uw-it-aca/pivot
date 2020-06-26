@@ -3,6 +3,13 @@ import os
 
 ALLOWED_HOSTS = ['*']
 
+# if os.getenv('ENV') == 'localdev':
+#     DEBUG = True
+#     RESTCLIENTS_DAO_CACHE_CLASS = None
+
+DEBUG = True
+RESTCLIENTS_DAO_CACHE_CLASS = None
+
 
 INSTALLED_APPS = [
     # 'django_prometheus',
@@ -108,11 +115,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-if os.getenv('ENV') == 'localdev':
-    DEBUG = True
-    RESTCLIENTS_DAO_CACHE_CLASS = None
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
