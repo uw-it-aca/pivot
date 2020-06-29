@@ -3,12 +3,8 @@ import os
 
 ALLOWED_HOSTS = ['*']
 
-# if os.getenv('ENV') == 'localdev':
-#     DEBUG = True
-#     RESTCLIENTS_DAO_CACHE_CLASS = None
-
 DEBUG = True
-RESTCLIENTS_DAO_CACHE_CLASS = None
+# RESTCLIENTS_DAO_CACHE_CLASS = None
 
 
 INSTALLED_APPS = [
