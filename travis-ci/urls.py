@@ -1,11 +1,6 @@
-from django.conf.urls import url, include
-from django.contrib.auth import views as auth_views
-
+from django.urls import re_path, include
 
 urlpatterns = [
-    url(r'^login/$', auth_views.login, {'template_name': 'login.html'},
-        name='login'),
-    url(r'^logout/$', auth_views.logout, {'next_page': '/'},
-        name='logout'),
-    url(r'^', include('pivot.urls')),
+    re_path(r'^saml/', include('uw_saml.urls')),                                                        
+    re_path(r'^', include('pivot.urls')),
 ]

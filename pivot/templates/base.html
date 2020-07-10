@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load pivot_extras %}
 
 <!DOCTYPE html>
 <html class="no-js" lang="en">
@@ -62,7 +63,7 @@
                         <li><a href="/feedback/" title="Send us feedback">Feedback</a></li>
 	                    <li><a href="http://www.washington.edu/online/terms/" target="_blank" title="University of Washington Website Terms and Conditions of Use">Terms </a></li>
 	                    <li><a href="http://www.washington.edu/online/privacy/" target="_blank" title="University of Washington Online Privacy Statement">Privacy</a></li>
-	                    <li><a href="/logout/" title="Log out from Pivot">Log out</a></li>
+	                    <li><a href="{% get_settings_value 'LOGOUT_URL' %}" title="Log out from Pivot">Log out</a></li>
 	                </ul>
 	            </div><!-- end of footer links -->
 	            <p class="credit">©2016 University of Washington Information Technology </p>
