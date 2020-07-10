@@ -21,6 +21,7 @@ setup(
         'django-templatetag-handlebars',
         'django-prometheus',
         'django-user-agents',
+        'UW-Django-SAML2<2.0',
         # 'supporttools',
     ],
     license='Apache License, Version 2.0',  # example license

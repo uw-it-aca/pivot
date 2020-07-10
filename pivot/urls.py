@@ -1,5 +1,7 @@
 from django.urls import include, re_path
 from django.views.generic.base import RedirectView
+import uw_saml
+
 from pivot.views import (
     HomeView,
     PivotTemplateView,
@@ -7,7 +9,6 @@ from pivot.views import (
     MajorGPAView,
     FeedbackView,
     About,
-    user_login
 )
 from pivot.views.data_api import (
     MajorCourse,
@@ -15,17 +16,12 @@ from pivot.views.data_api import (
     StatusLookup,
     StudentData
 )
-# Auth view
-from django.contrib.auth import views as auth_views
+
+
 from django.contrib.auth.decorators import login_required
 
-
 urlpatterns = [
-    # Authentication pages
-    re_path(r'^login/$', user_login, name='login'),
-    # Home
-    re_path(r'^$', RedirectView.as_view(url='/major-gpa/')),
-    # All links are login protected
+    re_path(r'^$', login_required(RedirectView.as_view(url='/major-gpa/'))),
     re_path(r'^course-gpa/$', login_required(CourseGPAView.as_view()),\
         name='coursegpa'),
     re_path(r'^major-gpa/$', login_required(MajorGPAView.as_view()),\

@@ -1,18 +1,21 @@
 from .base_settings import *
 import os
+from django.urls import reverse_lazy
+
+# BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 ALLOWED_HOSTS = ['*']
 
-DEBUG = True
-# RESTCLIENTS_DAO_CACHE_CLASS = None
+if os.getenv("ENV") == "localdev":
+    DEBUG = True
+else:
+    DEBUG = False
+
+
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
 
 
 INSTALLED_APPS = [
-    # 'django_prometheus',
-    # 'django.contrib.humanize',
-    # 'django_user_agents',
-    # 'supporttools',
-    # 'rc_django',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,6 +33,8 @@ INSTALLED_APPS += [
     # 'rc_django',
 ]
 
+INSTALLED_APPS += ['uw_saml',]
+
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'pivot/bundles/',
@@ -38,10 +43,11 @@ WEBPACK_LOADER = {
 }
 
 CSV_ROOT = os.path.join(BASE_DIR, "data/")
-LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login/'
+LOGIN_URL = reverse_lazy('saml_login')
+LOGOUT_URL = reverse_lazy('saml_logout')
 STATIC_ROOT = 'static/'
 COMPRESS_ROOT = 'static/'
+
 
 COMPRESS_PRECOMPILERS = (('text/less', 'lessc {infile} {outfile}'),)
 
@@ -59,11 +65,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.auth.middleware.RemoteUserMiddleware',
-]
-
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.RemoteUserBackend',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -86,14 +87,8 @@ TEMPLATES = [
     },
 ]
 
-# TEMPLATES[0]['OPTIONS']['context_processors'].extend([
-#     'supporttools.context_processors.supportools_globals'
-# ])
 
 WSGI_APPLICATION = 'project.wsgi.application'
-
-# if not os.getenv("ENV") == "localdev":
-#     DATABASES['default']['ENGINE'] = 'django_prometheus.db.backends.mysql'
 
 GOOGLE_ANALYTICS_KEY = os.getenv("GOOGLE_ANALYTICS_KEY", default=" ")
 
@@ -125,6 +120,3 @@ USE_L10N = True
 
 USE_TZ = True
 
-# django create superuser
-ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
-ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")

@@ -10,4 +10,9 @@ services:
       - ./pivot:/app/pivot
     ports:
       - "8000:8000"
-    
+    environment:
+      AUTH: ${AUTH:-SAML_DJANGO_LOGIN}
+      DJANGO_LOGIN_USERNAME: ${DJANGO_LOGIN_USERNAME:-javerage}
+      DJANGO_LOGIN_PASSWORD: ${DJANGO_LOGIN_PASSWORD:-javerage}
+      DJANGO_LOGIN_EMAIL: ${DJANGO_LOGIN_EMAIL:-javerage@uw.edu}
+          
