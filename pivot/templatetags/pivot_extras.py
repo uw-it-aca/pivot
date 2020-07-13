@@ -24,6 +24,7 @@ def year_select_tab(num_qtrs):
         </a>
     """.format(num_qtrs, num_years, qtr, start_year, end_year)
 
+
 # get settings value
 @register.simple_tag
 def get_settings_value(name):
