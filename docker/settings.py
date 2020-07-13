@@ -43,8 +43,6 @@ WEBPACK_LOADER = {
 }
 
 CSV_ROOT = os.path.join(BASE_DIR, "data/")
-LOGIN_URL = reverse_lazy('saml_login')
-LOGOUT_URL = reverse_lazy('saml_logout')
 STATIC_ROOT = 'static/'
 COMPRESS_ROOT = 'static/'
 

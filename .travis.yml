@@ -2,6 +2,8 @@ sudo: false
 language: python
 python:
   - "3.6"
+before_install:
+  - sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
 install:
   - python setup.py -q install
 before_script:
