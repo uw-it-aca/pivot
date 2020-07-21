@@ -27,8 +27,8 @@ const search_alias = {
  */
 
 // Define constants in case a common link changes
-var seattle_business = ['BUS'];
-var tacoma_business = ['T BUS'];
+const seattle_business = ['BUS'];
+const tacoma_business = ['T BUS'];
 
 const myplan_alias = {
 	'I S': seattle_business,
