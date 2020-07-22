@@ -2,6 +2,8 @@ sudo: false
 language: python
 python:
   - "3.6"
+before_install:
+  - sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
 install:
   - python setup.py -q install
 before_script:
@@ -14,8 +16,10 @@ before_script:
   - npm install mocha
   - npm install jquery
   - npm install jsdom@10
+  - npm install eslint eslint-config-google eslint-config-stylelint eslint-plugin-jquery
 script:
   - pycodestyle pivot/ utils/ --exclude=migrations
+  - ./node_modules/.bin/eslint --ext .js pivot/static/pivot/js/
   - coverage run --source=pivot/ --omit=pivot/migrations/* manage.py test pivot
 #  - mocha scout/static/gps/js/test --recursive
 after_script:
