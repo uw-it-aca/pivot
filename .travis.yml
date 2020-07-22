@@ -19,7 +19,7 @@ before_script:
   - npm install eslint eslint-config-google eslint-config-stylelint eslint-plugin-jquery
 script:
   - pycodestyle pivot/ utils/ --exclude=migrations
-  - ./node_modules/.bin/eslint --ext .js,.vue pivot/static/pivot/js/
+  - ./node_modules/.bin/eslint --ext .js pivot/static/pivot/js/
   - coverage run --source=pivot/ --omit=pivot/migrations/* manage.py test pivot
 #  - mocha scout/static/gps/js/test --recursive
 after_script:
