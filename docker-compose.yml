@@ -9,7 +9,7 @@ services:
     volumes:
       - ./pivot:/app/pivot
     ports:
-      - "8000:8000"
+      - "${PORT:-8000}:8000"
     environment:
       AUTH: ${AUTH:-SAML_DJANGO_LOGIN}
       DJANGO_LOGIN_USERNAME: ${DJANGO_LOGIN_USERNAME:-javerage}
