@@ -16,16 +16,14 @@ env:
 install:
   - docker build -t "$IMAGE_TAG" .
 before_script:
-  - gem install coveralls-lcov
   - pip install coverage
   - pip install coveralls
 script:
   - docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev" -e "AUTH=SAML_MOCK" app-test-container bash -c ". ./travis-ci/test.sh"
 after_success:
-  - cp /tmp/.coverage.* /tmp/lcov.info .
+  - cp /tmp/.coverage.* .
   - coverage combine
-  - coveralls-lcov -v -n lcov.info > js-coverage.json
-  - coveralls --merge=js-coverage.json
+  - coveralls
   # - |
   #   if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
   #     case "$TRAVIS_BRANCH" in
