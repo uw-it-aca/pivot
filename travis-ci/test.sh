@@ -11,6 +11,9 @@ trap catch ERR
 # start virtualenv
 source bin/activate
 
+# install test tooling
+pip install pycodestyle coverage
+
 function run_test {
     echo "##########################"
     echo "TEST: $1"
