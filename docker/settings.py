@@ -51,4 +51,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+PIVOT_AUTHZ_GROUPS = {
+    'access': os.getenv("PIVOT_ACCESS_GROUP", 'u_test_access')
+}
 
+if os.getenv("AUTH", "NONE") == "SAML_MOCK":
+    MOCK_SAML_ATTRIBUTES['isMemberOf'] = [
+        PIVOT_AUTHZ_GROUPS['access'],
+    ]
+elif os.getenv("AUTH", "NONE") == "SAML_DJANGO_LOGIN":
+    DJANGO_LOGIN_MOCK_SAML['SAML_USERS'][0]['MOCK_ATTRIBUTES']['isMemberOf'] = [
+        PIVOT_AUTHZ_GROUPS['access'],
+    ]

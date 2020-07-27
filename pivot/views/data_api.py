@@ -8,11 +8,17 @@ from urllib.request import urlopen
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views import View
 
 from pivot.utils import get_latest_term
 
+from uw_saml.decorators import group_required
 
+PIVOT_ACCESS_GROUP = settings.PIVOT_AUTHZ_GROUPS['access']
+
+
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
 class DataFileView(View):
     file_name = None
 
@@ -63,6 +69,7 @@ class DataFileView(View):
             return si.getvalue().strip('\r\n')
 
 
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
 class DataFileByQuarterView(DataFileView):
     """ Base class for views that take a time period queries
     """
@@ -116,17 +123,21 @@ class DataFileByQuarterView(DataFileView):
                                 + " requested time period", status=416)
 
 
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
 class MajorCourse(DataFileByQuarterView):
     base_file_name = "majors_and_courses.csv"
 
 
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
 class DataMap(DataFileView):
     file_name = "data_map.csv"
 
 
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
 class StudentData(DataFileByQuarterView):
     base_file_name = "student_data_all_majors.csv"
 
 
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
 class StatusLookup(DataFileView):
     file_name = "status_lookup.csv"

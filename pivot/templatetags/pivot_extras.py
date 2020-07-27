@@ -28,4 +28,4 @@ def year_select_tab(num_qtrs):
 # get settings value
 @register.simple_tag
 def get_settings_value(name):
-    return getattr(settings, name, "")
+    return getattr(settings, name)
