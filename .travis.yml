@@ -1,27 +1,56 @@
-sudo: false
+sudo: required
 language: python
 python:
   - "3.6"
-before_install:
-  - sudo apt-get -y install libxml2-dev libxmlsec1-dev libxmlsec1-openssl
+services:
+  - docker
+os:
+  - linux
+env:
+  global:
+    - RELEASE_NAME="pivot"
+    - DJANGO_APP="pivot"
+    - COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
+    - IMAGE_TAG="${RELEASE_NAME}:${COMMIT_HASH}"
+    - DEPLOY_SCRIPT_BASE=https://raw.githubusercontent.com/uw-it-aca/gcp-app-deploy/master
 install:
-  - python setup.py -q install
+  - docker build --target app-container -t "$IMAGE_TAG" .
+  - docker build -t app-test-container .
 before_script:
+  - gem install coveralls-lcov
   - pip install coverage
-  - pip install python-coveralls
-  - pip install pycodestyle
-  - pip install .
-  - cp travis-ci/manage.py manage.py
-  - python manage.py migrate --noinput
-  - npm install mocha
-  - npm install jquery
-  - npm install jsdom@10
+  - pip install coveralls
 script:
-  - pycodestyle pivot/ utils/ --exclude=migrations
-  - coverage run --source=pivot/ --omit=pivot/migrations/* manage.py test pivot
-#  - mocha scout/static/gps/js/test --recursive
-after_script:
-  - coveralls
+  - docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev" -e "AUTH=SAML_MOCK" app-test-container bash -c ". ./travis-ci/test.sh"
+  after_success:
+    - cp /tmp/.coverage.* /tmp/lcov.info .
+    - coverage combine
+    - coveralls-lcov -v -n lcov.info > js-coverage.json
+    - coveralls --merge=js-coverage.json
+    # - |
+    #   if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    #     case "$TRAVIS_BRANCH" in
+    #       "master")
+    #         export APP_INSTANCE="prod";
+    #         ;;
+    #       "qa")
+    #         export APP_INSTANCE="test";
+    #         ;;
+    #       "develop")
+    #         export APP_INSTANCE="dev";
+    #         ;;
+    #       *)
+    #         unset APP_INSTANCE
+    #         ;;
+    #     esac
+    #     if [[ "$APP_INSTANCE" ]]; then
+    #       curl -Ls ${DEPLOY_SCRIPT_BASE}/travis-ci/deploy.sh | bash;
+    #     fi
+    #   fi
+  cache:
+    directories:
+      - "$HOME/helm"
+      - "$HOME/kubeval"
 #notifications:
 #  webhooks:
 #      urls:
