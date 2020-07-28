@@ -30,6 +30,6 @@ run_test "pycodestyle ${DJANGO_APP}/ --exclude=migrations,static"
 run_test "coverage run --source=${DJANGO_APP} '--omit=*/migrations/*' manage.py test ${DJANGO_APP}"
 
 # put generaged coverage result where it will get processed
-cp .coverage.* /coverage
+cp .coverage* /coverage
 
 exit 0
