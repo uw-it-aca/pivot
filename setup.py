@@ -22,7 +22,6 @@ setup(
         'django-prometheus',
         'django-user-agents',
         'UW-Django-SAML2<2.0',
-        # 'supporttools',
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
@@ -37,8 +36,8 @@ setup(
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
     ],

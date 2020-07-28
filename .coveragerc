@@ -1,0 +1,8 @@
+[run]
+source = pivot
+parallel = True
+
+[paths]
+source =
+  pivot/
+  /app/pivot/
