@@ -63,7 +63,9 @@ class CsvDataApiTest(TestCase):
 
         self.client.force_login(user=self.user)
         session = self.client.session
-        session['samlUserdata'] = {"isMemberOf": [settings.PIVOT_AUTHZ_GROUPS['access']]}
+        session['samlUserdata'] = {
+            "isMemberOf": [settings.PIVOT_AUTHZ_GROUPS['access']]
+        }
         session.save()
 
     def tearDown(self):
