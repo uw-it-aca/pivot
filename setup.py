@@ -1,7 +1,11 @@
 import os
 from setuptools import setup
 
-README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
+# README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
+README = """
+See the README on `GitHub
+<https://github.com/uw-it-aca/pivot>`_.
+"""
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
@@ -12,9 +16,13 @@ setup(
     packages=['pivot'],
     include_package_data=True,
     install_requires=[
-        'Django>1.11.15,<2.0',
+        'Django>=2.0.13,<2.1',
         'django-compressor',
         'django-templatetag-handlebars',
+        'django-prometheus',
+        'django-user-agents',
+        'UW-Django-SAML2<2.0',
+        # 'supporttools',
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',

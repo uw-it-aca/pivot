@@ -59,8 +59,14 @@ class CsvDataApiTest(TestCase):
     """
     def setUp(self):
         self.user = User.objects.create(username='testuser')
-        self.user.set_password('password')
         self.user.save()
+
+        self.client.force_login(user=self.user)
+        session = self.client.session
+        session['samlUserdata'] = {
+            "isMemberOf": [settings.PIVOT_AUTHZ_GROUPS['access']]
+        }
+        session.save()
 
     def tearDown(self):
         self.user.delete()
@@ -101,8 +107,6 @@ class CsvDataApiTest(TestCase):
     def test_major_course_query_parameters(self):
         for test_case in ENDPOINT_TEST_CASES:
             url = '/api/v1/major_course/' + test_case[0]
-            login_successful = self.client.login(username='testuser',
-                                                 password='password')
             response = self.client.get(url)
             self.assertTrue(response.status_code == test_case[1])
 
@@ -110,8 +114,6 @@ class CsvDataApiTest(TestCase):
     def test_student_data_query_parameters(self):
         for test_case in ENDPOINT_TEST_CASES:
             url = '/api/v1/student_data/' + test_case[0]
-            login_successful = self.client.login(username='testuser',
-                                                 password='password')
             response = self.client.get(url)
             self.assertTrue(response.status_code == test_case[1])
 
@@ -127,9 +129,6 @@ class CsvDataApiTest(TestCase):
             file_data = self.csv_to_string(csv_reader)
             file_data = file_data.encode('utf-8')
 
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
         response_data = response.content
@@ -138,9 +137,6 @@ class CsvDataApiTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_status_lookup(self):
         url = '/api/v1/status_lookup/'
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
 
         file_name = 'status_lookup.csv'
         path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
@@ -158,9 +154,6 @@ class CsvDataApiTest(TestCase):
     @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_student_data(self):
         url = '/api/v1/student_data/'
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
 
         file_name = 'au12_8qtrs_student_data_all_majors.csv'
         path = os.path.join(TEST_CSV_POST_SCRUB_PATH, file_name)
@@ -195,10 +188,6 @@ class CsvDataApiTest(TestCase):
             data = self.csv_to_string(csv_reader)
             data = data.encode('utf-8')
 
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
-
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
         self.assertEqual(data, response.content)
@@ -211,10 +200,6 @@ class CsvDataApiTest(TestCase):
             csv_reader = csv.reader(csvfile)
             data = self.csv_to_string(csv_reader)
             data = data.encode('utf-8')
-
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
@@ -229,10 +214,6 @@ class CsvDataApiTest(TestCase):
             data = self.csv_to_string(csv_reader)
             data = data.encode('utf-8')
 
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
-
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
         self.assertEqual(data, response.content)
@@ -245,10 +226,6 @@ class CsvDataApiTest(TestCase):
             csv_reader = csv.reader(csvfile)
             data = self.csv_to_string(csv_reader)
             data = data.encode('utf-8')
-
-        login_successful = self.client.login(username='testuser',
-                                             password='password')
-        self.assertTrue(login_successful)
 
         response = self.client.get(url)
         self.assertTrue(200 == response.status_code)
