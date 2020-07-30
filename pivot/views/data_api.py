@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from pivot.utils import get_latest_term
+from pivot.utils import get_latest_term, get_file_data
 
 from uw_saml.decorators import group_required
 
@@ -27,15 +27,17 @@ class DataFileView(View):
         return HttpResponse(csv)
 
     def _get_csv(self):
+        print(self.file_name)
         try:
-            url = urljoin(getattr(settings, 'CSV_ROOT', None), self.file_name)
-            response = urlopen(url)
-            data = response.read()
-        except ValueError:
-            url = urljoin('file://', getattr(settings, 'CSV_ROOT', None))
-            url = urljoin(url, self.file_name)
-            response = urlopen(url)
-            data = response.read()
+            data = get_file_data(self.file_name)
+            #url = urljoin(getattr(settings, 'CSV_ROOT', None), self.file_name)
+            #response = urlopen(url)
+            #data = response.read()
+        #except ValueError:
+            #url = urljoin('file://', getattr(settings, 'CSV_ROOT', None))
+            #url = urljoin(url, self.file_name)
+            #response = urlopen(url)
+            #data = response.read()
         except Exception as err:
             data = "Error {}: {}".format(err.errno, err.reason)
 

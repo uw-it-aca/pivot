@@ -71,53 +71,53 @@ class CsvDataApiTest(TestCase):
     def tearDown(self):
         self.user.delete()
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_major_course_path(self):
         self._major_course()
 
-    @override_settings(CSV_ROOT=TEST_CSV_URL)
+    @override_settings(MEDIA_ROOT=TEST_CSV_URL)
     def test_major_course_url(self):
         self._major_course()
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_data_map_path(self):
         self._data_map()
 
-    @override_settings(CSV_ROOT=TEST_CSV_URL)
+    @override_settings(MEDIA_ROOT=TEST_CSV_URL)
     def test_data_map_url(self):
         self._data_map()
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_status_lookup_path(self):
         self._status_lookup()
 
-    @override_settings(CSV_ROOT=TEST_CSV_URL)
+    @override_settings(MEDIA_ROOT=TEST_CSV_URL)
     def test_status_lookup_url(self):
         self._status_lookup()
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_student_data_path(self):
         self._student_data()
 
-    @override_settings(CSV_ROOT=TEST_CSV_URL)
+    @override_settings(MEDIA_ROOT=TEST_CSV_URL)
     def test_student_data_url(self):
         self._student_data()
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_major_course_query_parameters(self):
         for test_case in ENDPOINT_TEST_CASES:
             url = '/api/v1/major_course/' + test_case[0]
             response = self.client.get(url)
             self.assertTrue(response.status_code == test_case[1])
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_student_data_query_parameters(self):
         for test_case in ENDPOINT_TEST_CASES:
             url = '/api/v1/student_data/' + test_case[0]
             response = self.client.get(url)
             self.assertTrue(response.status_code == test_case[1])
 
-    @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_major_course(self):
         url = '/api/v1/major_course/'
 
@@ -134,7 +134,7 @@ class CsvDataApiTest(TestCase):
         response_data = response.content
         self.assertTrue(file_data == response_data)
 
-    @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_status_lookup(self):
         url = '/api/v1/status_lookup/'
 
@@ -151,7 +151,7 @@ class CsvDataApiTest(TestCase):
         response_data = response.content
         self.assertTrue(response_data == file_data)
 
-    @override_settings(CSV_ROOT=TEST_CSV_SCRUB_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_SCRUB_PATH)
     def test_scrub_student_data(self):
         url = '/api/v1/student_data/'
 

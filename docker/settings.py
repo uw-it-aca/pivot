@@ -1,10 +1,15 @@
 from .base_settings import *
 import os
 
-if os.getenv('ENV') == 'localdev':
-    DEBUG = True
+MEDIA_ROOT = os.getenv('MEDIA_ROOT', '/csvfiles/')
+if os.getenv('ENV', 'localdev') == 'localdev':
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
 else:
-    DEBUG = False
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_PROJECT_ID = os.getenv('STORAGE_PROJECT_ID', '')
+    GS_BUCKET_NAME = 'pivot-data-files'
+    GS_LOCATION = os.path.join(os.getenv('ENV'), MEDIA_ROOT)
+    GS_CREDENTIALS = 'TODO!'
 
 INSTALLED_APPS += [
     'pivot',
@@ -13,8 +18,6 @@ INSTALLED_APPS += [
     'django_user_agents',
     'compressor',
 ]
-
-CSV_ROOT = os.getenv('CSV_ROOT', '/data')
 
 COMPRESS_ROOT = '/static/'
 
