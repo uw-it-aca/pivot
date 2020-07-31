@@ -62,3 +62,6 @@ elif os.getenv('AUTH', 'NONE') == 'SAML_DJANGO_LOGIN':
     DJANGO_LOGIN_MOCK_SAML['SAML_USERS'][0]['MOCK_ATTRIBUTES']['isMemberOf'] = [
         PIVOT_AUTHZ_GROUPS['access'],
     ]
+
+if os.getenv("ENV", '') == "localdev":
+    DEBUG = True
