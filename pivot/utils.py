@@ -5,6 +5,7 @@ from io import StringIO
 from urllib.error import URLError
 from urllib.parse import urljoin
 from urllib.request import urlopen
+from django.conf import settings
 from django.core.files.storage import default_storage
 
 
@@ -30,10 +31,7 @@ def get_latest_term():
 
 
 def get_quarters_for_file(filename):
-    #data_dir = getattr(settings, 'CSV_ROOT', None)
-    #if data_dir[0:7] == "file://":
-    #    data_dir = data_dir[7:]
-    data_dir = ""  # TODO: fix this fn
+    data_dir = getattr(settings, 'MEDIA_ROOT', None)
     full_paths = glob.glob(data_dir + "*_*qtrs_" + filename)
     file_names = list(map(lambda s: s.split('/')[-1], full_paths))
     terms = set(map(lambda s: s.split('_')[0], file_names))

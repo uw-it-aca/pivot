@@ -27,24 +27,15 @@ class DataFileView(View):
         return HttpResponse(csv)
 
     def _get_csv(self):
-        print(self.file_name)
         try:
             data = get_file_data(self.file_name)
-            #url = urljoin(getattr(settings, 'CSV_ROOT', None), self.file_name)
-            #response = urlopen(url)
-            #data = response.read()
-        #except ValueError:
-            #url = urljoin('file://', getattr(settings, 'CSV_ROOT', None))
-            #url = urljoin(url, self.file_name)
-            #response = urlopen(url)
-            #data = response.read()
         except Exception as err:
             data = "Error {}: {}".format(err.errno, err.reason)
 
         si = StringIO()
         cw = csv.writer(si)
         # csv.reader has to take in string not bytes...
-        csv_reader = csv.reader(data.decode("utf-8").splitlines())
+        csv_reader = csv.reader(data.splitlines())
 
         # csv_data = [line.split(b",") for line in data.splitlines()][0]
         header = [str.lower() for str in next(csv_reader)]

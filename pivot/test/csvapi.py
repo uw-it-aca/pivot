@@ -23,7 +23,7 @@ TEST_CSV_POST_SCRUB_PATH = os.path.join(os.path.dirname(pivot.__file__),
                                         'test',
                                         'test_resources',
                                         'csvfiles/scrub/post_scrub/',)
-TEST_CSV_URL = urljoin('file://', TEST_CSV_PATH)
+TEST_CSV_URL = TEST_CSV_PATH
 
 # Format: (query_str, expected status code)
 ENDPOINT_TEST_CASES = [
