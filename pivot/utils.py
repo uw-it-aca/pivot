@@ -10,15 +10,16 @@ from django.core.files.storage import default_storage
 
 
 def get_file_data(filename):
-    f = default_storage.open(filename, 'r')
+    f = default_storage.open(filename, "r")
     data = f.read()
     f.close()
     return data
 
 
 def get_latest_term():
-    student_data_term_set =\
-        get_quarters_for_file("student_data_all_majors.csv")
+    student_data_term_set = get_quarters_for_file(
+        "student_data_all_majors.csv"
+    )
     major_course_term_set = get_quarters_for_file("majors_and_courses.csv")
     term_set = student_data_term_set.intersection(major_course_term_set)
     newest_term = next(iter(term_set))
@@ -31,10 +32,10 @@ def get_latest_term():
 
 
 def get_quarters_for_file(filename):
-    data_dir = getattr(settings, 'MEDIA_ROOT', None)
+    data_dir = getattr(settings, "MEDIA_ROOT", None)
     full_paths = glob.glob(data_dir + "*_*qtrs_" + filename)
-    file_names = list(map(lambda s: s.split('/')[-1], full_paths))
-    terms = set(map(lambda s: s.split('_')[0], file_names))
+    file_names = list(map(lambda s: s.split("/")[-1], full_paths))
+    terms = set(map(lambda s: s.split("_")[0], file_names))
     return terms
 
 
@@ -45,10 +46,10 @@ def is_more_recent(new_term, old_term):
     except ValueError:
         print("Filename is not properly formatted")
 
-    if (new_year > old_year):
+    if new_year > old_year:
         return True
 
-    if (new_year < old_year):
+    if new_year < old_year:
         return False
 
     QUARTERS = ["wi", "sp", "su", "au"]

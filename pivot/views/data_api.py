@@ -15,10 +15,10 @@ from pivot.utils import get_latest_term, get_file_data
 
 from uw_saml.decorators import group_required
 
-PIVOT_ACCESS_GROUP = settings.PIVOT_AUTHZ_GROUPS['access']
+PIVOT_ACCESS_GROUP = settings.PIVOT_AUTHZ_GROUPS["access"]
 
 
-@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
 class DataFileView(View):
     file_name = None
 
@@ -42,7 +42,7 @@ class DataFileView(View):
         cw.writerow(header)
         # Columns we have to scrub out an & (note double quotes are included)
         # because thats how it is formatted in the csv files...
-        scrub = ['major_path', 'code', 'key']
+        scrub = ["major_path", "code", "key"]
         check_index = []
         for s in scrub:
             if s in header:
@@ -51,7 +51,7 @@ class DataFileView(View):
         if len(check_index) == 0:
             for row in csv_reader:
                 cw.writerow(row)
-            return si.getvalue().strip('\r\n')
+            return si.getvalue().strip("\r\n")
         else:
             for row in csv_reader:
                 for index in check_index:
@@ -59,10 +59,10 @@ class DataFileView(View):
                     row[index] = row[index].replace("&", "_AND_")
                     row[index] = row[index].replace(":", "_")
                 cw.writerow(row)
-            return si.getvalue().strip('\r\n')
+            return si.getvalue().strip("\r\n")
 
 
-@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
 class DataFileByQuarterView(DataFileView):
     """ Base class for views that take a time period queries
     """
@@ -91,46 +91,57 @@ class DataFileByQuarterView(DataFileView):
         end_quarter = end_quarter.lower()
 
         if end_quarter not in ["au", "wi", "sp", "su"]:
-            return HttpResponseBadRequest("Quarter must be one of 'au',"
-                                          + " 'wi', 'sp', or 'su'")
+            return HttpResponseBadRequest(
+                "Quarter must be one of 'au'," + " 'wi', 'sp', or 'su'"
+            )
 
         num_qtrs = request.GET.get("num_qtrs", "8")
 
         try:
             int(num_qtrs)
         except ValueError:
-            return HttpResponseBadRequest("Number of quarters must be"
-                                          + " an integer")
+            return HttpResponseBadRequest(
+                "Number of quarters must be" + " an integer"
+            )
 
         if int(num_qtrs) < 1:
-            return HttpResponseBadRequest("Number of quarters must be"
-                                          + " at least 1")
+            return HttpResponseBadRequest(
+                "Number of quarters must be" + " at least 1"
+            )
 
-        self.file_name = end_quarter + str(end_year) + "_" + num_qtrs\
-            + "qtrs_" + self.base_file_name
+        self.file_name = (
+            end_quarter
+            + str(end_year)
+            + "_"
+            + num_qtrs
+            + "qtrs_"
+            + self.base_file_name
+        )
 
         try:
             return super(DataFileByQuarterView, self).get(request)
         except URLError:
-            return HttpResponse("There is no data for the"
-                                + " requested time period", status=416)
+            return HttpResponse(
+                "There is no data for the" + " requested time period",
+                status=416,
+            )
 
 
-@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
 class MajorCourse(DataFileByQuarterView):
     base_file_name = "majors_and_courses.csv"
 
 
-@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
 class DataMap(DataFileView):
     file_name = "data_map.csv"
 
 
-@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
 class StudentData(DataFileByQuarterView):
     base_file_name = "student_data_all_majors.csv"
 
 
-@method_decorator(group_required(PIVOT_ACCESS_GROUP), name='dispatch')
+@method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
 class StatusLookup(DataFileView):
     file_name = "status_lookup.csv"
