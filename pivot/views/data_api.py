@@ -29,8 +29,8 @@ class DataFileView(View):
     def _get_csv(self):
         try:
             data = get_file_data(self.file_name)
-        except Exception as err:
-            data = "Error {}: {}".format(err.errno, err.reason)
+        except FileNotFoundError as err:
+            data = "Error {}: {} not found.".format(err.errno, err.filename)
 
         si = StringIO()
         cw = csv.writer(si)
