@@ -65,3 +65,60 @@ elif os.getenv("AUTH", "NONE") == "SAML_DJANGO_LOGIN":
 
 if os.getenv("ENV", "") == "localdev":
     DEBUG = True
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "[%(asctime)s] [%(levelname)s] [%(module)s] %(message)s",
+            "datefmt": "[%Y-%m-%d %H:%M:%S]",
+        },
+    },
+    "handlers": {
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stdout,
+            "filters": ["stdout_stream"],
+            "formatter": "standard",
+        },
+        "stderr": {
+            "class": "logging.StreamHandler",
+            "stream": sys.stderr,
+            "filters": ["stderr_stream"],
+            "formatter": "standard",
+        },
+        "null": {
+            "class": "logging.NullHandler",
+        },
+    },
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse"
+        },
+        "stdout_stream": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": lambda record: record.levelno <= logging.WARNING
+        },
+        "stderr_stream": {
+            "()": "django.utils.log.CallbackFilter",
+            "callback": lambda record: record.levelno >= logging.ERROR
+        }
+    },
+    "loggers": {
+        "django.security.DisallowedHost": {
+            "handlers": ["null"],
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["stderr"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+        "pivot": {
+            "handlers": ["stdout"],
+            "level": "INFO",
+            "propagate": True,
+        },
+    }
+}
