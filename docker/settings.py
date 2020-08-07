@@ -1,7 +1,7 @@
 from .base_settings import *
 import os
 
-MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/csvfiles/")
+MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/app/data/")
 if os.getenv("ENV", "localdev") == "localdev":
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 else:
