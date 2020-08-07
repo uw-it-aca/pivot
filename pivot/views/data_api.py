@@ -92,7 +92,7 @@ class DataFileByQuarterView(DataFileView):
 
         if end_quarter not in ["au", "wi", "sp", "su"]:
             return HttpResponseBadRequest(
-                "Quarter must be one of 'au'," + " 'wi', 'sp', or 'su'"
+                "Quarter must be one of 'au', 'wi', 'sp', or 'su'"
             )
 
         num_qtrs = request.GET.get("num_qtrs", "8")
@@ -101,12 +101,12 @@ class DataFileByQuarterView(DataFileView):
             int(num_qtrs)
         except ValueError:
             return HttpResponseBadRequest(
-                "Number of quarters must be" + " an integer"
+                "Number of quarters must be an integer"
             )
 
         if int(num_qtrs) < 1:
             return HttpResponseBadRequest(
-                "Number of quarters must be" + " at least 1"
+                "Number of quarters must be at least 1"
             )
 
         self.file_name = (
