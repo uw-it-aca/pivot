@@ -16,6 +16,7 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
                              'test_resources',
                              'csvfiles/',)
 
+
 class UtilsTest(TestCase):
     @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_get_latest_term(self):

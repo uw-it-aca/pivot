@@ -1,6 +1,7 @@
 import csv
 import os
 from io import StringIO
+from logging import getLogger
 from urllib.error import URLError
 from urllib.parse import urljoin
 from urllib.request import urlopen
@@ -15,6 +16,7 @@ from pivot.utils import get_latest_term, get_file_data
 
 from uw_saml.decorators import group_required
 
+logger = getLogger(__name__)
 PIVOT_ACCESS_GROUP = settings.PIVOT_AUTHZ_GROUPS["access"]
 
 
@@ -23,14 +25,15 @@ class DataFileView(View):
     file_name = None
 
     def get(self, request):
-        csv = self._get_csv()
-        return HttpResponse(csv)
+        try:
+            return HttpResponse(self._get_csv())
+        except FileNotFoundError as err:
+            logger.warning(
+                "Error {}: {} not found.".format(err.errno, err.filename))
+            return HttpResponse("Data not available", status=416)
 
     def _get_csv(self):
-        try:
-            data = get_file_data(self.file_name)
-        except FileNotFoundError as err:
-            data = "Error {}: {} not found.".format(err.errno, err.filename)
+        data = get_file_data(self.file_name)
 
         si = StringIO()
         cw = csv.writer(si)
@@ -122,7 +125,7 @@ class DataFileByQuarterView(DataFileView):
             return super(DataFileByQuarterView, self).get(request)
         except URLError:
             return HttpResponse(
-                "There is no data for the" + " requested time period",
+                "There is no data for the requested time period",
                 status=416,
             )
 
