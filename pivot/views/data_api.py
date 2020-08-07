@@ -2,9 +2,6 @@ import csv
 import os
 from io import StringIO
 from logging import getLogger
-from urllib.error import URLError
-from urllib.parse import urljoin
-from urllib.request import urlopen
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
