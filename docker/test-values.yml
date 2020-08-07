@@ -51,7 +51,7 @@ environmentVariables:
   - name: CLUSTER_CNAME
     value: test.pivot.uw.edu
   - name: PIVOT_ACCESS_GROUP
-    value: ''
+    value: 'u_acadev_pivot-test-access'
 externalSecrets:
   enabled: true
   secrets:
