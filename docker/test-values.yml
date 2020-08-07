@@ -62,6 +62,10 @@ externalSecrets:
           property: django-secret
         - name: google-analytics-key
           property: google-analytics-key
+        - name: storage-project-id
+          property: storage-project-id
+        - name: storage-bucket-name
+          property: storage-bucket-name
     - name: test.pivot.uw.edu-sql-secrets
       externalKey: axdd/kv/data/pivot/test/sql-secrets
       data:
@@ -88,6 +92,14 @@ environmentVariablesSecrets:
     name: GOOGLE_ANALYTICS_KEY
     secretName: test.pivot.uw.edu-secrets
     secretKey: google-analytics-key
+  storageProjectId:
+    name: STORAGE_PROJECT_ID
+    secretName: test.pivot.uw.edu-secrets
+    secretKey: storage-project-id
+  storageBucketName:
+    name: STORAGE_BUCKET_NAME
+    secretName: test.pivot.uw.edu-secrets
+    secretKey: storage-bucket-name
   samlSPCert:
     name: SP_CERT
     secretName: test.pivot.uw.edu-ic-certs
