@@ -39,6 +39,9 @@ image:
   tag: IMAGE_TAG
 memcached:
   enabled: false
+gcsCredentials:
+  mounted: true
+  secretName: test.pivot.uw.edu-gc-service-credentials
 cronjob:
   enabled: false
 environmentVariables:
