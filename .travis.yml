@@ -32,7 +32,7 @@ after_success:
 - |
     if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       case "$TRAVIS_BRANCH" in
-        "qa")
+        "mcitest")
           export APP_INSTANCE="test";
           ;;
         *)
