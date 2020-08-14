@@ -1,2 +1,2 @@
-pip install psychopg2
+pip install psycopg2
 -e .
