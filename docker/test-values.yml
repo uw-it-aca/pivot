@@ -25,7 +25,7 @@ externalService:
   enabled: true
   name: pivot-db-service
   type: ClusterIP
-  serviceAddress: 35.199.163.161
+  serviceAddress: 172.18.1.52
   servicePort: 5432
 database:
   engine: postgres
