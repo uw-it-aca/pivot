@@ -1,15 +1,15 @@
 from .base_settings import *
 import os
 
-MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/app/data/")
 if os.getenv("ENV", "localdev") == "localdev":
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+    MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/app/data/")
 else:
     DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     GS_PROJECT_ID = os.getenv("STORAGE_PROJECT_ID", "")
     GS_BUCKET_NAME = os.getenv("STORAGE_BUCKET_NAME", "")
     GS_CREDENTIALS = os.getenv("STORAGE_CREDENTIALS", "")
-    GS_LOCATION = os.path.join(os.getenv("ENV"), MEDIA_ROOT)
+    GS_LOCATION = os.path.join(os.getenv("ENV"), "csvfiles")
 
 INSTALLED_APPS += [
     "pivot",
