@@ -1,6 +1,7 @@
 import csv
 import glob
 import os
+import re
 from io import StringIO
 from urllib.error import URLError
 from urllib.parse import urljoin
@@ -32,10 +33,13 @@ def get_latest_term():
 
 
 def get_quarters_for_file(filename):
+    terms = set()
     data_dir = getattr(settings, "MEDIA_ROOT", None)
-    full_paths = glob.glob(data_dir + "*_*qtrs_" + filename)
-    file_names = list(map(lambda s: s.split("/")[-1], full_paths))
-    terms = set(map(lambda s: s.split("_")[0], file_names))
+    for item in default_storage.listdir(data_dir):
+        for fname in item:
+            match = re.match(r'^(.+?)_.*{0}$'.format(filename), fname)
+            if match:
+                terms.add(match.group(1))
     return terms
 
 
