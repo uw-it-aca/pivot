@@ -15,7 +15,6 @@ ADD --chown=acait:acait docker/ project/
 RUN . /app/bin/activate && pip install nodeenv && nodeenv -p &&\
     npm install -g npm && ./bin/npm install less -g
 
-RUN . /app/bin/activate && python manage.py test
 RUN . /app/bin/activate && python manage.py collectstatic --noinput &&\
     python manage.py compress -f
 
