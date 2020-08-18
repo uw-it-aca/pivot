@@ -19,7 +19,6 @@ setup(
         'Django>=2.0.13,<2.1',
         'django-compressor',
         'django-templatetag-handlebars',
-        'django-prometheus',
         'django-user-agents',
         'django-storages[google]',
         'UW-Django-SAML2<2.0',
@@ -27,9 +26,9 @@ setup(
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
     long_description=README,
-    url='http://www.example.com/',
-    author='Your Name',
-    author_email='yourname@example.com',
+    url='https://github.com/uw-it-aca/pivot',
+    author='"UW-IT AXDD"',
+    author_email='aca-it@uw.edu',
     classifiers=[
         'Environment :: Web Environment',
         'Framework :: Django',
