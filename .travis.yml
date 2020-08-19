@@ -32,6 +32,9 @@ after_success:
 - |
     if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       case "$TRAVIS_BRANCH" in
+        "master")
+          export APP_INSTANCE="prod";
+          ;;
         "feature/google-cloud-storage")
           export APP_INSTANCE="test";
           ;;
