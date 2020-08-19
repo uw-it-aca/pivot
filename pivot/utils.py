@@ -1,20 +1,36 @@
-import csv
-import glob
-import os
 import re
+import csv
 from io import StringIO
-from urllib.error import URLError
-from urllib.parse import urljoin
-from urllib.request import urlopen
 from django.conf import settings
 from django.core.files.storage import default_storage
 
 
 def get_file_data(filename):
-    f = default_storage.open(filename, "r")
-    data = f.read()
-    f.close()
-    return data
+    si = StringIO()
+    writer = csv.writer(si)
+    with default_storage.open(filename, mode="rt") as csvfile:
+        # csv.reader has to take in string not bytes
+        reader = csv.reader(csvfile)
+
+        header = [s.lower() for s in next(reader)]
+        writer.writerow(header)
+
+        # Columns we have to scrub out an & (note double quotes are included)
+        # because thats how it is formatted in the csv files
+        check_index = []
+        for s in ["major_path", "code", "key"]:
+            if s in header:
+                check_index.append(header.index(s))
+
+        for row in reader:
+            if len(check_index):
+                for index in check_index:
+                    row[index] = row[index].replace(" ", "-")
+                    row[index] = row[index].replace("&", "_AND_")
+                    row[index] = row[index].replace(":", "_")
+            writer.writerow(row)
+
+    return si.getvalue().strip("\r\n")
 
 
 def get_latest_term():
