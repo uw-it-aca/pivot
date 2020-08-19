@@ -55,8 +55,6 @@ environmentVariables:
     value: test.pivot.uw.edu
   - name: PIVOT_ACCESS_GROUP
     value: 'u_acadev_pivot-test-access'
-  - name: STORAGE_CREDENTIALS
-    value: /gcs/credentials.json
 externalSecrets:
   enabled: true
   secrets:

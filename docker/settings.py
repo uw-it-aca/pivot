@@ -1,4 +1,5 @@
 from .base_settings import *
+from google.oauth2 import service_account
 import os
 
 if os.getenv("ENV", "localdev") == "localdev":
@@ -8,8 +9,9 @@ else:
     DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
     GS_PROJECT_ID = os.getenv("STORAGE_PROJECT_ID", "")
     GS_BUCKET_NAME = os.getenv("STORAGE_BUCKET_NAME", "")
-    GS_CREDENTIALS = os.getenv("STORAGE_CREDENTIALS", "")
     GS_LOCATION = os.path.join(os.getenv("ENV"), "csvfiles")
+    GS_CREDENTIALS = service_account.Credentials.from_service_account_file(
+        "/gcs/credentials.json")
 
 INSTALLED_APPS += [
     "pivot",
