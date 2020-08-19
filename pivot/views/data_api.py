@@ -1,8 +1,5 @@
-import csv
-import os
-from io import StringIO
 from logging import getLogger
-
+from urllib.error import URLError
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
@@ -23,43 +20,11 @@ class DataFileView(View):
 
     def get(self, request):
         try:
-            return HttpResponse(self._get_csv())
+            return HttpResponse(get_file_data(self.file_name))
         except FileNotFoundError as err:
             logger.warning(
                 "Error {}: {} not found.".format(err.errno, err.filename))
             return HttpResponse("Data not available", status=416)
-
-    def _get_csv(self):
-        data = get_file_data(self.file_name)
-
-        si = StringIO()
-        cw = csv.writer(si)
-        # csv.reader has to take in string not bytes...
-        csv_reader = csv.reader(data.splitlines())
-
-        # csv_data = [line.split(b",") for line in data.splitlines()][0]
-        header = [str.lower() for str in next(csv_reader)]
-        cw.writerow(header)
-        # Columns we have to scrub out an & (note double quotes are included)
-        # because thats how it is formatted in the csv files...
-        scrub = ["major_path", "code", "key"]
-        check_index = []
-        for s in scrub:
-            if s in header:
-                check_index.append(header.index(s))
-
-        if len(check_index) == 0:
-            for row in csv_reader:
-                cw.writerow(row)
-            return si.getvalue().strip("\r\n")
-        else:
-            for row in csv_reader:
-                for index in check_index:
-                    row[index] = row[index].replace(" ", "-")
-                    row[index] = row[index].replace("&", "_AND_")
-                    row[index] = row[index].replace(":", "_")
-                cw.writerow(row)
-            return si.getvalue().strip("\r\n")
 
 
 @method_decorator(group_required(PIVOT_ACCESS_GROUP), name="dispatch")
