@@ -1,6 +1,5 @@
 import re
 import csv
-import codecs
 from io import StringIO
 from django.conf import settings
 from django.core.files.storage import default_storage
