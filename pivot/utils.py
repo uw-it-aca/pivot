@@ -8,9 +8,12 @@ from django.core.files.storage import default_storage
 def get_file_data(filename):
     out = StringIO()
     writer = csv.writer(out)
-    with default_storage.open(filename, mode="rt") as csvfile:
+    with default_storage.open(filename, mode="r") as csvfile:
         # csv.reader has to take in string not bytes
-        reader = csv.reader(StringIO(csvfile.read()))
+        try:
+            reader = csv.reader(csvfile.read().decode("utf-8"))
+        except AttributeError:
+            reader = csv.reader(csvfile)
 
         header = [s.lower() for s in next(reader)]
         writer.writerow(header)
