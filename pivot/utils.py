@@ -6,11 +6,11 @@ from django.core.files.storage import default_storage
 
 
 def get_file_data(filename):
-    si = StringIO()
-    writer = csv.writer(si)
+    out = StringIO()
+    writer = csv.writer(out)
     with default_storage.open(filename, mode="rt") as csvfile:
         # csv.reader has to take in string not bytes
-        reader = csv.reader(csvfile)
+        reader = csv.reader(StringIO(csvfile.read()))
 
         header = [s.lower() for s in next(reader)]
         writer.writerow(header)
@@ -30,7 +30,7 @@ def get_file_data(filename):
                     row[index] = row[index].replace(":", "_")
             writer.writerow(row)
 
-    return si.getvalue().strip("\r\n")
+    return out.getvalue().strip("\r\n")
 
 
 def get_latest_term():
