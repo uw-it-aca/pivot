@@ -11,7 +11,7 @@ def get_file_data(filename):
     with default_storage.open(filename, mode="r") as csvfile:
         # csv.reader has to take in string not bytes
         try:
-            reader = csv.reader(csvfile.read().decode("utf-8"))
+            reader = csv.reader(csvfile.read().decode("utf-8").splitlines())
         except AttributeError:
             reader = csv.reader(csvfile)
 
