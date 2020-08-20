@@ -1,0 +1,125 @@
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 4
+targetAverageUtilization: 100
+resources:
+  limits:
+    cpu: 1.0
+    memory: 1280Mi
+  requests:
+    cpu: 256m
+    memory: 1024Mi
+ingress:
+  enabled: true
+  tls:
+    pivot:
+      secretName: prod.pivot.uw.edu-ingress-cert
+      hosts:
+        - prod.pivot.uw.edu
+  hosts:
+    pivot:
+      host: prod.pivot.uw.edu
+      paths:
+        - "/"
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/ssl-ciphers: "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256"
+lifecycle:
+  enabled: true
+  preStop:
+    enabled: true
+affinity:
+   podsSpanNodes: true
+readiness:
+  enabled: true
+externalService:
+  enabled: true
+  name: pivot-db-service
+  type: ClusterIP
+  serviceAddress: 172.18.1.52
+  servicePort: 5432
+database:
+  engine: postgres
+  name: pivot-prod
+  hostname: pivot-db-service
+  secretName: pivot.uw.edu-sql-secrets
+repo: pivot
+instance: prod
+image:
+  repository: registry.hub.docker.com/acait/pivot
+  tag: IMAGE_TAG
+memcached:
+  enabled: false
+gcsCredentials:
+  mounted: true
+  secretName: pivot.uw.edu-gc-service-credentials
+cronjob:
+  enabled: false
+environmentVariables:
+  - name: ENV
+    value: prod
+  - name: AUTH
+    value: SAML
+  - name: SAML_ENTITY_ID
+    value: https://prod.pivot.uw.edu/saml2
+  - name: CLUSTER_CNAME
+    value: prod.pivot.uw.edu
+  - name: PIVOT_ACCESS_GROUP
+    value: 'u_acadev_pivot-test-access'
+externalSecrets:
+  enabled: true
+  secrets:
+    - name: pivot.uw.edu-secrets
+      externalKey: axdd/kv/data/pivot/prod/secrets
+      data:
+        - name: django-secret
+          property: django-secret
+        - name: google-analytics-key
+          property: google-analytics-key
+        - name: storage-project-id
+          property: storage-project-id
+        - name: storage-bucket-name
+          property: storage-bucket-name
+    - name: pivot.uw.edu-sql-secrets
+      externalKey: axdd/kv/data/pivot/prod/sql-secrets
+      data:
+        - name: username
+          property: username
+        - name: password
+          property: password
+    - name: pivot.uw.edu-ic-certs
+      externalKey: axdd/kv/data/pivot/prod/ic-certs
+      data:
+        - name: prod.pivot.uw.edu-ic.cert
+          property: prod.pivot.uw.edu-ic.cert
+    - name: pivot.uw.edu-uw-idp-cert
+      externalKey: axdd/kv/data/idp-cert
+      data:
+        - name: uw-idp-cert
+          property: cert
+environmentVariablesSecrets:
+  djangoSecret:
+    name: DJANGO_SECRET
+    secretName: pivot.uw.edu-secrets
+    secretKey: django-secret
+  googleAnalyticsKey:
+    name: GOOGLE_ANALYTICS_KEY
+    secretName: pivot.uw.edu-secrets
+    secretKey: google-analytics-key
+  storageProjectId:
+    name: STORAGE_PROJECT_ID
+    secretName: pivot.uw.edu-secrets
+    secretKey: storage-project-id
+  storageBucketName:
+    name: STORAGE_BUCKET_NAME
+    secretName: pivot.uw.edu-secrets
+    secretKey: storage-bucket-name
+  samlSPCert:
+    name: SP_CERT
+    secretName: pivot.uw.edu-ic-certs
+    secretKey: prod.pivot.uw.edu-ic.cert
+  samlIDPCert:
+    name: IDP_CERT
+    secretName: pivot.uw.edu-uw-idp-cert
+    secretKey: uw-idp-cert
