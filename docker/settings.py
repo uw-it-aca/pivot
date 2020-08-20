@@ -29,10 +29,10 @@ COMPRESS_OFFLINE = True
 
 STATICFILES_FINDERS += ("compressor.finders.CompressorFinder",)
 
-TEMPLATES[0]["OPTIONS"]["context_processors"].append(
+TEMPLATES[0]["OPTIONS"]["context_processors"].extend([
     "pivot.context_processors.support_email",
     "pivot.context_processors.google_analytics"
-)
+])
 
 GOOGLE_ANALYTICS_KEY = os.getenv("GOOGLE_ANALYTICS_KEY", " ")
 
