@@ -69,6 +69,8 @@ externalSecrets:
           property: storage-project-id
         - name: storage-bucket-name
           property: storage-bucket-name
+        - name: support-email
+          property: support-email
     - name: test.pivot.uw.edu-sql-secrets
       externalKey: axdd/kv/data/pivot/test/sql-secrets
       data:
@@ -103,6 +105,10 @@ environmentVariablesSecrets:
     name: STORAGE_BUCKET_NAME
     secretName: test.pivot.uw.edu-secrets
     secretKey: storage-bucket-name
+  supportEmailAddress:
+    name: SUPPORT_EMAIL
+    secretName: test.pivot.uw.edu-secrets
+    secretKey: support-email
   samlSPCert:
     name: SP_CERT
     secretName: test.pivot.uw.edu-ic-certs

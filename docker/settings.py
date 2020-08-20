@@ -30,6 +30,7 @@ COMPRESS_OFFLINE = True
 STATICFILES_FINDERS += ("compressor.finders.CompressorFinder",)
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].append(
+    "pivot.context_processors.support_email",
     "pivot.context_processors.google_analytics"
 )
 
@@ -50,6 +51,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "")
 PIVOT_AUTHZ_GROUPS = {
     "access": os.getenv("PIVOT_ACCESS_GROUP", "u_test_access")
 }
