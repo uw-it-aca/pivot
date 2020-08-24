@@ -35,7 +35,7 @@ after_success:
         "master")
           export APP_INSTANCE="prod";
           ;;
-        "feature/google-cloud-storage")
+        "qa")
           export APP_INSTANCE="test";
           ;;
         *)
