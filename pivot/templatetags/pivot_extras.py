@@ -1,4 +1,5 @@
 from django import template
+from django.conf import settings
 from pivot.utils import get_latest_term, get_quarters_for_file, is_more_recent
 
 register = template.Library()
@@ -22,3 +23,9 @@ def year_select_tab(num_qtrs):
             </span>
         </a>
     """.format(num_qtrs, num_years, qtr, start_year, end_year)
+
+
+# get settings value
+@register.simple_tag
+def get_settings_value(name):
+    return getattr(settings, name)

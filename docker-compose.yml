@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  app:
+    restart: always
+    container_name: pivot
+    build:
+      context: .
+    volumes:
+      - ./pivot:/app/pivot
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      ENV: localdev
+      AUTH: ${AUTH:-SAML_DJANGO_LOGIN}
+      DJANGO_LOGIN_USERNAME: ${DJANGO_LOGIN_USERNAME:-javerage}
+      DJANGO_LOGIN_PASSWORD: ${DJANGO_LOGIN_PASSWORD:-javerage}
+      DJANGO_LOGIN_EMAIL: ${DJANGO_LOGIN_EMAIL:-javerage@uw.edu}
