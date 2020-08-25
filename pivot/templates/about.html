@@ -20,8 +20,6 @@
 					A: Pivot is an academic planning tool that shows the median cumulative GPA for declared majors. You can also view the most commonly taken courses for each UW degree program and the median grade received for declared majors in these courses.
 					</p>
 					<p class="faq-chunk"><span class="faq-q">Q: How is the data gathered and processed?</span><br>
-					A: Data on course grades and cumulative GPA comes from UW databases.
-					</p>
 					<p class="faq-chunk"><span class="faq-q">Q: How far back does the data go?</span><br>
 					A: Pivot uses data from autumn quarter 2012 to autumn quarter 2017.
 					</p>
@@ -43,7 +41,7 @@
 				<h2 id="data-viz">Data visualization</h2>
 				<p>Grade data is visualized using a boxplot. Below is a guide to understanding boxplots.</p>
 
-				<section id="boxplot-legend"> <img src="{% static "pivot/img/boxplot-legend-wide.png" %}"  style="border:#ddd 1px solid;margin: 1em 0;" alt="an example of Boxplot indicating the range from the lower quartile to the upper quartile that 50% of GPAs fall in. The median GPA is the midpoint of this range.">
+				<section id="boxplot-legend"> <img id="boxplot-image" src="{% static "pivot/img/boxplot-legend-wide.png" %}" alt="an example of Boxplot indicating the range from the lower quartile to the upper quartile that 50% of GPAs fall in. The median GPA is the midpoint of this range.">
 				</section>
 				<p>
 					<dfn>Boxplot</dfn> : A boxplot is a visualization that divides a dataset into four equal parts, minus the outliers*. Half of the data is included in the two boxes in the center of the diagram and the remaining half of the data fall in the two whiskers.
