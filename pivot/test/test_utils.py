@@ -18,19 +18,19 @@ TEST_CSV_PATH = os.path.join(os.path.dirname(pivot.__file__),
 
 
 class UtilsTest(TestCase):
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_get_latest_term(self):
         self.assertEquals(get_latest_term(), 'au12')
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_is_more_recent_true(self):
         self.assertTrue(is_more_recent('au19', 'au18'))
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_is_more_recent_false(self):
         self.assertFalse(is_more_recent('au18', 'au19'))
 
-    @override_settings(CSV_ROOT=TEST_CSV_PATH)
+    @override_settings(MEDIA_ROOT=TEST_CSV_PATH)
     def test_pivot_extras(self):
         template = """
         <a href=".?num_qtrs=8&end_yr=12&end_qtr=AU">
