@@ -103,7 +103,7 @@ externalSecrets:
     - name: pivot.uw.edu-gc-service-credentials
       externalKey: axdd/kv/data/prod/gc-service-credentials
       data:
-        - name: pivot.uw.edu-gc-service-credentials
+        - name: credentials.json
         - property: credentials.json
 environmentVariablesSecrets:
   djangoSecret:
