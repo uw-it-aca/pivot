@@ -104,7 +104,7 @@ externalSecrets:
       externalKey: axdd/kv/data/prod/gc-service-credentials
       data:
         - name: credentials.json
-        - property: credentials.json
+          property: credentials.json
 environmentVariablesSecrets:
   djangoSecret:
     name: DJANGO_SECRET
