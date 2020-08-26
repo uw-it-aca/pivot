@@ -14,12 +14,12 @@ ingress:
   enabled: true
   tls:
     pivot:
-      secretName: prod.pivot.uw.edu-ingress-cert
+      secretName: pivot.uw.edu-ingress-cert
       hosts:
-        - prod.pivot.uw.edu
+        - pivot.uw.edu
   hosts:
     pivot:
-      host: prod.pivot.uw.edu
+      host: pivot.uw.edu
       paths:
         - "/"
   annotations:
@@ -62,9 +62,9 @@ environmentVariables:
   - name: AUTH
     value: SAML
   - name: SAML_ENTITY_ID
-    value: https://prod.pivot.uw.edu/saml2
+    value: https://pivot.uw.edu/shibboleth
   - name: CLUSTER_CNAME
-    value: prod.pivot.uw.edu
+    value: pivot.uw.edu
   - name: PIVOT_ACCESS_GROUP
     value: 'u_acadev_pivot-prod-access'
 externalSecrets:
@@ -93,8 +93,8 @@ externalSecrets:
     - name: pivot.uw.edu-ic-certs
       externalKey: axdd/kv/data/pivot/prod/ic-certs
       data:
-        - name: prod.pivot.uw.edu-ic.cert
-          property: prod.pivot.uw.edu-ic.cert
+        - name: pivot.uw.edu-ic.cert
+          property: pivot.uw.edu-ic.cert
     - name: pivot.uw.edu-uw-idp-cert
       externalKey: axdd/kv/data/idp-cert
       data:
@@ -129,7 +129,7 @@ environmentVariablesSecrets:
   samlSPCert:
     name: SP_CERT
     secretName: pivot.uw.edu-ic-certs
-    secretKey: prod.pivot.uw.edu-ic.cert
+    secretKey: pivot.uw.edu-ic.cert
   samlIDPCert:
     name: IDP_CERT
     secretName: pivot.uw.edu-uw-idp-cert
