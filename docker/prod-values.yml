@@ -124,7 +124,7 @@ environmentVariablesSecrets:
     secretKey: storage-bucket-name
   supportEmailAddress:
     name: SUPPORT_EMAIL
-    secretName: test.pivot.uw.edu-secrets
+    secretName: pivot.uw.edu-secrets
     secretKey: support-email
   samlSPCert:
     name: SP_CERT
