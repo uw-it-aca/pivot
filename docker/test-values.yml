@@ -88,6 +88,11 @@ externalSecrets:
       data:
         - name: uw-idp-cert
           property: cert
+    - name: test.pivot.uw.edu-gc-service-credentials
+      externalKey: axdd/kv/data/test/gc-service-credentials
+      data:
+        - name: credentials.json
+        - property: credentials.json
 environmentVariablesSecrets:
   djangoSecret:
     name: DJANGO_SECRET
