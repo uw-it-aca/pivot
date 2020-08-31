@@ -1,56 +1,53 @@
 sudo: required
 language: python
 python:
-  - "3.6"
+- '3.6'
 services:
-  - docker
+- docker
 os:
-  - linux
+- linux
 env:
   global:
-    - RELEASE_NAME="pivot"
-    - DJANGO_APP="pivot"
-    - COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
-    - IMAGE_TAG="${RELEASE_NAME}:${COMMIT_HASH}"
-    - DEPLOY_SCRIPT_BASE=https://raw.githubusercontent.com/uw-it-aca/gcp-app-deploy/master
+  - RELEASE_NAME="pivot"
+  - DJANGO_APP="pivot"
+  - COMMIT_HASH="$(git rev-parse --short=7 HEAD)"
+  - IMAGE_TAG="${RELEASE_NAME}:${COMMIT_HASH}"
+  - DEPLOY_SCRIPT_BASE=https://raw.githubusercontent.com/uw-it-aca/gcp-app-deploy/master
+  - secure: cKNJ2TyBV6/79CxwnRmff4LslwStErNAYIhoqx4eO9y+Tk3eM+JP9qCHLaY+t6W2zQo/a98n7dxjVv8zod9ka9hHjg8ZFdhEdhFYF4prtG2Dv8bQqlHJPb38w6Zj33a/ivEk4FpsHs2mQ3DJ6BaKROGQNUMsDmBlGz8zl1AN8p5/jfQFS9rY2SyrdHUvPD7d75mKZQEnAon4d7jlDG1r8Bjvd1JZPjKuGKlJ1YUvd5XsfPccUAhWydHjAKRjwAH3ZIsqkaiwEDWaCnl/PhkzG+eWzODE+TEMXmNlmORTTFfsce+mToN7r8/XsO9Myh3YGoMt+PsQnHKrDgM85LD7liNZakgGbqIaBQZiGKi8wSnreGh/wODxXivk1qaalJUz6M93IBIcjy5/qkEpefXv4gHFu+FnSwMFIjAWoz4cAl6YbwrMxFrp999k14Ls3e6qF5V4tJbrmwOMU4Xm4gN9CVLPXtVa0pZPLvMaXaYTGm8w8bH633cQaerf5CPp/VCOxN67O7y39fWs5WCbH55XY0nVKVUcuazI7rwVWVy10nZ2xkH1JdXojx72jm1YxuLxWQL6DoyGZp47L+vwwd/nifdRRFbvfAEN91qVvgT6vp+yL3hDOka9YT3PaznsaTzuNQpd9047hgZZw+oJV4Wss6gwYEEtKrCTTY6NtXzvTf8=
+  - secure: vm1PxlIktPSSp/d4skgh4mq2Bq1m+AoA1qYMRrpi87GU/pzktNgqmkgWQODl+e7SZbZjB5vf7PmHWtESTE0XF7FWHvtHqDb/m6yJwKUYCwdrAnpq90dAcV9vb12fmrALsQVBfCmtRPeAoLVkTTa/YBU5iYCn2g4vIOxqVvM31WeKRdK+cAcnVPqNbdk10BP1qnX7WiKe1KaemEjtfiZZVhyVa4nevXEcBx/JLVFnNZrsfJJgGbDLen9qewYWu59oEl5DqYnIw/U5hbHbeccg/e2jj2LJVOpvUDPobtJQnC90aU6kfWj4U2WSkW2V2w8oegqtnzho5JoqPcpYwtRnxetxcj5pyvo3yR2wcv4hKJxkpqSdQtYC/m+5ls4r/T42B+jxL50m8aKok1BLNT9VnAxRn6NPeZvCegrH9u3QuI/s3LEgZ0yFuL9mXsvxpCC8MaGfXfiTg7SbhkcBAJ7NXM8SbjJr2jnqbMi/W3cXicKFSFg9plRk9p/KiRKp0S7sDJRb68GU5JdO9YNcKn2zOaHULe2EoIdZl9C+0buvNoLAv004GM1kCQVEDkyd6HZkqLwOd+5jOfKcBTxzzKBZqzA6nAP/iovGGeZLSOW/dTvf4pKhJjQYFSv4Sv/titHLCaoblhUfVMlYXFkD41AFnZDOhF6A2kjnWYckpnfjn/I=
+  - secure: Z0JKVPHBFx7UabRS6h+PV09IJm5aBjPRQ3cBsB/4hNZGkUlgCZl4m0pbETYQL5TBUB+oSGED3pdswwOOSWQ8YWAIYuFaS36OoZcd+mheoxYaDSGv4MnSNJ/YDr25pxgDf4EFSKUpUTmUBB0oAoxbAO4+MJU4+XvU/nmULgtoiGx3/t+INozik5ifAhCsBj7bse8iYdZAuFONCZnLmVciZEw7sxsKT46cuC5fjmFzzaoCy/j1UrtJi8mi/GA4X2CZ80v3FcS53lnyNMjAQQssX4dh2/U1gTBa3Zi/cy9gB/bydgs7XsJUnfkjqZcM+Paagso9+02g5Cv+xzAaSJlqkBlV2qC2o4itr69+nLvyWSbXC5mWev+2cQimjanRjILU2WiYKilcMFQ7nKctaiD+AkLimQxIkeifVB5KJMHJjUvJzo3LaMQ/0kN+B9eUOOxhFJJQhPcher8glLI3rHMvkp6XAVJsGVH+lk7TyOA6Lgnbl18G7XFHsA23IUcaBbbvl2yfGaXd/uRVxlfw/QPaDcyz1/Dei6OiCCihTxzt2VlQNfKrGrcFqSehFPVTDqD/iy+jAkjUhUktFHV7cTrvdZwTstAYHQJnN+meTJpPmeyNfZaYb0JBEOHhwzOHd0EjT31PyRE+d5wZrcqN7W2FjX+CLLi/RXVUSNjyyzVmS/I=
 install:
-  - docker build -t "$IMAGE_TAG" .
+- docker build --target app-container -t "$IMAGE_TAG" .
+- docker build -t "${IMAGE_TAG}-test" .
 before_script:
-  - pip install coverage
-  - pip install coveralls
+- pip install coverage
+- pip install coveralls
 script:
-  - docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev" -e "AUTH=SAML_MOCK" "$IMAGE_TAG" bash -c ". ./travis-ci/test.sh"
+- docker run -u root -it -v /tmp:/coverage -e DJANGO_APP="$DJANGO_APP" -e "ENV=localdev"
+  -e "AUTH=SAML_MOCK" "${IMAGE_TAG}-test" bash -c ". ./travis-ci/test.sh"
 after_success:
-  - cp /tmp/.coverage* .
-  - coverage combine
-  - coveralls
-  # - |
-  #   if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-  #     case "$TRAVIS_BRANCH" in
-  #       "master")
-  #         export APP_INSTANCE="prod";
-  #         ;;
-  #       "qa")
-  #         export APP_INSTANCE="test";
-  #         ;;
-  #       "develop")
-  #         export APP_INSTANCE="dev";
-  #         ;;
-  #       *)
-  #         unset APP_INSTANCE
-  #         ;;
-  #     esac
-  #     if [[ "$APP_INSTANCE" ]]; then
-  #       curl -Ls ${DEPLOY_SCRIPT_BASE}/travis-ci/deploy.sh | bash;
-  #     fi
-  #   fi
+- cp /tmp/.coverage.* .
+- coverage combine
+- coveralls
+- |
+    if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      case "$TRAVIS_BRANCH" in
+        "master")
+          export APP_INSTANCE="prod";
+          ;;
+        "qa")
+          export APP_INSTANCE="test";
+          ;;
+        *)
+          unset APP_INSTANCE
+          ;;
+      esac
+      if [[ "$APP_INSTANCE" ]]; then
+        curl -Ls ${DEPLOY_SCRIPT_BASE}/travis-ci/deploy.sh | bash;
+      fi
+    fi
+
 cache:
   directories:
-    - "$HOME/helm"
-    - "$HOME/kubeval"
-#notifications:
-#  webhooks:
-#      urls:
-#        - https://yarn.cac.washington.edu/rest/botalyst/v1/travis-ci
-#  slack:
-#        secure: QhQcPJdxvdl5GlPdiewvyMMzDAM5fFB0Db2kRwpDphn8KiyNv2cF1SVeiYaJcQ4fObA7eWgsBXGBd/be8OC/1ujGNncz92bJM5xHePzMxs37hjPFaHuDGH0pnqurQIhRTz6OoWDi2+2OzC3xP1VkpOv0/2ApFjhUkO8S6JodH9A=
+  - "$HOME/helm"
+  - "$HOME/kubeval"
