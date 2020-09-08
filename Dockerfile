@@ -16,5 +16,5 @@ RUN . /app/bin/activate && python manage.py collectstatic --noinput &&\
 
 FROM acait/django-test-container:1.1.3 as app-test-container
 
-COPY --from=0 /app/ /app/
-COPY --from=0 /static/ /static/
+COPY --from=app-container /app/ /app/
+COPY --from=app-container /static/ /static/
