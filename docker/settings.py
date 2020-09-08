@@ -3,6 +3,7 @@ from google.oauth2 import service_account
 import os
 
 if os.getenv("ENV", "localdev") == "localdev":
+    DEBUG = True
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
     MEDIA_ROOT = os.getenv("MEDIA_ROOT", "/app/data/")
 else:
@@ -66,9 +67,6 @@ elif os.getenv("AUTH", "NONE") == "SAML_DJANGO_LOGIN":
     ] = [
         PIVOT_AUTHZ_GROUPS["access"],
     ]
-
-if os.getenv("ENV", "") == "localdev":
-    DEBUG = True
 
 LOGGING = {
     "version": 1,

@@ -21,24 +21,18 @@ affinity:
    podsSpanNodes: true
 readiness:
   enabled: true
-externalService:
-  enabled: true
-  name: pivot-db-service
-  type: ClusterIP
-  serviceAddress: 172.18.1.52
-  servicePort: 5432
 database:
-  engine: postgres
-  name: pivot-test
-  hostname: pivot-db-service
-  secretName: test.pivot.uw.edu-sql-secrets
+  engine: null
 repo: pivot
 instance: test
 image:
   repository: registry.hub.docker.com/acait/pivot
   tag: IMAGE_TAG
 memcached:
-  enabled: false
+  enabled: true
+  replicaCount: 1
+  updateStrategy:
+    type: RollingUpdate
 gcsCredentials:
   mounted: true
   secretName: test.pivot.uw.edu-gc-service-credentials
@@ -55,6 +49,8 @@ environmentVariables:
     value: test.pivot.uw.edu
   - name: PIVOT_ACCESS_GROUP
     value: 'u_acadev_pivot-test-access'
+  - name: SESSION_BACKEND
+    value: MEMCACHED
 externalSecrets:
   enabled: true
   secrets:
@@ -71,13 +67,6 @@ externalSecrets:
           property: storage-bucket-name
         - name: support-email
           property: support-email
-    - name: test.pivot.uw.edu-sql-secrets
-      externalKey: axdd/kv/data/pivot/test/sql-secrets
-      data:
-        - name: username
-          property: username
-        - name: password
-          property: password
     - name: test.pivot.uw.edu-ic-certs
       externalKey: axdd/kv/data/pivot/test/ic-certs
       data:

@@ -4,6 +4,7 @@ python:
 - '3.6'
 services:
 - docker
+- memcached
 os:
 - linux
 env:

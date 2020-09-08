@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 
 services:
   app:
@@ -6,6 +6,7 @@ services:
     container_name: pivot
     build:
       context: .
+      target: app-container
     volumes:
       - ./pivot:/app/pivot
     ports:
@@ -16,3 +17,4 @@ services:
       DJANGO_LOGIN_USERNAME: ${DJANGO_LOGIN_USERNAME:-javerage}
       DJANGO_LOGIN_PASSWORD: ${DJANGO_LOGIN_PASSWORD:-javerage}
       DJANGO_LOGIN_EMAIL: ${DJANGO_LOGIN_EMAIL:-javerage@uw.edu}
+

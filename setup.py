@@ -18,6 +18,7 @@ setup(
     install_requires=[
         'Django>=2.0.13,<2.1',
         'django-compressor',
+        'python-memcached',
         'django-templatetag-handlebars',
         'django-user-agents',
         'django-storages[google]',
