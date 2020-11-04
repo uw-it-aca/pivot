@@ -101,7 +101,7 @@ externalSecrets:
         - name: uw-idp-cert
           property: cert
     - name: pivot.uw.edu-gc-service-credentials
-      externalKey: axdd/kv/data/prod/gc-service-credentials
+      externalKey: axdd/kv/data/pivot/prod/gc-service-credentials
       data:
         - name: credentials.json
           property: credentials.json
