@@ -5,9 +5,7 @@ gc()
 library(tidyverse)
 
 setwd(paste0(rstudioapi::getActiveProject(), "/.."))
-
-# custom function to created quoted character vectors from unquoted text
-Cs <- function(...) {as.character(sys.call())[-1]}
+source('pivot_rproj/utils/r_utility_funs.R')
 
 load("intermediate data/intermediate cleaned files.RData")
 data.map <- read_csv("transformed data/data_map.csv")

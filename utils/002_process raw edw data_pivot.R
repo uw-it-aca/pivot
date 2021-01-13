@@ -25,44 +25,17 @@ library(tidyverse)
 # This is included to 'reset' 002 in the event that 001 > 002 aren't being
 # run in the same session.
 setwd(paste0(rstudioapi::getActiveProject(), "/.."))
+source('pivot_rproj/utils/r_utility_funs.R')
 
-# in case there are multiple raw data files, load the most recently created
+# if there are multiple raw data files, load the most recently created
 f <- list.files("raw data/", pattern = "raw", full.names = T)
 f <- f[which.max(file.mtime(f))]
 load(f); rm(f)
 
-# function to created quoted character vectors from unquoted text
-#
-# input: unquoted text as in Cs(x, y, z)
-Cs <- function(...) {as.character(sys.call())[-1]}
 
-
-
-
-# make file name prefix from max.yrq
-mk.prefix <- function(x){
-  q <- x %% 10
-  y <- (x %/% 10) - 2000  # diff from yr 2000; [TODO] make this an argument
-  q <- c("wi", "sp", "su", "au")[q]
-  return(paste0(q, y, "_20qtrs"))
-}
-
-# calculate the difference between two quarters
-qtr.diff <- function(x, y){
-  (((x %/% 10) - (y %/% 10)) * 4) + ((x %% 10) - (y %% 10))
-}
 
 
 # trim WS from everything in one pass -----------------------------------
-# function to strip whitespace, alternative to `mutate_if(is.character, ...)` that does not depend on dplyr/tidyverse
-#
-# input: a dataframe
-# return: dataframe
-df.trimws <- function(df){
-  i <- sapply(df, is.character)
-  df[i] <- lapply(df[i], trimws)
-  return(df)
-}
 
 l <- ls()
 for(i in 1:length(l)){
@@ -387,7 +360,7 @@ ma <- maj.age %>%
   ungroup() %>%
   mutate(quarters_of_data = if_else(quarters_of_data > 20, 20, quarters_of_data))
 
-# (no.age <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
+(no.age <- status.lookup$code[!(status.lookup$code %in% ma$credential_code)])
 
 ma2 <- pre.maj.courses %>%
   filter(credential_code %in% no.age) %>%

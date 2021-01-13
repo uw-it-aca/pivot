@@ -8,19 +8,17 @@ library(dbplyr)
 library(odbc)
 library(keyring)
 
-# helper function - create quoted vector, i.e. c(), from unquoted text
-# not intended to smoothly handle punctuation but can be coerced a little, e.g. Cs(a, b, "?")
-Cs <- function(...){as.character(sys.call())[-1]}
 options(tibble.print_max = 800)
 
 # To access local files/vars that are not part of repo, move up one level from project directory
 setwd(rstudioapi::getActiveProject())
 setwd("..")
-
+source('pivot_rproj/utils/r_utility_funs.R')
 
 # create connections to enterprise data server
 con <- dbConnect(odbc(), 'sqlserver01', PWD = keyring::key_get("sdb"))
-
+aicon <- dbConnect(odbc::odbc(), 'sqlserver01', Database = "AnalyticInteg",
+                   PWD = keyring::key_get("sdb"))
 
 # get date for year + quarter ----------------------------------------------------
 cal <- tbl(con, in_schema("sec", "sys_tbl_39_calendar")) %>%
@@ -37,48 +35,33 @@ last.major.yrq5 <- max.yrq - 50
 rm(cal)
 
 # CM in SDB replaces Kuali csv ------------------------------------------------
-get.active.majors <- function(){
-  # build an end-label filter for CM tables
-  text.qtr.to.numeric <- function(q){
-    lookup <- c('Winter', 'Spring', 'Summer', 'Autumn')
-    return(match(q, lookup))
-  }
 
-  label.to.yrq <- function(text.yrq){
-    y <- str_sub(text.yrq, start = -4)
-    q <- str_sub(text.yrq, end = -6)
-    q <- text.qtr.to.numeric(q)
-    yrq <- paste0(y, q)
-    return(as.numeric(yrq))
-  }
+## get.active.majors
 
-  programs <- tbl(con, in_schema('sec', 'CM_Programs')) %>%
-    filter(program_type == 'Major',
-           program_level == 'Undergraduate') %>%
-    collect() %>%
-    mutate(program_end = label.to.yrq(program_dateEndLabel)) %>%
-    filter(program_end >= max.yrq | is.na(program_end)) %>%
-    select(-program_end)
-  creds <- tbl(con, in_schema('sec', 'CM_Credentials')) %>%
-    filter(DoNotPublish %in% c('', 'False', 'false')) %>%
-    collect() %>%
-    mutate(credential_end = label.to.yrq(credential_dateEndLabel)) %>%
-    filter(credential_end >= max.yrq | is.na(credential_end)) %>%
-    select(-credential_end)
+programs <- tbl(con, in_schema('sec', 'CM_Programs')) %>%
+  filter(program_type == 'Major',
+         program_level == 'Undergraduate') %>%
+  collect() %>%
+  mutate(program_end = label.to.yrq(program_dateEndLabel)) %>%
+  filter(program_end >= max.yrq | is.na(program_end)) %>%
+  select(-program_end)
 
-  active.majors <- inner_join(creds, programs, by = c('program_verind_id')) %>%
-    distinct(credential_code, .keep_all = T)
+creds <- tbl(con, in_schema('sec', 'CM_Credentials')) %>%
+  filter(DoNotPublish %in% c('', 'False', 'false')) %>%
+  collect() %>%
+  mutate(credential_end = label.to.yrq(credential_dateEndLabel)) %>%
+  filter(credential_end >= max.yrq | is.na(credential_end)) %>%
+  select(-credential_end)
 
-  rm(programs, creds)
+active.majors <- inner_join(creds, programs, by = c('program_verind_id')) %>%
+  distinct(credential_code, .keep_all = T)
 
-  return(active.majors)
-}
+rm(programs, creds)
 
-active.majors <- get.active.majors()
 
 # Student 1st yrq in major ------------------------------------------------
 
-maj.first.yrq <- tbl(con, in_schema("AnalyticInteg.sec", "IV_StudentProgramEnrollment")) %>%
+maj.first.yrq <- tbl(aicon, in_schema("sec", "IV_StudentProgramEnrollment")) %>%
   filter(ProgramAcademicCareerLevelCode == "UG",
          ProgramEntryAcademicQtrKeyId >= last.major.yrq5,
          ProgramEntryAcademicQtrKeyId <= max.yrq,
@@ -100,7 +83,7 @@ maj.first.yrq <- tbl(con, in_schema("AnalyticInteg.sec", "IV_StudentProgramEnrol
 
 get.premajor.gpa <- function(){
   # Collect quarterly outcomes temporarily, then merge with first quarter in major
-  x <- tbl(con, in_schema("AnalyticInteg.sec", "IV_StudentQuarterlyOutcomes")) %>%
+  x <- tbl(aicon, in_schema("sec", "IV_StudentQuarterlyOutcomes")) %>%
     select(sys.key = SDBSrcSystemKey, yrq = AcademicQtrKeyId, cgpa = OutcomeCumGPA) %>%
     collect()       # this is slower but performing join in the same query is buggy
 
@@ -183,3 +166,4 @@ maj.age <- tbl(con, in_schema("sec", "sr_major_code")) %>%
 
 save(active.majors, pre.maj.courses, pre.maj.gpa, course.names, maj.age, file = paste0("raw data/raw data_", Sys.Date()))
 dbDisconnect(con); rm(con)
+dbDisconnect(aicon); rm(aicon)
