@@ -47,7 +47,7 @@ database:
 repo: pivot
 instance: prod
 image:
-  repository: registry.hub.docker.com/acait/pivot
+  repository: gcr.io/uwit-mci-axdd/pivot
   tag: IMAGE_TAG
 memcached:
   enabled: false
