@@ -21,7 +21,7 @@ setup(
         'django-templatetag-handlebars',
         'django-user-agents',
         'django-storages[google]',
-        'UW-Django-SAML2<2.0',
+        'UW-Django-SAML2~=1.5',
     ],
     license='Apache License, Version 2.0',  # example license
     description='A Django App for analyzing major/grade data',
