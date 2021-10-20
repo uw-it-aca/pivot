@@ -33,8 +33,8 @@ name: Build, Test and Deploy
 
 env:
   # Release name must match "repo" value in docker/*-values.yml
-  RELEASE_NAME: appname
-  DJANGO_APP: django_project
+  RELEASE_NAME: pivot
+  DJANGO_APP: pivot
 
 # Be sure that branches defined here have corresponding steps
 # defined in the "deploy" job
