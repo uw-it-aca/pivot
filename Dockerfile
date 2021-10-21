@@ -1,4 +1,4 @@
-FROM gcr.io/uwit-mci-axdd/django-container:1.3.0 as app-container
+FROM gcr.io/uwit-mci-axdd/django-container:1.3.3 as app-container
 
 USER root
 RUN apt-get update && apt-get install libpq-dev -y
@@ -18,7 +18,7 @@ RUN . /app/bin/activate && pip install nodeenv && nodeenv -p &&\
 RUN . /app/bin/activate && python manage.py collectstatic --noinput &&\
     python manage.py compress -f
 
-FROM gcr.io/uwit-mci-axdd/django-test-container:1.3.0 as app-test-container
+FROM gcr.io/uwit-mci-axdd/django-test-container:1.3.3 as app-test-container
 
 COPY --from=0 /app/ /app/
 COPY --from=0 /static/ /static/
