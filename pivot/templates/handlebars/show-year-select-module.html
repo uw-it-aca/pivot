@@ -1,6 +1,6 @@
-{% load templatetag_handlebars %}
 {% load pivot_extras %}
-{% tplhandlebars "show-year-select-module" %}
+{% verbatim %}
+<script id="tpl-show-year-select-module" type="text/x-handlebars-template">
 
 <ul class="nav nav-tabs col-xs-12 col-md-6 col-md-pull-6 pivot-year-selector">
     <li role="presentation" id="8qtrs" data-num-qtrs="8" class="active">
@@ -14,4 +14,5 @@
         {% endautoescape %}
     </li>
 </ul>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}
