@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "populate-college-dropdown" %}
+{% verbatim %}
+<script id="tpl-populate-college-dropdown" type="text/x-handlebars-template">
 
 <li role="option" id="college-opt1" aria-selected="true" class="active college-list" tabindex="0">All Colleges</li>
 <li class="divider"><hr class="sr-only" /></li>
@@ -20,4 +20,5 @@
     </li>
 {{ /each }}
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

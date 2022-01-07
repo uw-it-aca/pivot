@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "major-display-results" %}
+{% verbatim %}
+<script id="tpl-major-display-results" type="text/x-handlebars-template">
 
 <label class="suggested_major" tabindex="-1">
     <input type='checkbox' {{ status }} tabindex="0" role="menuitem" />
@@ -7,4 +7,5 @@
 </label>
 <br>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

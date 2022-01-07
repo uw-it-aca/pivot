@@ -1,8 +1,9 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "feedback" %}
+{% verbatim %}
+<script id="tpl-feedback" type="text/x-handlebars-template">
 
 <div class="alert {{ message_type }}">
     {{ message }}
 </div>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

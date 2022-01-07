@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "admission-type-help-popover" %}
+{% verbatim %}
+<script id="tpl-admission-type-help-popover" type="text/x-handlebars-template">
 
 {{#ifEquals major_status_text "open" }}
 <p><b>Open Major</b></p>
@@ -21,4 +21,5 @@
 <p>Entry to the major may be either open, minimum, or capacity-constrained, depending on the concentration/option chosen.</p>
 {{/ifEquals}}
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

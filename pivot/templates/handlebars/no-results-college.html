@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "no-results-college" %}
+{% verbatim %}
+<script id="tpl-no-results-college" type="text/x-handlebars-template">
 <div role="alert" aria-atomic="true">
 <p>
     <b>Can't find keyword "{{ search }}" in {{ college }}.</b>
@@ -12,4 +12,5 @@
     <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.
 </p>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

@@ -1,9 +1,10 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "display-results" %}
+{% verbatim %}
+<script id="tpl-display-results" type="text/x-handlebars-template">
 
 <!-- the empty onclick adds semantic information that this element is clickable -->
 <li class='suggested_major' tabindex='0' onclick=";" role="menuitem">
     {{{ major }}}
 </li>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

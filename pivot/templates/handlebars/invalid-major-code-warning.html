@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "invalid-major-code-warning" %}
+{% verbatim %}
+<script id="tpl-invalid-major-code-warning" type="text/x-handlebars-template">
 
 <div class="alert alert-info" role="alert" aria-atomic="true">
     {{#if plural}}
@@ -13,4 +13,5 @@
     {{/if}}
 </div>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

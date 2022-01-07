@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "multiple-results" %}
+{% verbatim %}
+<script id="tpl-multiple-results" type="text/x-handlebars-template">
 <div class="no-results-warning alert alert-info" role="alert" aria-atomic="true"> 
 <p>
     <b>Multiple results found for keyword {{ search }} in UW major list.</b>
@@ -12,4 +12,5 @@
     <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.
 </p>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "prepare-results" %}
+{% verbatim %}
+<script id="tpl-prepare-results" type="text/x-handlebars-template">
 
 <ul id="numSuggestions">
     <span class="dropdown-header" id="numResults" aria-live="assertive">&nbsp;</span>
@@ -20,5 +20,6 @@
 <h3 class="dropdown-header pivot-dropdown-header" tabindex="0" id="tacomaCampusHeader">TACOMA CAMPUS</h3>
 <ul id="tacomaCampus" aria-labelledby="tacomaCampusHeader">
 </ul>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}
 

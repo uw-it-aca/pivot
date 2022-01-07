@@ -1,6 +1,7 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "display-major-status-icon" %}
+{% verbatim %}
+<script id="tpl-display-major-status-icon" type="text/x-handlebars-template">
 
 <img src="{{ src }}" title='Admission type: {{ title }}' alt='Admission type: {{ title }}'/>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

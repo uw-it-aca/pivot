@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "create-major-card" %}
+{% verbatim %}
+<script id="tpl-create-major-card" type="text/x-handlebars-template">
 
 <div class='major-card row' id='{{ id }}' aria-live="polite">
     <div class='card-heading col-xs-12 col-md-4 major-height'>
@@ -10,4 +10,5 @@
     </div>
 </div>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

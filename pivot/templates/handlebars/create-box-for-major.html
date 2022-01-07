@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "create-box-for-major" %}
+{% verbatim %}
+<script id="tpl-create-box-for-major" type="text/x-handlebars-template">
 
 <div class='median-box col-xs-3 col-md-2'>
     <!--Check if i is one-->
@@ -34,4 +34,5 @@
     <a href='/course-gpa/?code={{ major_id }}' title="View most commonly taken courses in {{major_name}}"><span class="glyphicon glyphicon-menu-right link-arrow" aria-hidden="true"></span> View most commonly taken courses among students who declared<strong> {{major_name}}</strong></a>
 </div>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

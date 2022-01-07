@@ -1,6 +1,7 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "display-major-status-url" %}
+{% verbatim %}
+<script id="tpl-display-major-status-url" type="text/x-handlebars-template">
 
 <a href='{{ url }}' target=_blank>{{ msg }}</a>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

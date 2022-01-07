@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "list-courses-for-major-outer" %}
+{% verbatim %}
+<script id="tpl-list-courses-for-major-outer" type="text/x-handlebars-template">
 
 <div class='course-card row' id='{{ id }}'>
     <p class='college-heading'>{{ college }} - {{ campus }} campus</p>
@@ -77,4 +77,5 @@
 </div>
 <div class="col-md-9 row "><p class="fine-print-text" id="da-note"><b>Note</b>: Course GPA data is limited to the last 2 years. It doesn't include direct admit students' data and equivalent course data.    </p></div>
 
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

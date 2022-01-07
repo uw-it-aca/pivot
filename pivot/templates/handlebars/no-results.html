@@ -1,5 +1,5 @@
-{% load templatetag_handlebars %}
-{% tplhandlebars "no-results" %}
+{% verbatim %}
+<script id="tpl-no-results" type="text/x-handlebars-template">
 <div class="no-results-warning alert alert-info" role="alert" aria-live="assertive" aria-atomic="true">
 <p>
     <b>Can't find keyword {{ search }} in UW major list.</b>
@@ -10,4 +10,5 @@
     and <a href='http://www.tacoma.uw.edu/uwt/admissions/undergraduate-majors' target='_blank'>Tacoma</a>.
 </p>
 </div>
-{% endtplhandlebars %}
+</script>
+{% endverbatim %}

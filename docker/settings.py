@@ -15,7 +15,6 @@ else:
 
 INSTALLED_APPS += [
     "pivot",
-    "templatetag_handlebars",
     "django.contrib.humanize",
     "django_user_agents",
     "compressor",
