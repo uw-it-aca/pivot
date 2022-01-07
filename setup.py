@@ -16,7 +16,7 @@ setup(
     packages=['pivot'],
     include_package_data=True,
     install_requires=[
-        'Django>=2.0.13,<2.1',
+        'Django~=2.2',
         'django-compressor',
         'django-templatetag-handlebars',
         'django-user-agents',
