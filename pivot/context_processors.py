@@ -14,3 +14,6 @@ def google_analytics(request):
         'GOOGLE_ANALYTICS_KEY': ga_key,
         'google_analytics': ga_key
     }
+
+def show_alert(request):
+    return {'show_alert': settings.SHOW_ALERT}

@@ -31,7 +31,8 @@ STATICFILES_FINDERS += ("compressor.finders.CompressorFinder",)
 
 TEMPLATES[0]["OPTIONS"]["context_processors"].extend([
     "pivot.context_processors.support_email",
-    "pivot.context_processors.google_analytics"
+    "pivot.context_processors.google_analytics",
+    "pivot.context_processors.show_alert",
 ])
 
 GOOGLE_ANALYTICS_KEY = os.getenv("GOOGLE_ANALYTICS_KEY", " ")
@@ -51,6 +52,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+SHOW_ALERT = os.getenv("SHOW_ALERT", "False") == "True"
 SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "")
 PIVOT_AUTHZ_GROUPS = {
     "access": os.getenv("PIVOT_ACCESS_GROUP", "u_test_access")
