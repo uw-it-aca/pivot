@@ -1,4 +1,4 @@
-FROM gcr.io/uwit-mci-axdd/django-container:1.3.3 as app-container
+FROM gcr.io/uwit-mci-axdd/django-container:1.3.8 as app-container
 
 USER root
 RUN apt-get update && apt-get install libpq-dev -y
