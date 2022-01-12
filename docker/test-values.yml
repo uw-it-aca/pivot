@@ -68,7 +68,7 @@ externalSecrets:
           property: django-secret
         - name: google-analytics-key
           property: google-analytics-key
-          name: show-alert
+        - name: show-alert
           property: show-alert
         - name: storage-project-id
           property: storage-project-id
