@@ -71,6 +71,8 @@ externalSecrets:
           property: django-secret
         - name: google-analytics-key
           property: google-analytics-key
+        - name: show-alert
+          property: show-alert
         - name: storage-project-id
           property: storage-project-id
         - name: storage-bucket-name
@@ -108,6 +110,10 @@ environmentVariablesSecrets:
     name: GOOGLE_ANALYTICS_KEY
     secretName: pivot.uw.edu-secrets
     secretKey: google-analytics-key
+  showAlert:
+    name: SHOW_ALERT
+    secretName: pivot.uw.edu-secrets
+    secretKey: show-alert
   storageProjectId:
     name: STORAGE_PROJECT_ID
     secretName: pivot.uw.edu-secrets
