@@ -1,5 +1,5 @@
 ingress:
-  enabled: true
+  enabled: false
   tls:
     pivot:
       secretName: test.pivot.uw.edu-ingress-cert
