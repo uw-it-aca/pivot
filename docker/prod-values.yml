@@ -4,7 +4,7 @@ autoscaling:
   maxReplicas: 4
 targetAverageUtilization: 100
 ingress:
-  enabled: true
+  enabled: false
   tls:
     pivot:
       secretName: pivot.uw.edu-ingress-cert
